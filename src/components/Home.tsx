@@ -60,7 +60,7 @@ export function Home() {
   const activePersonality = activeCall ? getPersonalityById(activeCall) : null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 to-orange-50 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-rose-50 to-orange-50 p-6 pb-32">
       <header className="flex justify-between items-center mb-8">
         <div className="flex items-center space-x-2">
           <div className="w-8 h-8">
@@ -90,21 +90,23 @@ export function Home() {
       </div>
 
       {activeCall && activePersonality && (
-        <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-white rounded-full shadow-lg px-4 py-2 flex items-center space-x-4">
-          <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center overflow-hidden">
-            <img src={activePersonality.icon} alt={activeCall} className="w-8 h-8" />
+        <div className="fixed bottom-8 left-4 right-4 bg-white rounded-full shadow-lg px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center overflow-hidden">
+              <img src={activePersonality.icon} alt={activeCall} className="w-10 h-10" />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-lg font-medium">{activeCall}</span>
+              <span className="text-sm text-gray-500">00:00:02</span>
+            </div>
           </div>
-          <div className="flex flex-col">
-            <span className="font-medium">{activeCall}</span>
-            <span className="text-xs text-gray-500">00:00:02</span>
-          </div>
-          <div className="flex space-x-2">
-            <button className="p-2 rounded-full bg-gray-100">
-              <Mic className="h-5 w-5" />
+          <div className="flex items-center space-x-3">
+            <button className="p-4 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors">
+              <Mic className="h-5 w-5 text-gray-600" />
             </button>
             <button 
               onClick={() => navigate(`/chat/${activePersonality.id}`)}
-              className="p-2 rounded-full bg-red-500"
+              className="p-4 rounded-full bg-red-500 hover:bg-red-600 transition-colors"
             >
               <Phone className="h-5 w-5 text-white" />
             </button>
