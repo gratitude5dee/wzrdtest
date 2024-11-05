@@ -21,6 +21,9 @@ export function Login() {
       if (event === "USER_UPDATED" && session) {
         navigate("/home");
       }
+      if (event === "SIGNED_OUT") {
+        navigate("/login");
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -37,6 +40,7 @@ export function Login() {
           </div>
           <h2 className="text-3xl font-bold">Welcome to Hume</h2>
           <p className="mt-2 text-gray-600">Sign in or create an account to continue</p>
+          <p className="mt-2 text-sm text-red-600">Note: During development, you need to use an authorized email domain.</p>
         </div>
         <div className="bg-white p-8 rounded-2xl shadow-sm">
           <Auth
@@ -54,6 +58,7 @@ export function Login() {
               className: {
                 message: 'text-red-600 text-sm',
                 label: 'text-gray-700 font-medium',
+                button: 'bg-black hover:bg-gray-800',
               },
             }}
             theme="light"
