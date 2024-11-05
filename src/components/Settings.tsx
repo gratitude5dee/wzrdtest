@@ -15,28 +15,50 @@ export function Settings({ open, onOpenChange }: { open: boolean; onOpenChange: 
 
   useEffect(() => {
     const loadUserProfile = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) {
-        onOpenChange(false);
+      try {
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+        
+        if (authError || !user) {
+          onOpenChange(false);
+          toast({
+            title: "Authentication Error",
+            description: "You must be logged in to access settings",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+
+        if (profileError && profileError.code === 'PGRST116') {
+          // Profile doesn't exist yet, create it
+          const { error: insertError } = await supabase
+            .from('profiles')
+            .insert([{ id: user.id }]);
+
+          if (insertError) {
+            toast({
+              title: "Error",
+              description: "Failed to create profile",
+              variant: "destructive",
+            });
+            return;
+          }
+        } else if (profile) {
+          setFirstName(profile.first_name || "");
+          setLastName(profile.last_name || "");
+          setEmail(profile.email || "");
+        }
+      } catch (error) {
         toast({
           title: "Error",
-          description: "You must be logged in to access settings",
+          description: "Failed to load profile",
           variant: "destructive",
         });
-        return;
-      }
-
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .single();
-
-      if (profile) {
-        setFirstName(profile.first_name || "");
-        setLastName(profile.last_name || "");
-        setEmail(profile.email || "");
       }
     };
 
@@ -46,41 +68,49 @@ export function Settings({ open, onOpenChange }: { open: boolean; onOpenChange: 
   }, [open, onOpenChange, toast]);
 
   const handleSave = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    
-    if (!user) {
+    try {
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      
+      if (authError || !user) {
+        toast({
+          title: "Authentication Error",
+          description: "You must be logged in to update your profile",
+          variant: "destructive",
+        });
+        onOpenChange(false);
+        return;
+      }
+
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .upsert({
+          id: user.id,
+          first_name: firstName,
+          last_name: lastName,
+          email: email,
+        });
+
+      if (updateError) {
+        toast({
+          title: "Error",
+          description: "Failed to update profile",
+          variant: "destructive",
+        });
+        return;
+      }
+
       toast({
-        title: "Error",
-        description: "You must be logged in to update your profile",
-        variant: "destructive",
+        title: "Success",
+        description: "Profile updated successfully",
       });
       onOpenChange(false);
-      return;
-    }
-
-    const { error } = await supabase
-      .from('profiles')
-      .upsert({
-        id: user.id,
-        first_name: firstName,
-        last_name: lastName,
-        email: email,
-      });
-
-    if (error) {
+    } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to update profile",
+        description: "An unexpected error occurred",
         variant: "destructive",
       });
-      return;
     }
-
-    toast({
-      title: "Success",
-      description: "Profile updated successfully",
-    });
-    onOpenChange(false);
   };
 
   return (
