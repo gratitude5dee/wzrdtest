@@ -1,4 +1,4 @@
-import { ArrowLeft, Info, X } from "lucide-react";
+import { ArrowLeft, Info } from "lucide-react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
@@ -39,15 +39,6 @@ export function ChatHeader({ personality, onBack, onResetChat, personalityInfo }
                 </div>
                 <h2 className="text-2xl font-medium">{personality}</h2>
               </div>
-              <DialogTrigger asChild>
-                <Button 
-                  variant="ghost" 
-                  size="icon"
-                  className="rounded-full hover:bg-gray-100"
-                >
-                  <X className="h-5 w-5" />
-                </Button>
-              </DialogTrigger>
             </div>
 
             <div className="space-y-2">
