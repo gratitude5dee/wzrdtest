@@ -1,6 +1,8 @@
-import { Settings } from "lucide-react";
+import { Settings, Mic, Phone } from "lucide-react";
 import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { ActiveCallContext } from "../App";
 
 const personalities = [
   {
@@ -49,6 +51,13 @@ const personalities = [
 
 export function Home() {
   const navigate = useNavigate();
+  const { activeCall } = useContext(ActiveCallContext);
+
+  const getPersonalityById = (title: string) => {
+    return personalities.find(p => p.title === title);
+  };
+
+  const activePersonality = activeCall ? getPersonalityById(activeCall) : null;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50 to-orange-50 p-6">
@@ -79,6 +88,29 @@ export function Home() {
           </button>
         ))}
       </div>
+
+      {activeCall && activePersonality && (
+        <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-white rounded-full shadow-lg px-4 py-2 flex items-center space-x-4">
+          <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center overflow-hidden">
+            <img src={activePersonality.icon} alt={activeCall} className="w-8 h-8" />
+          </div>
+          <div className="flex flex-col">
+            <span className="font-medium">{activeCall}</span>
+            <span className="text-xs text-gray-500">00:00:02</span>
+          </div>
+          <div className="flex space-x-2">
+            <button className="p-2 rounded-full bg-gray-100">
+              <Mic className="h-5 w-5" />
+            </button>
+            <button 
+              onClick={() => navigate(`/chat/${activePersonality.id}`)}
+              className="p-2 rounded-full bg-red-500"
+            >
+              <Phone className="h-5 w-5 text-white" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

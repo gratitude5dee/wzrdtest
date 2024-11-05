@@ -1,6 +1,7 @@
-import { ArrowLeft, Info, Mic, Phone, MessageSquare } from "lucide-react";
-import { useState } from "react";
+import { ArrowLeft, Info, Mic, Phone, MessageSquare, MicOff } from "lucide-react";
+import { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { ActiveCallContext } from "../App";
 
 interface Message {
   text: string;
@@ -20,6 +21,18 @@ export function Chat({ personality }: ChatProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isListening, setIsListening] = useState(true);
   const [showMessages, setShowMessages] = useState(false);
+  const [isMicMuted, setIsMicMuted] = useState(false);
+  const { setActiveCall } = useContext(ActiveCallContext);
+
+  useEffect(() => {
+    setActiveCall(personality);
+    return () => {
+      // Only clear active call if we're ending the call (not navigating back)
+      if (window.location.pathname === '/home') {
+        setActiveCall(null);
+      }
+    };
+  }, [personality, setActiveCall]);
 
   const handleMessageClick = () => {
     setIsListening(false);
@@ -37,7 +50,12 @@ export function Chat({ personality }: ChatProps) {
   };
 
   const handleEndCall = () => {
+    setActiveCall(null);
     navigate('/home');
+  };
+
+  const handleMicToggle = () => {
+    setIsMicMuted(!isMicMuted);
   };
 
   return (
@@ -99,8 +117,15 @@ export function Chat({ personality }: ChatProps) {
       {/* Bottom Controls */}
       <div className="fixed bottom-0 left-0 right-0 p-6 bg-transparent">
         <div className="flex justify-around items-center">
-          <button className="p-4 rounded-full bg-white/80 backdrop-blur-sm shadow-sm">
-            <Mic className="h-6 w-6 text-gray-600" />
+          <button 
+            onClick={handleMicToggle}
+            className="p-4 rounded-full bg-white/80 backdrop-blur-sm shadow-sm relative"
+          >
+            {isMicMuted ? (
+              <MicOff className="h-6 w-6 text-gray-600" />
+            ) : (
+              <Mic className="h-6 w-6 text-gray-600" />
+            )}
           </button>
           <button 
             onClick={handleEndCall}
