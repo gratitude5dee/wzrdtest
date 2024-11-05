@@ -1,8 +1,9 @@
-import { Settings, Mic, Phone } from "lucide-react";
+import { Settings as SettingsIcon, Mic, Phone } from "lucide-react";
 import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { ActiveCallContext } from "../App";
+import { Settings } from "./Settings";
 
 const personalities = [
   {
@@ -54,6 +55,7 @@ const personalities = [
 export function Home() {
   const navigate = useNavigate();
   const { activeCall } = useContext(ActiveCallContext);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   const getPersonalityById = (title: string) => {
     return personalities.find(p => p.title === title);
@@ -70,8 +72,13 @@ export function Home() {
           </div>
           <span className="text-2xl font-semibold">hume</span>
         </div>
-        <Button variant="ghost" size="icon" className="rounded-full bg-[#2A2A2A] text-white hover:bg-gray-800">
-          <Settings className="h-5 w-5" />
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="rounded-full bg-[#2A2A2A] text-white hover:bg-gray-800"
+          onClick={() => setSettingsOpen(true)}
+        >
+          <SettingsIcon className="h-5 w-5" />
         </Button>
       </header>
 
@@ -117,6 +124,8 @@ export function Home() {
           </div>
         </div>
       )}
+
+      <Settings open={settingsOpen} onOpenChange={setSettingsOpen} />
     </div>
   );
 }
