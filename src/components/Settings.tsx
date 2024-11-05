@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -12,6 +12,38 @@ export function Settings({ open, onOpenChange }: { open: boolean; onOpenChange: 
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const { toast } = useToast();
+
+  useEffect(() => {
+    const loadUserProfile = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        onOpenChange(false);
+        toast({
+          title: "Error",
+          description: "You must be logged in to access settings",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (profile) {
+        setFirstName(profile.first_name || "");
+        setLastName(profile.last_name || "");
+        setEmail(profile.email || "");
+      }
+    };
+
+    if (open) {
+      loadUserProfile();
+    }
+  }, [open, onOpenChange, toast]);
 
   const handleSave = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -22,6 +54,7 @@ export function Settings({ open, onOpenChange }: { open: boolean; onOpenChange: 
         description: "You must be logged in to update your profile",
         variant: "destructive",
       });
+      onOpenChange(false);
       return;
     }
 
