@@ -1,7 +1,8 @@
-import { ArrowLeft, Info, Mic, Phone, MessageSquare, MicOff } from "lucide-react";
+import { ArrowLeft, Info, Mic, Phone, MessageSquare, MicOff, X } from "lucide-react";
 import { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ActiveCallContext } from "../App";
+import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 
 interface Message {
   text: string;
@@ -27,7 +28,6 @@ export function Chat({ personality }: ChatProps) {
   useEffect(() => {
     setActiveCall(personality);
     return () => {
-      // Only clear active call if we're ending the call (not navigating back)
       if (window.location.pathname === '/home') {
         setActiveCall(null);
       }
@@ -58,6 +58,23 @@ export function Chat({ personality }: ChatProps) {
     setIsMicMuted(!isMicMuted);
   };
 
+  const getPersonalityInfo = () => {
+    const info = {
+      "Emotional Reflection": {
+        about: "A relaxed, professorial advisor with a wealth of knowledge and calm demeanor. Bring your intellectual curiosities - his laid-back wisdom will offer enlightening new perspectives.",
+        baseVoice: "Dacher",
+        model: "claude-3-5-sonnet-latest"
+      }
+    };
+    return info[personality as keyof typeof info] || {
+      about: "An AI assistant ready to help you.",
+      baseVoice: "Default",
+      model: "Default"
+    };
+  };
+
+  const personalityInfo = getPersonalityInfo();
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50 via-purple-50 to-blue-50">
       {/* Status Bar */}
@@ -75,9 +92,49 @@ export function Chat({ personality }: ChatProps) {
           <ArrowLeft className="h-5 w-5" />
         </button>
         <h1 className="text-xl font-medium">{personality}</h1>
-        <button className="p-2 text-gray-600">
-          <Info className="h-5 w-5" />
-        </button>
+        <Drawer>
+          <DrawerTrigger asChild>
+            <button className="p-2 text-gray-600">
+              <Info className="h-5 w-5" />
+            </button>
+          </DrawerTrigger>
+          <DrawerContent className="px-6 pb-6">
+            <div className="flex items-center space-x-4 mb-6 mt-8">
+              <div className="w-12 h-12 rounded-full overflow-hidden">
+                <img 
+                  src={`/${personality.toLowerCase().replace(" ", "-")}-avatar.png`}
+                  alt={personality}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <h2 className="text-xl font-semibold">{personality}</h2>
+            </div>
+
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-lg font-medium mb-2">About</h3>
+                <p className="text-gray-600">{personalityInfo.about}</p>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-medium mb-2">Base voice</h3>
+                <p className="text-gray-600">{personalityInfo.baseVoice}</p>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-medium mb-2">Language model</h3>
+                <p className="text-gray-600">{personalityInfo.model}</p>
+              </div>
+
+              <button 
+                onClick={() => setMessages([])}
+                className="w-full py-3 px-4 bg-red-50 text-red-600 rounded-lg mt-4"
+              >
+                Reset chat history
+              </button>
+            </div>
+          </DrawerContent>
+        </Drawer>
       </header>
 
       {/* Chat Content */}
