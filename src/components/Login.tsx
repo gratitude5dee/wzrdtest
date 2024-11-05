@@ -51,6 +51,10 @@ export function Login() {
                   },
                 },
               },
+              className: {
+                message: 'text-red-600 text-sm',
+                label: 'text-gray-700 font-medium',
+              },
             }}
             theme="light"
             providers={[]}
@@ -61,7 +65,7 @@ export function Login() {
                   email_label: 'Email',
                   password_label: 'Password',
                   email_input_placeholder: 'Your email address',
-                  password_input_placeholder: 'Your password',
+                  password_input_placeholder: 'Your password (minimum 6 characters)',
                   button_label: 'Sign in',
                   loading_button_label: 'Signing in ...',
                 },
@@ -69,7 +73,7 @@ export function Login() {
                   email_label: 'Email',
                   password_label: 'Password (minimum 6 characters)',
                   email_input_placeholder: 'Your email address',
-                  password_input_placeholder: 'Your password',
+                  password_input_placeholder: 'Your password (minimum 6 characters)',
                   button_label: 'Sign up',
                   loading_button_label: 'Signing up ...',
                 }
