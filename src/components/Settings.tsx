@@ -34,21 +34,36 @@ export function Settings({ open, onOpenChange }: { open: boolean; onOpenChange: 
           .eq('id', user.id)
           .single();
 
-        if (profileError && profileError.code === 'PGRST116') {
-          // Profile doesn't exist yet, create it
-          const { error: insertError } = await supabase
-            .from('profiles')
-            .insert([{ id: user.id }]);
+        if (profileError) {
+          if (profileError.code === 'PGRST116') {
+            // Profile doesn't exist yet, create it
+            const { error: insertError } = await supabase
+              .from('profiles')
+              .insert([{ 
+                id: user.id,
+                email: user.email
+              }]);
 
-          if (insertError) {
+            if (insertError) {
+              toast({
+                title: "Error",
+                description: "Failed to create profile",
+                variant: "destructive",
+              });
+            }
+            // Set email from user data
+            setEmail(user.email || "");
+          } else {
             toast({
               title: "Error",
-              description: "Failed to create profile",
+              description: "Failed to load profile",
               variant: "destructive",
             });
-            return;
           }
-        } else if (profile) {
+          return;
+        }
+
+        if (profile) {
           setFirstName(profile.first_name || "");
           setLastName(profile.last_name || "");
           setEmail(profile.email || "");
