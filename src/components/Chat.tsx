@@ -36,6 +36,10 @@ export function Chat({ personality }: ChatProps) {
     ]);
   };
 
+  const handleEndCall = () => {
+    navigate('/home');
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50 via-purple-50 to-blue-50">
       {/* Status Bar */}
@@ -98,7 +102,10 @@ export function Chat({ personality }: ChatProps) {
           <button className="p-4 rounded-full bg-white/80 backdrop-blur-sm shadow-sm">
             <Mic className="h-6 w-6 text-gray-600" />
           </button>
-          <button className="p-4 rounded-full bg-red-500 shadow-sm">
+          <button 
+            onClick={handleEndCall}
+            className="p-4 rounded-full bg-red-500 shadow-sm hover:bg-red-600 transition-colors"
+          >
             <Phone className="h-6 w-6 text-white" />
           </button>
           <button 
