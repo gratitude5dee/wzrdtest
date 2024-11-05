@@ -23,6 +23,26 @@ export function Login() {
     return () => subscription.unsubscribe();
   }, [navigate, toast]);
 
+  const handleSignup = async (email: string, password: string) => {
+    if (password.length < 6) {
+      toast({
+        title: "Weak Password",
+        description: "Password should be at least 6 characters.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const { error } = await supabase.auth.signUp({ email, password });
+    if (error) {
+      toast({
+        title: "Signup Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#FFF8F6] flex items-center justify-center p-4">
       <div className="w-full max-w-md space-y-8">
@@ -41,6 +61,8 @@ export function Login() {
             appearance={{ theme: ThemeSupa }}
             theme="light"
             providers={[]}
+            magicLink={false}
+            onSignup={handleSignup}
           />
         </div>
       </div>
