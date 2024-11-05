@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "./ui/button";
 import { ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const slides = [
   {
@@ -22,10 +23,13 @@ const slides = [
 
 export function Onboarding() {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const navigate = useNavigate();
 
   const nextSlide = () => {
     if (currentSlide < slides.length - 1) {
       setCurrentSlide(curr => curr + 1);
+    } else {
+      navigate("/home");
     }
   };
 
