@@ -1,66 +1,92 @@
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useTeleprompter } from '@/hooks/useTeleprompter';
 import { TeleprompterControls } from '@/components/TeleprompterControls';
-import { useEffect, useState, useRef } from 'react';
-import { ArrowLeft } from 'lucide-react';
-import { Button } from './ui/button';
+import { useEffect, useState, useRef, useCallback } from 'react';
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Edit2, ArrowLeft } from 'lucide-react';
+import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 
-interface TeleprompterProps {
-  text?: string;
+interface TeleprompterState {
+  script: string;
+  fontSize: number;
+  fontFamily: string;
+  textColor: string;
 }
 
-export const Teleprompter = ({ text = '' }: TeleprompterProps) => {
+const Teleprompter = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [scrollPosition, setScrollPosition] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [speed, setSpeed] = useState(2);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const scriptText = location.state?.text || text;
+  const [words, setWords] = useState<string[]>([]);
+  const [currentWordIndex, setCurrentWordIndex] = useState(0);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedText, setEditedText] = useState('');
+  const { script, fontSize, fontFamily, textColor } = (location.state as TeleprompterState) || {};
+  const highlightRef = useRef<HTMLSpanElement>(null);
+  
+  const {
+    isPlaying,
+    speed,
+    containerRef,
+    togglePlay,
+    updateSpeed,
+    reset,
+    updateScrollPosition
+  } = useTeleprompter(2);
 
   useEffect(() => {
-    if (!scriptText) {
+    if (!script) {
       navigate('/');
       return;
     }
-  }, [scriptText, navigate]);
+    setWords(script.split(/\s+/).filter(word => word.length > 0));
+    setEditedText(script);
+  }, [script, navigate]);
 
   useEffect(() => {
-    let animationFrameId: number;
-    
-    const animate = () => {
-      if (isPlaying && containerRef.current) {
-        setScrollPosition((prev) => {
-          const newPosition = prev + speed * 0.5;
-          const maxScroll = containerRef.current!.scrollHeight - containerRef.current!.clientHeight;
-          
-          if (newPosition >= maxScroll) {
-            setIsPlaying(false);
-            return maxScroll;
+    if (isPlaying && !isEditing) {
+      const interval = setInterval(() => {
+        setCurrentWordIndex(prev => {
+          if (prev >= words.length - 1) {
+            clearInterval(interval);
+            togglePlay();
+            return prev;
           }
-          
-          return newPosition;
+          return prev + 1;
         });
-      }
-      animationFrameId = requestAnimationFrame(animate);
-    };
-
-    animationFrameId = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(animationFrameId);
-  }, [isPlaying, speed]);
+      }, 60000 / (speed * 200));
+      
+      return () => clearInterval(interval);
+    }
+  }, [isPlaying, speed, words.length, togglePlay, isEditing]);
 
   useEffect(() => {
-    if (containerRef.current) {
-      containerRef.current.scrollTop = scrollPosition;
+    if (highlightRef.current && !isEditing) {
+      updateScrollPosition(highlightRef.current);
     }
-  }, [scrollPosition]);
+  }, [currentWordIndex, updateScrollPosition, isEditing]);
 
-  const handleTogglePlay = () => {
-    setIsPlaying(!isPlaying);
-  };
+  const handleExit = useCallback(() => {
+    reset();
+    setCurrentWordIndex(0);
+    navigate('/');
+  }, [reset, navigate]);
 
-  const handleSpeedChange = (newSpeed: number) => {
-    setSpeed(newSpeed);
+  const handleWordClick = useCallback((index: number) => {
+    if (!isEditing) {
+      setCurrentWordIndex(index);
+    }
+  }, [isEditing]);
+
+  const handleEditToggle = () => {
+    if (isEditing) {
+      const newWords = editedText.split(/\s+/).filter(word => word.length > 0);
+      setWords(newWords);
+      setCurrentWordIndex(Math.min(currentWordIndex, newWords.length - 1));
+      toast.success('Text updated successfully');
+    }
+    setIsEditing(!isEditing);
   };
 
   const handleBack = () => {
@@ -68,7 +94,7 @@ export const Teleprompter = ({ text = '' }: TeleprompterProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-950 to-slate-900 text-white overflow-hidden relative">
+    <div className="min-h-screen bg-slate-950 text-white overflow-hidden relative">
       <Button
         variant="ghost"
         size="icon"
@@ -78,21 +104,61 @@ export const Teleprompter = ({ text = '' }: TeleprompterProps) => {
         <ArrowLeft className="h-6 w-6" />
       </Button>
 
-      <div className="absolute inset-0 bg-gradient-to-b from-slate-950/50 to-transparent pointer-events-none" />
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={handleEditToggle}
+        className="absolute top-6 right-6 z-50 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all duration-300 hover:scale-105"
+      >
+        <Edit2 className="h-6 w-6" />
+      </Button>
+
+      <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent pointer-events-none" />
       
       <div
         ref={containerRef}
         className="h-screen overflow-hidden relative z-10 smooth-scroll"
       >
-        <div 
-          className={cn(
-            "teleprompter-text",
-            "transition-opacity duration-500",
-            isPlaying ? "opacity-100" : "opacity-80"
-          )}
-        >
-          {scriptText}
-        </div>
+        {isEditing ? (
+          <div className="max-w-4xl mx-auto pt-24 px-6">
+            <Textarea
+              value={editedText}
+              onChange={(e) => setEditedText(e.target.value)}
+              className="min-h-[60vh] w-full bg-black/30 border-white/20 text-white resize-none p-6"
+              style={{
+                fontFamily: fontFamily === 'inter' ? 'Inter' : 
+                         fontFamily === 'cal-sans' ? 'Cal Sans' : fontFamily,
+                fontSize: `${fontSize / 16}rem`,
+              }}
+            />
+          </div>
+        ) : (
+          <div 
+            className="teleprompter-text"
+            style={{
+              fontFamily: fontFamily === 'inter' ? 'Inter' : 
+                       fontFamily === 'cal-sans' ? 'Cal Sans' : fontFamily,
+              fontSize: `${fontSize / 16}rem`,
+            }}
+          >
+            {words.map((word, index) => (
+              <span
+                key={index}
+                ref={index === currentWordIndex ? highlightRef : null}
+                onClick={() => handleWordClick(index)}
+                className={cn(
+                  "inline-block mx-1 px-1 py-0.5 rounded cursor-pointer transition-all duration-300",
+                  index === currentWordIndex && "word-highlight",
+                  index < currentWordIndex && "word-past",
+                  index > currentWordIndex && "word-future",
+                  "hover:opacity-100"
+                )}
+              >
+                {word}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
       
       <div className="fixed inset-x-0 top-0 h-40 bg-gradient-to-b from-slate-950 via-slate-950/80 to-transparent pointer-events-none z-20" />
@@ -101,10 +167,12 @@ export const Teleprompter = ({ text = '' }: TeleprompterProps) => {
       <TeleprompterControls
         isPlaying={isPlaying}
         speed={speed}
-        onTogglePlay={handleTogglePlay}
-        onSpeedChange={handleSpeedChange}
-        onExit={handleBack}
+        onTogglePlay={togglePlay}
+        onSpeedChange={updateSpeed}
+        onExit={handleExit}
       />
     </div>
   );
 };
+
+export default Teleprompter;
