@@ -3,8 +3,8 @@ import { useTeleprompter } from '@/hooks/useTeleprompter';
 import { TeleprompterControls } from '@/components/TeleprompterControls';
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { Edit2, ArrowLeft } from 'lucide-react';
+import { Textarea } from "@/components/ui/textarea";
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 
@@ -15,7 +15,7 @@ interface TeleprompterState {
   textColor: string;
 }
 
-const Teleprompter = () => {
+export const Teleprompter = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [words, setWords] = useState<string[]>([]);
@@ -174,5 +174,3 @@ const Teleprompter = () => {
     </div>
   );
 };
-
-export default Teleprompter;
