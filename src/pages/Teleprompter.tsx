@@ -2,10 +2,11 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useTeleprompter } from '@/hooks/useTeleprompter';
 import { TeleprompterControls } from '@/components/TeleprompterControls';
 import { useEffect, useState, useRef, useCallback } from 'react';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Edit2 } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Edit2, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
 
 interface TeleprompterState {
   script: string;
@@ -85,18 +86,31 @@ const Teleprompter = () => {
     setIsEditing(!isEditing);
   };
 
+  const handleBack = () => {
+    navigate('/home');
+  };
+
   return (
-    <div className="min-h-screen bg-teleprompter-bg overflow-hidden relative">
-      <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent pointer-events-none" />
-      
+    <div className="min-h-screen bg-gradient-to-b from-slate-950 to-slate-900 text-white overflow-hidden relative">
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={handleBack}
+        className="absolute top-6 left-6 z-50 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all duration-300 hover:scale-105"
+      >
+        <ArrowLeft className="h-6 w-6" />
+      </Button>
+
       <Button
         variant="ghost"
         size="icon"
         onClick={handleEditToggle}
-        className="fixed top-6 right-24 z-50 rounded-full w-12 h-12 bg-white/10 hover:bg-white/20 text-white transition-all duration-300"
+        className="absolute top-6 right-6 z-50 rounded-full w-12 h-12 bg-white/10 hover:bg-white/20 text-white transition-all duration-300"
       >
-        <Edit2 className="h-5 w-5" />
+        <Edit2 className="h-6 w-6" />
       </Button>
+
+      <div className="absolute inset-0 bg-gradient-to-b from-slate-950/50 to-transparent pointer-events-none" />
       
       <div
         ref={containerRef}
@@ -117,26 +131,23 @@ const Teleprompter = () => {
           </div>
         ) : (
           <div 
-            className="teleprompter-text"
-            style={{
-              fontFamily: fontFamily === 'inter' ? 'Inter' : 
-                       fontFamily === 'cal-sans' ? 'Cal Sans' : fontFamily,
-              fontSize: `${fontSize / 16}rem`,
-              color: textColor,
-            }}
+            className={cn(
+              "teleprompter-text",
+              "transition-opacity duration-500",
+              isPlaying ? "opacity-100" : "opacity-80"
+            )}
           >
             {words.map((word, index) => (
               <span
                 key={index}
                 ref={index === currentWordIndex ? highlightRef : null}
                 onClick={() => handleWordClick(index)}
-                className={`inline-block mx-1 px-1 py-0.5 rounded cursor-pointer transition-all duration-300 hover:bg-teleprompter-highlight/20 ${
-                  index === currentWordIndex
-                    ? 'animate-glow-word scale-110 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent font-semibold'
-                    : index < currentWordIndex
-                    ? 'opacity-60'
-                    : 'opacity-40'
-                }`}
+                className={cn(
+                  "inline-block mx-1 px-1 py-0.5 rounded cursor-pointer transition-all duration-300",
+                  "hover:bg-white/10",
+                  index === currentWordIndex && "animate-glow-word scale-110 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent font-semibold",
+                  index < currentWordIndex ? "opacity-60" : "opacity-40"
+                )}
               >
                 {word}
               </span>
@@ -145,16 +156,18 @@ const Teleprompter = () => {
         )}
       </div>
       
-      <div className="fixed inset-x-0 top-0 h-40 bg-gradient-to-b from-teleprompter-bg via-teleprompter-bg/80 to-transparent pointer-events-none z-20" />
-      <div className="fixed inset-x-0 bottom-0 h-40 bg-gradient-to-t from-teleprompter-bg via-teleprompter-bg/80 to-transparent pointer-events-none z-20" />
+      <div className="fixed inset-x-0 top-0 h-40 bg-gradient-to-b from-slate-950 via-slate-950/80 to-transparent pointer-events-none z-20" />
+      <div className="fixed inset-x-0 bottom-0 h-40 bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent pointer-events-none z-20" />
       
-      <TeleprompterControls
-        isPlaying={isPlaying}
-        speed={speed}
-        onTogglePlay={togglePlay}
-        onSpeedChange={updateSpeed}
-        onExit={handleExit}
-      />
+      {!isEditing && (
+        <TeleprompterControls
+          isPlaying={isPlaying}
+          speed={speed}
+          onTogglePlay={togglePlay}
+          onSpeedChange={updateSpeed}
+          onExit={handleExit}
+        />
+      )}
     </div>
   );
 };
