@@ -24,6 +24,13 @@ export function Login() {
       if (event === "SIGNED_OUT") {
         navigate("/login");
       }
+      if (event === "USER_DELETED") {
+        toast({
+          title: "Account deleted",
+          description: "Your account has been successfully deleted.",
+        });
+        navigate("/login");
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -59,6 +66,9 @@ export function Login() {
                 message: 'text-red-600 text-sm',
                 label: 'text-gray-700 font-medium',
                 button: 'bg-black hover:bg-gray-800',
+                container: 'space-y-4',
+                anchor: 'text-gray-600 hover:text-gray-800',
+                divider: 'bg-gray-200',
               },
             }}
             theme="light"
@@ -68,11 +78,13 @@ export function Login() {
               variables: {
                 sign_in: {
                   email_label: 'Email',
-                  password_label: 'Password',
+                  password_label: 'Password (minimum 6 characters)',
                   email_input_placeholder: 'Your email address',
                   password_input_placeholder: 'Your password (minimum 6 characters)',
                   button_label: 'Sign in',
                   loading_button_label: 'Signing in ...',
+                  email_address_not_authorized: 'This email domain is not authorized. Please use an authorized email domain.',
+                  invalid_credentials: 'Invalid email or password. Please try again.',
                 },
                 sign_up: {
                   email_label: 'Email',
@@ -81,6 +93,8 @@ export function Login() {
                   password_input_placeholder: 'Your password (minimum 6 characters)',
                   button_label: 'Sign up',
                   loading_button_label: 'Signing up ...',
+                  email_address_not_authorized: 'This email domain is not authorized. Please use an authorized email domain.',
+                  password_too_weak: 'Password should be at least 6 characters long.',
                 }
               }
             }}
