@@ -3,6 +3,7 @@ import { TeleprompterControls } from '@/components/TeleprompterControls';
 import { useEffect, useState, useRef } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from './ui/button';
+import { cn } from '@/lib/utils';
 
 interface TeleprompterProps {
   text?: string;
@@ -67,29 +68,35 @@ export const Teleprompter = ({ text = '' }: TeleprompterProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white overflow-hidden relative">
+    <div className="min-h-screen bg-gradient-to-b from-slate-950 to-slate-900 text-white overflow-hidden relative">
       <Button
         variant="ghost"
         size="icon"
         onClick={handleBack}
-        className="absolute top-4 left-4 z-50 rounded-full bg-white/10 hover:bg-white/20 text-white"
+        className="absolute top-6 left-6 z-50 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all duration-300 hover:scale-105"
       >
         <ArrowLeft className="h-6 w-6" />
       </Button>
 
-      <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-b from-slate-950/50 to-transparent pointer-events-none" />
       
       <div
         ref={containerRef}
         className="h-screen overflow-hidden relative z-10 smooth-scroll"
       >
-        <div className="teleprompter-text">
+        <div 
+          className={cn(
+            "teleprompter-text",
+            "transition-opacity duration-500",
+            isPlaying ? "opacity-100" : "opacity-80"
+          )}
+        >
           {scriptText}
         </div>
       </div>
       
-      <div className="fixed inset-x-0 top-0 h-40 bg-gradient-to-b from-black via-black/80 to-transparent pointer-events-none z-20" />
-      <div className="fixed inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black via-black/80 to-transparent pointer-events-none z-20" />
+      <div className="fixed inset-x-0 top-0 h-40 bg-gradient-to-b from-slate-950 via-slate-950/80 to-transparent pointer-events-none z-20" />
+      <div className="fixed inset-x-0 bottom-0 h-40 bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent pointer-events-none z-20" />
       
       <TeleprompterControls
         isPlaying={isPlaying}
