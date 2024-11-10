@@ -29,6 +29,7 @@ export function Chat({ personality }: ChatProps) {
   useEffect(() => {
     setActiveCall(personality);
     return () => {
+      // Only clear the active call if we're actually navigating to home
       if (window.location.pathname === '/home') {
         setActiveCall(null);
       }
@@ -52,6 +53,11 @@ export function Chat({ personality }: ChatProps) {
 
   const handleEndCall = () => {
     setActiveCall(null);
+    navigate('/home');
+  };
+
+  const handleBack = () => {
+    // If there's an active call, navigate to home without ending it
     navigate('/home');
   };
 
@@ -80,7 +86,7 @@ export function Chat({ personality }: ChatProps) {
     <div className="min-h-screen bg-gradient-to-br from-rose-50 via-purple-50 to-blue-50">
       <ChatHeader 
         personality={personality}
-        onBack={() => navigate(-1)}
+        onBack={handleBack}
         onResetChat={() => setMessages([])}
         personalityInfo={personalityInfo}
       />
