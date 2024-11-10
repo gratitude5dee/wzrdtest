@@ -50,6 +50,14 @@ const personalities = [
     description: "Gives advice on emotion from the perspective of an emotion scientist",
     gradient: "bg-gradient-to-br from-cyan-100 via-blue-50 to-blue-200",
     icon: "/emotional-reflection-avatar.png"
+  },
+  {
+    id: "affirmations",
+    title: "Affirmations",
+    description: "Daily affirmations with teleprompter",
+    gradient: "bg-gradient-to-br from-purple-100 via-purple-50 to-pink-100",
+    span: "col-span-2",
+    icon: "/affirmations-avatar.png"
   }
 ];
 

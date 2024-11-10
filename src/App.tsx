@@ -7,6 +7,7 @@ import { Onboarding } from "./components/Onboarding";
 import { Home } from "./components/Home";
 import { Chat } from "./components/Chat";
 import { Login } from "./components/Login";
+import { Teleprompter } from "./components/Teleprompter";
 import { createContext, useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -83,6 +84,15 @@ const App = () => {
               <Route path="/chat/:personalityId" element={
                 <ProtectedRoute>
                   <ChatWrapper />
+                </ProtectedRoute>
+              } />
+              <Route path="/affirmations" element={
+                <ProtectedRoute>
+                  <div className="h-screen p-6">
+                    <Teleprompter 
+                      text="I am worthy of love and respect. Every day I grow stronger and more confident. I trust in my abilities and embrace new challenges. My potential is limitless. I radiate positivity and attract success. I am grateful for all that I have. I choose to be happy and spread joy to others. I am exactly where I need to be. My future is bright and full of possibilities. I deserve all the good things life has to offer."
+                    />
+                  </div>
                 </ProtectedRoute>
               } />
             </Routes>
