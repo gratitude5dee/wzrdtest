@@ -1,17 +1,25 @@
-import { useState, useEffect, useRef } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useTeleprompter } from '@/hooks/useTeleprompter';
+import { TeleprompterControls } from '@/components/TeleprompterControls';
+import { useEffect, useState, useRef } from 'react';
+import { ArrowLeft } from 'lucide-react';
 import { Button } from './ui/button';
-import { PlayCircle, PauseCircle, RotateCcw, Settings } from 'lucide-react';
 
-interface TeleprompterProps {
-  text: string;
-  speed?: number;
-}
-
-export function Teleprompter({ text, speed = 50 }: TeleprompterProps) {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [scrollPosition, setScrollPosition] = useState(0);
+const Teleprompter = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [text] = useState(location.state?.text || '');
   const containerRef = useRef<HTMLDivElement>(null);
-  const [scrollSpeed, setScrollSpeed] = useState(speed);
+  const [scrollPosition, setScrollPosition] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [speed, setSpeed] = useState(2);
+
+  useEffect(() => {
+    if (!text) {
+      navigate('/');
+      return;
+    }
+  }, [text, navigate]);
 
   useEffect(() => {
     let animationFrameId: number;
@@ -19,7 +27,7 @@ export function Teleprompter({ text, speed = 50 }: TeleprompterProps) {
     const animate = () => {
       if (isPlaying && containerRef.current) {
         setScrollPosition((prev) => {
-          const newPosition = prev + scrollSpeed * 0.01;
+          const newPosition = prev + speed * 0.5;
           const maxScroll = containerRef.current!.scrollHeight - containerRef.current!.clientHeight;
           
           if (newPosition >= maxScroll) {
@@ -35,7 +43,7 @@ export function Teleprompter({ text, speed = 50 }: TeleprompterProps) {
 
     animationFrameId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animationFrameId);
-  }, [isPlaying, scrollSpeed]);
+  }, [isPlaying, speed]);
 
   useEffect(() => {
     if (containerRef.current) {
@@ -43,53 +51,52 @@ export function Teleprompter({ text, speed = 50 }: TeleprompterProps) {
     }
   }, [scrollPosition]);
 
-  const handleReset = () => {
-    setIsPlaying(false);
-    setScrollPosition(0);
+  const handleTogglePlay = () => {
+    setIsPlaying(!isPlaying);
+  };
+
+  const handleSpeedChange = (newSpeed: number) => {
+    setSpeed(newSpeed);
+  };
+
+  const handleBack = () => {
+    navigate('/');
   };
 
   return (
-    <div className="flex flex-col h-full bg-black text-white rounded-3xl overflow-hidden">
-      <div className="flex justify-between items-center p-4 bg-gray-900">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={handleReset}
-          className="text-white hover:bg-gray-800"
-        >
-          <RotateCcw className="h-6 w-6" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setIsPlaying(!isPlaying)}
-          className="text-white hover:bg-gray-800"
-        >
-          {isPlaying ? (
-            <PauseCircle className="h-8 w-8" />
-          ) : (
-            <PlayCircle className="h-8 w-8" />
-          )}
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="text-white hover:bg-gray-800"
-        >
-          <Settings className="h-6 w-6" />
-        </Button>
-      </div>
-      <div 
-        ref={containerRef}
-        className="flex-1 overflow-hidden p-8"
-        style={{ 
-          background: 'linear-gradient(180deg, rgba(0,0,0,0) 0%, #000000 10%, #000000 90%, rgba(0,0,0,0) 100%)'
-        }}
+    <div className="min-h-screen bg-black text-white overflow-hidden relative">
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={handleBack}
+        className="absolute top-4 left-4 z-50 rounded-full bg-white/10 hover:bg-white/20 text-white"
       >
-        <div className="text-center text-4xl font-medium leading-relaxed">
+        <ArrowLeft className="h-6 w-6" />
+      </Button>
+
+      <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent pointer-events-none" />
+      
+      <div
+        ref={containerRef}
+        className="h-screen overflow-hidden relative z-10 smooth-scroll"
+      >
+        <div className="teleprompter-text">
           {text}
         </div>
       </div>
+      
+      <div className="fixed inset-x-0 top-0 h-40 bg-gradient-to-b from-black via-black/80 to-transparent pointer-events-none z-20" />
+      <div className="fixed inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black via-black/80 to-transparent pointer-events-none z-20" />
+      
+      <TeleprompterControls
+        isPlaying={isPlaying}
+        speed={speed}
+        onTogglePlay={handleTogglePlay}
+        onSpeedChange={handleSpeedChange}
+        onExit={handleBack}
+      />
     </div>
   );
-}
+};
+
+export default Teleprompter;
