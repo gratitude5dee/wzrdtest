@@ -4,21 +4,25 @@ import { useEffect, useState, useRef } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from './ui/button';
 
-export const Teleprompter = () => {
+interface TeleprompterProps {
+  text?: string;
+}
+
+export const Teleprompter = ({ text = '' }: TeleprompterProps) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [text] = useState(location.state?.text || '');
-  const containerRef = useRef<HTMLDivElement>(null);
   const [scrollPosition, setScrollPosition] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [speed, setSpeed] = useState(2);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const scriptText = location.state?.text || text;
 
   useEffect(() => {
-    if (!text) {
+    if (!scriptText) {
       navigate('/');
       return;
     }
-  }, [text, navigate]);
+  }, [scriptText, navigate]);
 
   useEffect(() => {
     let animationFrameId: number;
@@ -59,7 +63,7 @@ export const Teleprompter = () => {
   };
 
   const handleBack = () => {
-    navigate('/');
+    navigate('/home');
   };
 
   return (
@@ -80,7 +84,7 @@ export const Teleprompter = () => {
         className="h-screen overflow-hidden relative z-10 smooth-scroll"
       >
         <div className="teleprompter-text">
-          {text}
+          {scriptText}
         </div>
       </div>
       
