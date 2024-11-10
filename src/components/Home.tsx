@@ -1,65 +1,12 @@
-import { Settings as SettingsIcon, Mic, MicOff, Phone } from "lucide-react";
+import { Settings as SettingsIcon } from "lucide-react";
 import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
 import { useContext, useState, useEffect } from "react";
 import { ActiveCallContext } from "../App";
 import { Settings } from "./Settings";
 import { cn } from "@/lib/utils";
-
-const personalities = [
-  {
-    id: "quick-answers",
-    title: "Quick Answers",
-    description: "Fast question-answering",
-    gradient: "bg-gradient-to-br from-blue-100 via-blue-50 to-blue-200",
-    span: "col-span-2",
-    icon: "/quick-answers-avatar.png"
-  },
-  {
-    id: "life-advice",
-    title: "Life Advice",
-    description: "Advice given with a balance of empathy and assertiveness",
-    gradient: "bg-gradient-to-br from-green-100 via-green-50 to-green-200",
-    icon: "/life-advice-avatar.png"
-  },
-  {
-    id: "storytelling",
-    title: "Storytelling",
-    description: "Fantastical storytelling",
-    gradient: "bg-gradient-to-br from-pink-100 via-pink-50 to-pink-200",
-    icon: "/storytelling-avatar.png"
-  },
-  {
-    id: "deeper-questions",
-    title: "Deeper Questions",
-    description: "Answers questions but from more of a philosophical and scientific angle",
-    gradient: "bg-gradient-to-br from-rose-100 via-orange-50 to-orange-200",
-    span: "col-span-2",
-    icon: "/deeper-questions-avatar.png"
-  },
-  {
-    id: "spirituality",
-    title: "Spirituality",
-    description: "Gives spiritual advice",
-    gradient: "bg-gradient-to-br from-orange-100 via-pink-50 to-red-100",
-    icon: "/spirituality-avatar.png"
-  },
-  {
-    id: "emotional-reflection",
-    title: "Emotional Reflection",
-    description: "Gives advice on emotion from the perspective of an emotion scientist",
-    gradient: "bg-gradient-to-br from-cyan-100 via-blue-50 to-blue-200",
-    icon: "/emotional-reflection-avatar.png"
-  },
-  {
-    id: "affirmations",
-    title: "Affirmations",
-    description: "Daily affirmations with teleprompter",
-    gradient: "bg-gradient-to-br from-purple-100 via-purple-50 to-pink-100",
-    span: "col-span-2",
-    icon: "/affirmations-avatar.png"
-  }
-];
+import { CallBar } from "./CallBar";
+import { PersonalityGrid } from "./PersonalityGrid";
 
 export function Home() {
   const navigate = useNavigate();
@@ -67,7 +14,6 @@ export function Home() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [isMicMuted, setIsMicMuted] = useState(false);
   const [callDuration, setCallDuration] = useState(0);
-  const [isCallUIVisible, setIsCallUIVisible] = useState(true);
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
 
   const getPersonalityById = (title: string) => {
@@ -88,39 +34,9 @@ export function Home() {
     };
   }, [activeCall]);
 
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-  };
-
   const handleEndCall = () => {
-    setIsCallUIVisible(false);
-    setTimeout(() => {
-      setActiveCall(null);
-      setCallDuration(0);
-    }, 300);
-  };
-
-  const handleCardMouseMove = (e: React.MouseEvent<HTMLButtonElement>, personalityId: string) => {
-    const card = e.currentTarget;
-    const rect = card.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-    const maxDistance = 10;
-
-    const offsetX = ((x - centerX) / centerX) * maxDistance;
-    const offsetY = ((y - centerY) / centerY) * maxDistance;
-
-    card.style.transform = `perspective(1000px) rotateX(${-offsetY}deg) rotateY(${offsetX}deg) scale(1.02)`;
-    setHoveredCard(personalityId);
-  };
-
-  const handleCardMouseLeave = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.currentTarget.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)';
-    setHoveredCard(null);
+    setActiveCall(null);
+    setCallDuration(0);
   };
 
   return (
@@ -142,71 +58,20 @@ export function Home() {
         </Button>
       </header>
 
-      <div className="grid grid-cols-2 auto-rows-[180px] gap-4">
-        {personalities.map((personality) => (
-          <button
-            key={personality.id}
-            className={cn(
-              personality.gradient,
-              personality.span || '',
-              'rounded-[32px] p-6 text-left transition-all duration-300 relative overflow-hidden glow-card',
-              hoveredCard === personality.id ? 'z-10' : 'z-0'
-            )}
-            onClick={() => personality.id === "affirmations" ? navigate("/affirmations") : navigate(`/chat/${personality.id}`)}
-            onMouseMove={(e) => handleCardMouseMove(e, personality.id)}
-            onMouseLeave={handleCardMouseLeave}
-            style={{ transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}
-          >
-            <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center overflow-hidden mb-3 animate-pulse-soft">
-              <img src={personality.icon} alt={personality.title} className="w-10 h-10" />
-            </div>
-            <div className="space-y-1">
-              <h3 className="text-xl font-semibold text-[#2A2A2A]">{personality.title}</h3>
-              <p className="text-gray-600 text-sm leading-relaxed">{personality.description}</p>
-            </div>
-          </button>
-        ))}
-      </div>
+      <PersonalityGrid 
+        hoveredCard={hoveredCard}
+        setHoveredCard={setHoveredCard}
+        navigate={navigate}
+      />
 
-      {activeCall && activePersonality && (
-        <div 
-          className={cn(
-            "fixed bottom-8 left-4 right-4 bg-white rounded-full shadow-lg px-6 py-4 flex items-center justify-between transition-all duration-300 transform hover-lift",
-            isCallUIVisible ? "translate-y-0" : "translate-y-[200%]"
-          )}
-        >
-          <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center overflow-hidden animate-pulse-soft">
-              <img src={activePersonality.icon} alt={activeCall} className="w-10 h-10" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-lg font-medium gradient-text">{activeCall}</span>
-              <span className="text-sm text-gray-500">{formatTime(callDuration)}</span>
-            </div>
-          </div>
-          <div className="flex items-center space-x-3">
-            <button 
-              className={cn(
-                "p-4 rounded-full transition-all duration-300 magnetic-button",
-                isMicMuted ? "bg-red-100 hover:bg-red-200" : "bg-gray-100 hover:bg-gray-200"
-              )}
-              onClick={() => setIsMicMuted(!isMicMuted)}
-            >
-              {isMicMuted ? (
-                <MicOff className="h-5 w-5 text-red-600" />
-              ) : (
-                <Mic className="h-5 w-5 text-gray-600" />
-              )}
-            </button>
-            <button 
-              onClick={handleEndCall}
-              className="p-4 rounded-full bg-red-500 hover:bg-red-600 transition-colors magnetic-button"
-            >
-              <Phone className="h-5 w-5 text-white" />
-            </button>
-          </div>
-        </div>
-      )}
+      <CallBar 
+        activeCall={activeCall}
+        isMicMuted={isMicMuted}
+        callDuration={callDuration}
+        onMicToggle={() => setIsMicMuted(!isMicMuted)}
+        onEndCall={handleEndCall}
+        activePersonality={activePersonality}
+      />
 
       <Settings open={settingsOpen} onOpenChange={setSettingsOpen} />
     </div>
