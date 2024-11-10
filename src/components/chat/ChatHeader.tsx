@@ -1,6 +1,10 @@
 import { ArrowLeft, Info } from "lucide-react";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
 
 interface ChatHeaderProps {
   personality: string;
@@ -20,13 +24,13 @@ export function ChatHeader({ personality, onBack, onResetChat, personalityInfo }
         <ArrowLeft className="h-5 w-5" />
       </button>
       <h1 className="text-xl font-medium">{personality}</h1>
-      <Dialog>
-        <DialogTrigger asChild>
+      <Drawer>
+        <DrawerTrigger asChild>
           <button className="p-2 text-gray-600 rounded-full hover:bg-gray-100">
             <Info className="h-5 w-5" />
           </button>
-        </DialogTrigger>
-        <DialogContent className="max-w-md p-0 gap-0 border-0">
+        </DrawerTrigger>
+        <DrawerContent>
           <div className="p-6 space-y-8">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
@@ -71,8 +75,8 @@ export function ChatHeader({ personality, onBack, onResetChat, personalityInfo }
               </div>
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
+        </DrawerContent>
+      </Drawer>
     </header>
   );
 }
