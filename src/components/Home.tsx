@@ -68,6 +68,7 @@ export function Home() {
   const [isMicMuted, setIsMicMuted] = useState(false);
   const [callDuration, setCallDuration] = useState(0);
   const [isCallUIVisible, setIsCallUIVisible] = useState(true);
+  const [hoveredCard, setHoveredCard] = useState<string | null>(null);
 
   const getPersonalityById = (title: string) => {
     return personalities.find(p => p.title === title);
@@ -98,22 +99,43 @@ export function Home() {
     setTimeout(() => {
       setActiveCall(null);
       setCallDuration(0);
-    }, 300); // Match the duration of the slide-out animation
+    }, 300);
+  };
+
+  const handleCardMouseMove = (e: React.MouseEvent<HTMLButtonElement>, personalityId: string) => {
+    const card = e.currentTarget;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const maxDistance = 10;
+
+    const offsetX = ((x - centerX) / centerX) * maxDistance;
+    const offsetY = ((y - centerY) / centerY) * maxDistance;
+
+    card.style.transform = `perspective(1000px) rotateX(${-offsetY}deg) rotateY(${offsetX}deg) scale(1.02)`;
+    setHoveredCard(personalityId);
+  };
+
+  const handleCardMouseLeave = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.currentTarget.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)';
+    setHoveredCard(null);
   };
 
   return (
     <div className="min-h-screen bg-[#FFF8F6] p-6 pb-32">
       <header className="flex justify-between items-center mb-8">
         <div className="flex items-center space-x-3">
-          <div className="w-8 h-8">
+          <div className="w-8 h-8 animate-float">
             <img src="/hume-logo.png" alt="Hume" className="w-full h-full" />
           </div>
-          <span className="text-2xl font-semibold">hume</span>
+          <span className="text-2xl font-semibold gradient-text">hume</span>
         </div>
         <Button 
           variant="ghost" 
           size="icon" 
-          className="rounded-full bg-[#2A2A2A] text-white hover:bg-gray-800"
+          className="rounded-full bg-[#2A2A2A] text-white hover:bg-gray-800 hover-lift"
           onClick={() => setSettingsOpen(true)}
         >
           <SettingsIcon className="h-5 w-5" />
@@ -124,10 +146,18 @@ export function Home() {
         {personalities.map((personality) => (
           <button
             key={personality.id}
-            className={`${personality.gradient} ${personality.span || ''} rounded-[32px] p-6 text-left transition-transform hover:scale-[1.02] relative overflow-hidden`}
+            className={cn(
+              personality.gradient,
+              personality.span || '',
+              'rounded-[32px] p-6 text-left transition-all duration-300 relative overflow-hidden glow-card',
+              hoveredCard === personality.id ? 'z-10' : 'z-0'
+            )}
             onClick={() => personality.id === "affirmations" ? navigate("/affirmations") : navigate(`/chat/${personality.id}`)}
+            onMouseMove={(e) => handleCardMouseMove(e, personality.id)}
+            onMouseLeave={handleCardMouseLeave}
+            style={{ transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}
           >
-            <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center overflow-hidden mb-3">
+            <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center overflow-hidden mb-3 animate-pulse-soft">
               <img src={personality.icon} alt={personality.title} className="w-10 h-10" />
             </div>
             <div className="space-y-1">
@@ -141,24 +171,24 @@ export function Home() {
       {activeCall && activePersonality && (
         <div 
           className={cn(
-            "fixed bottom-8 left-4 right-4 bg-white rounded-full shadow-lg px-6 py-4 flex items-center justify-between transition-all duration-300 transform",
+            "fixed bottom-8 left-4 right-4 bg-white rounded-full shadow-lg px-6 py-4 flex items-center justify-between transition-all duration-300 transform hover-lift",
             isCallUIVisible ? "translate-y-0" : "translate-y-[200%]"
           )}
         >
           <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center overflow-hidden">
+            <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center overflow-hidden animate-pulse-soft">
               <img src={activePersonality.icon} alt={activeCall} className="w-10 h-10" />
             </div>
             <div className="flex flex-col">
-              <span className="text-lg font-medium">{activeCall}</span>
+              <span className="text-lg font-medium gradient-text">{activeCall}</span>
               <span className="text-sm text-gray-500">{formatTime(callDuration)}</span>
             </div>
           </div>
           <div className="flex items-center space-x-3">
             <button 
               className={cn(
-                "p-4 rounded-full transition-all duration-300",
-                isMicMuted ? "bg-red-100 hover:bg-red-200" : "bg-gray-100 hover:bg-gray-200",
+                "p-4 rounded-full transition-all duration-300 magnetic-button",
+                isMicMuted ? "bg-red-100 hover:bg-red-200" : "bg-gray-100 hover:bg-gray-200"
               )}
               onClick={() => setIsMicMuted(!isMicMuted)}
             >
@@ -170,7 +200,7 @@ export function Home() {
             </button>
             <button 
               onClick={handleEndCall}
-              className="p-4 rounded-full bg-red-500 hover:bg-red-600 transition-colors"
+              className="p-4 rounded-full bg-red-500 hover:bg-red-600 transition-colors magnetic-button"
             >
               <Phone className="h-5 w-5 text-white" />
             </button>
