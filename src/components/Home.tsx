@@ -1,9 +1,10 @@
-import { Settings as SettingsIcon, Mic, Phone } from "lucide-react";
+import { Settings as SettingsIcon, Mic, MicOff, Phone } from "lucide-react";
 import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { ActiveCallContext } from "../App";
 import { Settings } from "./Settings";
+import { cn } from "@/lib/utils";
 
 const personalities = [
   {
@@ -54,14 +55,43 @@ const personalities = [
 
 export function Home() {
   const navigate = useNavigate();
-  const { activeCall } = useContext(ActiveCallContext);
+  const { activeCall, setActiveCall } = useContext(ActiveCallContext);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [isMicMuted, setIsMicMuted] = useState(false);
+  const [callDuration, setCallDuration] = useState(0);
+  const [isCallUIVisible, setIsCallUIVisible] = useState(true);
 
   const getPersonalityById = (title: string) => {
     return personalities.find(p => p.title === title);
   };
 
   const activePersonality = activeCall ? getPersonalityById(activeCall) : null;
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (activeCall) {
+      timer = setInterval(() => {
+        setCallDuration(prev => prev + 1);
+      }, 1000);
+    }
+    return () => {
+      if (timer) clearInterval(timer);
+    };
+  }, [activeCall]);
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+  };
+
+  const handleEndCall = () => {
+    setIsCallUIVisible(false);
+    setTimeout(() => {
+      setActiveCall(null);
+      setCallDuration(0);
+    }, 300); // Match the duration of the slide-out animation
+  };
 
   return (
     <div className="min-h-screen bg-[#FFF8F6] p-6 pb-32">
@@ -101,22 +131,37 @@ export function Home() {
       </div>
 
       {activeCall && activePersonality && (
-        <div className="fixed bottom-8 left-4 right-4 bg-white rounded-full shadow-lg px-6 py-4 flex items-center justify-between">
+        <div 
+          className={cn(
+            "fixed bottom-8 left-4 right-4 bg-white rounded-full shadow-lg px-6 py-4 flex items-center justify-between transition-all duration-300 transform",
+            isCallUIVisible ? "translate-y-0" : "translate-y-[200%]"
+          )}
+        >
           <div className="flex items-center space-x-4">
             <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center overflow-hidden">
               <img src={activePersonality.icon} alt={activeCall} className="w-10 h-10" />
             </div>
             <div className="flex flex-col">
               <span className="text-lg font-medium">{activeCall}</span>
-              <span className="text-sm text-gray-500">00:00:02</span>
+              <span className="text-sm text-gray-500">{formatTime(callDuration)}</span>
             </div>
           </div>
           <div className="flex items-center space-x-3">
-            <button className="p-4 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors">
-              <Mic className="h-5 w-5 text-gray-600" />
+            <button 
+              className={cn(
+                "p-4 rounded-full transition-all duration-300",
+                isMicMuted ? "bg-red-100 hover:bg-red-200" : "bg-gray-100 hover:bg-gray-200",
+              )}
+              onClick={() => setIsMicMuted(!isMicMuted)}
+            >
+              {isMicMuted ? (
+                <MicOff className="h-5 w-5 text-red-600" />
+              ) : (
+                <Mic className="h-5 w-5 text-gray-600" />
+              )}
             </button>
             <button 
-              onClick={() => navigate(`/chat/${activePersonality.id}`)}
+              onClick={handleEndCall}
               className="p-4 rounded-full bg-red-500 hover:bg-red-600 transition-colors"
             >
               <Phone className="h-5 w-5 text-white" />
