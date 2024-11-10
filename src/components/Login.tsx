@@ -10,6 +10,13 @@ export function Login() {
   const { toast } = useToast();
 
   useEffect(() => {
+    // Check if user is already logged in
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        navigate("/home");
+      }
+    });
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === "SIGNED_IN" && session) {
         toast({
@@ -66,6 +73,7 @@ export function Login() {
             }}
             theme="light"
             providers={[]}
+            redirectTo={`${window.location.origin}/home`}
             magicLink={false}
             localization={{
               variables: {
