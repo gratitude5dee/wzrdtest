@@ -24,13 +24,6 @@ export function Login() {
       if (event === "SIGNED_OUT") {
         navigate("/login");
       }
-      if (event === "USER_DELETED") {
-        toast({
-          title: "Account deleted",
-          description: "Your account has been successfully deleted.",
-        });
-        navigate("/login");
-      }
     });
 
     return () => subscription.unsubscribe();
@@ -80,21 +73,17 @@ export function Login() {
                   email_label: 'Email',
                   password_label: 'Password (minimum 6 characters)',
                   email_input_placeholder: 'Your email address',
-                  password_input_placeholder: 'Your password (minimum 6 characters)',
+                  password_input_placeholder: 'Your password',
                   button_label: 'Sign in',
                   loading_button_label: 'Signing in ...',
-                  email_address_not_authorized: 'This email domain is not authorized. Please use an authorized email domain.',
-                  invalid_credentials: 'Invalid email or password. Please try again.',
                 },
                 sign_up: {
                   email_label: 'Email',
                   password_label: 'Password (minimum 6 characters)',
                   email_input_placeholder: 'Your email address',
-                  password_input_placeholder: 'Your password (minimum 6 characters)',
+                  password_input_placeholder: 'Your password',
                   button_label: 'Sign up',
                   loading_button_label: 'Signing up ...',
-                  email_address_not_authorized: 'This email domain is not authorized. Please use an authorized email domain.',
-                  password_too_weak: 'Password should be at least 6 characters long.',
                 }
               }
             }}
