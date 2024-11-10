@@ -78,12 +78,21 @@ export default {
           "0%": { transform: "translateY(0)" },
           "100%": { transform: "translateY(200%)" },
         },
+        "glow-word": {
+          "0%, 100%": {
+            filter: "brightness(100%) drop-shadow(0 0 0 rgba(59, 130, 246, 0))",
+          },
+          "50%": {
+            filter: "brightness(120%) drop-shadow(0 0 10px rgba(59, 130, 246, 0.5))",
+          }
+        }
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "fade-in": "fade-in 0.5s ease-out",
         "slide-out-down": "slide-out-down 0.3s ease-in-out",
+        "glow-word": "glow-word 2s ease-in-out infinite",
       },
     },
   },

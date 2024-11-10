@@ -95,7 +95,7 @@ const Teleprompter = () => {
         onClick={handleEditToggle}
         className="fixed top-6 right-24 z-50 rounded-full w-12 h-12 bg-white/10 hover:bg-white/20 text-white transition-all duration-300"
       >
-        <Edit2 className="w-5 h-5" />
+        <Edit2 className="h-5 w-5" />
       </Button>
       
       <div
@@ -130,14 +130,13 @@ const Teleprompter = () => {
                 key={index}
                 ref={index === currentWordIndex ? highlightRef : null}
                 onClick={() => handleWordClick(index)}
-                className={`inline-block mx-1 px-1 py-0.5 rounded cursor-pointer
-                  transition-all duration-300 hover:bg-teleprompter-highlight/20
-                  ${index === currentWordIndex 
-                    ? 'animate-glow-word scale-110 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent font-semibold' 
+                className={`inline-block mx-1 px-1 py-0.5 rounded cursor-pointer transition-all duration-300 hover:bg-teleprompter-highlight/20 ${
+                  index === currentWordIndex
+                    ? 'animate-glow-word scale-110 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent font-semibold'
                     : index < currentWordIndex
                     ? 'opacity-60'
                     : 'opacity-40'
-                  }`}
+                }`}
               >
                 {word}
               </span>
