@@ -1,11 +1,10 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useTeleprompter } from '@/hooks/useTeleprompter';
 import { TeleprompterControls } from '@/components/TeleprompterControls';
 import { useEffect, useState, useRef } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from './ui/button';
 
-const Teleprompter = () => {
+export const Teleprompter = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [text] = useState(location.state?.text || '');
@@ -98,5 +97,3 @@ const Teleprompter = () => {
     </div>
   );
 };
-
-export default Teleprompter;
