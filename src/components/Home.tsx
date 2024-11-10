@@ -7,6 +7,7 @@ import { Settings } from "./Settings";
 import { cn } from "@/lib/utils";
 import { CallBar } from "./CallBar";
 import { PersonalityGrid } from "./PersonalityGrid";
+import { personalities } from "@/data/personalities";
 
 export function Home() {
   const navigate = useNavigate();
