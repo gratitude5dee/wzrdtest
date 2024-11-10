@@ -2,19 +2,14 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useTeleprompter } from '@/hooks/useTeleprompter';
 import { TeleprompterControls } from '@/components/TeleprompterControls';
 import { useEffect, useState, useRef, useCallback } from 'react';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
 
 interface TeleprompterProps {
   initialText?: string;
   fontSize?: number;
   fontFamily?: string;
   textColor?: string;
-}
-
-interface LocationState {
-  script: string;
-  fontSize: number;
-  fontFamily: string;
-  textColor: string;
 }
 
 const Teleprompter = ({ 
@@ -27,7 +22,7 @@ const Teleprompter = ({
   const navigate = useNavigate();
   const [words, setWords] = useState<string[]>([]);
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
-  const locationState = location.state as LocationState;
+  const locationState = location.state as { script: string; fontSize: number; fontFamily: string; textColor: string; };
   
   const script = initialText || locationState?.script;
   const fontSize = initialFontSize || locationState?.fontSize || 44;
@@ -89,6 +84,16 @@ const Teleprompter = ({
 
   return (
     <div className="min-h-screen bg-teleprompter-bg overflow-hidden relative">
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => navigate('/')}
+        className="fixed top-4 left-4 z-50 w-10 h-10 rounded-full bg-white/10 backdrop-blur-lg hover:bg-white/20 transition-colors"
+      >
+        <ArrowLeft className="h-5 w-5 text-white" />
+        <span className="sr-only">Back to home</span>
+      </Button>
+
       <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent pointer-events-none" />
       
       <div

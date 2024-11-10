@@ -38,6 +38,24 @@ export const useTeleprompter = (initialSpeed: number = 2) => {
   }, []);
 
   useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code === 'Space') {
+        e.preventDefault();
+        togglePlay();
+      } else if (e.code === 'ArrowUp') {
+        e.preventDefault();
+        setSpeed(prev => Math.min(prev + 0.1, 10));
+      } else if (e.code === 'ArrowDown') {
+        e.preventDefault();
+        setSpeed(prev => Math.max(prev - 0.1, 0.1));
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [togglePlay]);
+
+  useEffect(() => {
     if (!containerRef.current) return;
     containerRef.current.scrollTop = scrollPosition;
   }, [scrollPosition]);
