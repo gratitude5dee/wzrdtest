@@ -125,7 +125,7 @@ export function Home() {
           <button
             key={personality.id}
             className={`${personality.gradient} ${personality.span || ''} rounded-[32px] p-6 text-left transition-transform hover:scale-[1.02] relative overflow-hidden`}
-            onClick={() => navigate(`/chat/${personality.id}`)}
+            onClick={() => personality.id === "affirmations" ? navigate("/affirmations") : navigate(`/chat/${personality.id}`)}
           >
             <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center overflow-hidden mb-3">
               <img src={personality.icon} alt={personality.title} className="w-10 h-10" />
