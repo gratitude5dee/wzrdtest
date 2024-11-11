@@ -54,7 +54,7 @@
   transform: translateZ(0);
 }
 
-.word-highlight {
+.word-container {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -62,16 +62,20 @@
   padding: 0.1em 0.3em;
   margin: 0 0.1em;
   border-radius: 0.3em;
+  transform-origin: center;
+  position: relative;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, opacity;
+}
+
+.word-highlight {
   background: linear-gradient(120deg, #60A5FA, #3B82F6, #2563EB);
   background-size: 200% auto;
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
-  transform-origin: center;
   text-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
-  position: relative;
   animation: gradient-shift 8s ease infinite;
-  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .word-highlight::before {
@@ -87,20 +91,10 @@
 
 .word-past {
   opacity: 0.5;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 1.8em;
-  transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .word-future {
   opacity: 0.3;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 1.8em;
-  transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @keyframes gradient-shift {

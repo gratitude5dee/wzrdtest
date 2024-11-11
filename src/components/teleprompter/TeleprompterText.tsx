@@ -40,19 +40,24 @@ export const TeleprompterText = ({
           ref={index === currentWordIndex ? highlightRef : null}
           onClick={() => handleWordClick(index)}
           className={cn(
-            "inline-flex items-center justify-center",
-            "mx-1 px-1 py-0.5 rounded cursor-pointer",
+            "word-container",
             index === currentWordIndex && "word-highlight",
             index < currentWordIndex ? "word-past" : "word-future"
           )}
+          initial={false}
           animate={{
-            scale: index === currentWordIndex ? 1.1 : 1,
+            scale: index === currentWordIndex ? 1.05 : 1,
             opacity: index === currentWordIndex ? 1 : 
                      index < currentWordIndex ? 0.6 : 0.4,
           }}
           transition={{
             duration: 0.4,
             ease: [0.4, 0, 0.2, 1],
+            scale: {
+              type: "spring",
+              stiffness: 200,
+              damping: 20
+            }
           }}
         >
           {word}
