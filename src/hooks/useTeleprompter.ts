@@ -19,7 +19,10 @@ export const useTeleprompter = (initialSpeed: number = 2) => {
     setIsPlaying(false);
     setScrollPosition(0);
     if (containerRef.current) {
-      containerRef.current.scrollTop = 0;
+      containerRef.current.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
     }
   }, []);
 
@@ -32,11 +35,12 @@ export const useTeleprompter = (initialSpeed: number = 2) => {
     const wordHeight = wordElement.offsetHeight;
     const targetScroll = wordPosition - (containerHeight / 2) + (wordHeight / 2);
     
-    const currentScroll = container.scrollTop;
-    const distance = targetScroll - currentScroll;
-    const smoothness = 0.15;
+    container.scrollTo({
+      top: targetScroll,
+      behavior: 'smooth'
+    });
     
-    setScrollPosition(prev => prev + (distance * smoothness));
+    setScrollPosition(targetScroll);
   }, []);
 
   useEffect(() => {
@@ -44,7 +48,16 @@ export const useTeleprompter = (initialSpeed: number = 2) => {
 
     if (isPlaying && containerRef.current) {
       const animate = () => {
-        setScrollPosition(prev => prev + (speed * 0.5));
+        setScrollPosition(prev => {
+          const newPosition = prev + (speed * 0.5);
+          if (containerRef.current) {
+            containerRef.current.scrollTo({
+              top: newPosition,
+              behavior: 'auto'
+            });
+          }
+          return newPosition;
+        });
         animationFrameId = requestAnimationFrame(animate);
       };
       
@@ -57,12 +70,6 @@ export const useTeleprompter = (initialSpeed: number = 2) => {
       }
     };
   }, [isPlaying, speed]);
-
-  useEffect(() => {
-    if (containerRef.current) {
-      containerRef.current.scrollTop = scrollPosition;
-    }
-  }, [scrollPosition]);
 
   return {
     isPlaying,
