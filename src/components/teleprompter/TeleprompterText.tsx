@@ -46,17 +46,17 @@ export const TeleprompterText = ({
           )}
           initial={false}
           animate={{
-            scale: index === currentWordIndex ? 1.05 : 1,
+            scale: index === currentWordIndex ? 1.03 : 1,
             opacity: index === currentWordIndex ? 1 : 
                      index < currentWordIndex ? 0.6 : 0.4,
           }}
           transition={{
-            duration: 0.4,
+            duration: 0.3,
             ease: [0.4, 0, 0.2, 1],
             scale: {
               type: "spring",
-              stiffness: 200,
-              damping: 20
+              stiffness: 300,
+              damping: 25
             }
           }}
         >
