@@ -11,25 +11,27 @@ interface ProfileSectionProps {
 
 export function ProfileSection({ firstName, lastName, onFirstNameChange, onLastNameChange }: ProfileSectionProps) {
   return (
-    <div className="space-y-4">
-      <h3 className="text-lg font-semibold">Personal details</h3>
+    <div className="space-y-6">
+      <h3 className="text-2xl font-medium">Personal details</h3>
       <div className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="firstName">First name</Label>
+          <Label htmlFor="firstName" className="text-lg text-gray-500">First name</Label>
           <Input
             id="firstName"
             value={firstName}
             onChange={(e) => onFirstNameChange(e.target.value)}
-            className="rounded-2xl"
+            className="h-14 rounded-2xl text-xl bg-gray-50/50"
+            placeholder="Enter your first name"
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="lastName">Last name</Label>
+          <Label htmlFor="lastName" className="text-lg text-gray-500">Last name</Label>
           <Input
             id="lastName"
             value={lastName}
             onChange={(e) => onLastNameChange(e.target.value)}
-            className="rounded-2xl"
+            className="h-14 rounded-2xl text-xl bg-gray-50/50"
+            placeholder="Enter your last name"
           />
         </div>
       </div>

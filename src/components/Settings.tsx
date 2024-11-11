@@ -59,7 +59,7 @@ export function Settings({ open, onOpenChange }: { open: boolean; onOpenChange: 
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[400px] p-0 overflow-hidden">
+      <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden bg-white">
         {view === 'main' ? (
           <MainMenu
             firstName={firstName}
@@ -70,20 +70,20 @@ export function Settings({ open, onOpenChange }: { open: boolean; onOpenChange: 
           />
         ) : (
           <div className="h-full flex flex-col">
-            <div className="flex items-center p-4 border-b">
+            <div className="flex items-center p-6 border-b">
               <Button 
                 variant="ghost" 
                 size="icon" 
                 className="mr-2"
                 onClick={() => setView('main')}
               >
-                <ChevronLeft className="h-5 w-5" />
+                <ChevronLeft className="h-6 w-6" />
               </Button>
-              <h2 className="text-xl font-semibold">Profile</h2>
+              <h2 className="text-2xl font-medium">Profile</h2>
             </div>
 
             <div className="flex-1 overflow-auto">
-              <div className="p-6 space-y-6">
+              <div className="p-6 space-y-8">
                 <ProfileSection
                   firstName={firstName}
                   lastName={lastName}
@@ -95,9 +95,9 @@ export function Settings({ open, onOpenChange }: { open: boolean; onOpenChange: 
               </div>
             </div>
 
-            <div className="p-6 border-t bg-white">
+            <div className="p-6">
               <Button 
-                className="w-full rounded-2xl"
+                className="w-full h-14 rounded-full text-lg"
                 onClick={handleSave}
               >
                 Save changes
