@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
-import { X, Play, Pause, Settings2, ArrowUp, ArrowDown, Space } from 'lucide-react';
+import { X, Play, Pause, Settings2, ArrowUp, ArrowDown, Space, RotateCcw } from 'lucide-react';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { cn } from '@/lib/utils';
 
@@ -11,6 +11,7 @@ interface TeleprompterControlsProps {
   onTogglePlay: () => void;
   onSpeedChange: (value: number) => void;
   onExit: () => void;
+  onRestart: () => void;
 }
 
 export const TeleprompterControls = ({
@@ -18,7 +19,8 @@ export const TeleprompterControls = ({
   speed,
   onTogglePlay,
   onSpeedChange,
-  onExit
+  onExit,
+  onRestart
 }: TeleprompterControlsProps) => {
   const [isVisible, setIsVisible] = useState(true);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -94,7 +96,7 @@ export const TeleprompterControls = ({
         isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8 pointer-events-none"
       )}
     >
-      <div className="flex flex-col items-center space-y-4">
+      <div className="flex items-center space-x-8">
         <Button
           ref={playButtonRef}
           type="button"
@@ -112,9 +114,23 @@ export const TeleprompterControls = ({
         >
           {isPlaying ? <Pause size={32} /> : <Play size={32} />}
         </Button>
-        <div className="flex items-center space-x-2 text-sm text-white/70 font-medium">
-          <Space size={14} /> <span>Space</span>
-        </div>
+
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          onClick={onRestart}
+          className={cn(
+            "w-16 h-16 rounded-2xl transition-all duration-300",
+            "hover:scale-105 active:scale-95",
+            "bg-gradient-to-b from-white/10 to-white/5",
+            "hover:from-white/15 hover:to-white/10",
+            "border border-white/20 hover:border-white/30",
+            "text-white shadow-lg"
+          )}
+        >
+          <RotateCcw size={32} />
+        </Button>
       </div>
 
       <div className="flex flex-col space-y-6 min-w-[280px]">
