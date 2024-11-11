@@ -110,7 +110,9 @@ export const Teleprompter = ({
       exit={{ opacity: 0 }}
       className="min-h-screen bg-gradient-to-br from-[#FFF8F0] via-[#FFF4E8] to-[#FFF8F0] overflow-hidden relative"
     >
+      {/* Ambient background effects */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(120,83,64,0.05)_0%,transparent_100%)] pointer-events-none" />
+      <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(120,83,64,0.03)_0%,transparent_100%)] pointer-events-none" />
       
       <div className="fixed top-8 left-8 z-[100] flex items-center gap-4">
         <Button
@@ -162,6 +164,7 @@ export const Teleprompter = ({
         </AnimatePresence>
       </div>
       
+      {/* Enhanced gradient overlays */}
       <div className="fixed inset-x-0 top-0 h-40 bg-gradient-to-b from-[#FFF8F0] via-[#FFF8F0]/80 to-transparent pointer-events-none z-20" />
       <div className="fixed inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#FFF8F0] via-[#FFF8F0]/80 to-transparent pointer-events-none z-20" />
       

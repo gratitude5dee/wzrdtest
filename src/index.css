@@ -35,7 +35,6 @@
   line-height: 1.8;
   font-size: 2.75rem;
   text-align: center;
-  color: theme('colors.white');
   max-width: 1200px;
   margin: 0 auto;
   padding: 100vh 0;
@@ -67,7 +66,6 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   will-change: transform, opacity;
   vertical-align: middle;
-  line-height: 1;
   cursor: pointer;
 }
 
@@ -79,7 +77,6 @@
   color: transparent;
   text-shadow: 0 0 30px rgba(120, 83, 64, 0.5);
   animation: gradient-shift 8s ease infinite;
-  transform: translateY(-8px);
 }
 
 .word-highlight::before {
@@ -91,16 +88,6 @@
   z-index: -1;
   opacity: 0;
   animation: glow-ripple 4s ease-in-out infinite;
-}
-
-.word-past {
-  opacity: 0.5;
-  transform: translateY(0);
-}
-
-.word-future {
-  opacity: 0.3;
-  transform: translateY(0);
 }
 
 @keyframes gradient-shift {

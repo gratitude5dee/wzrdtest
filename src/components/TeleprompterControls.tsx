@@ -90,7 +90,7 @@ export const TeleprompterControls = ({
     <AnimatePresence>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
+        animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
         exit={{ opacity: 0, y: 20 }}
         ref={controlsRef}
         className={cn(
