@@ -6,7 +6,7 @@ import { BrowserRouter, Routes, Route, useParams, Navigate, useLocation } from "
 import { Home } from "./components/Home";
 import { Chat } from "./components/Chat";
 import { Login } from "./components/Login";
-import { Teleprompter } from "./components/Teleprompter";
+import Teleprompter from "./components/Teleprompter";
 import { createContext, useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { AnimatePresence, motion } from "framer-motion";

@@ -15,7 +15,7 @@ interface TeleprompterState {
   textColor: string;
 }
 
-const Teleprompter = () => {
+export const Teleprompter = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [words, setWords] = useState<string[]>([]);
