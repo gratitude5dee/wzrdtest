@@ -130,14 +130,6 @@ export function PersonalityGrid({ hoveredCard, setHoveredCard, navigate }: Perso
     };
   }, [hoveredCard, setHoveredCard, debouncedMouseMove, resetCard]);
 
-  const handleCardClick = (personalityId: string) => {
-    if (personalityId === "affirmations") {
-      navigate("/affirmations");
-    } else {
-      navigate(`/chat/${personalityId}`);
-    }
-  };
-
   return (
     <div className="grid grid-cols-2 auto-rows-[180px] gap-4">
       {personalities.map((personality) => (
@@ -157,7 +149,10 @@ export function PersonalityGrid({ hoveredCard, setHoveredCard, navigate }: Perso
               'z-10 shadow-2xl shadow-white/20 animate-glow-pulse' : 
               'z-0 hover:shadow-xl hover:shadow-white/10'
           )}
-          onClick={() => handleCardClick(personality.id)}
+          onClick={() => personality.id === "affirmations" ? 
+            navigate("/affirmations") : 
+            navigate(`/chat/${personality.id}`)
+          }
           onMouseEnter={() => setHoveredCard(personality.id)}
           onMouseLeave={() => {
             resetCard(personality.id);

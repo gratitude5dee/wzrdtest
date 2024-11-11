@@ -33,7 +33,12 @@ export const Teleprompter = ({
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
   const [editableScript, setEditableScript] = useState('');
-  const { script, fontSize, fontFamily, textColor } = (location.state as TeleprompterState) || {};
+  const { script, fontSize, fontFamily, textColor } = (location.state as TeleprompterState) || {
+    script: initialScript,
+    fontSize: initialFontSize,
+    fontFamily: initialFontFamily,
+    textColor: initialTextColor,
+  };
   const highlightRef = useRef<HTMLSpanElement>(null);
   
   const {
@@ -105,8 +110,8 @@ export const Teleprompter = ({
     <div className="min-h-screen bg-background overflow-hidden relative">
       <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent pointer-events-none" />
       
-      {/* Navigation Controls - Updated positioning and styling */}
-      <div className="fixed top-8 z-[100] flex items-center gap-4 w-full px-8">
+      {/* Navigation Controls */}
+      <div className="fixed top-8 left-8 z-[100] flex items-center gap-4">
         <Button
           variant="ghost"
           size="icon"
@@ -116,27 +121,13 @@ export const Teleprompter = ({
           <ArrowLeft className="h-6 w-6" />
         </Button>
 
-        <div className="flex-1" /> {/* Spacer */}
-
         <Button
           variant="ghost"
           size="icon"
           onClick={handleEditToggle}
-          className={cn(
-            "w-12 h-12 rounded-full transition-all duration-300 hover:scale-105 backdrop-blur-lg border",
-            isEditing 
-              ? "bg-[#785340]/90 hover:bg-[#785340] text-white border-[#785340]/20"
-              : "bg-black/40 hover:bg-black/60 text-white border-white/10",
-            "relative overflow-hidden"
-          )}
+          className="w-12 h-12 rounded-full bg-black/40 hover:bg-black/60 text-white transition-all duration-300 hover:scale-105 backdrop-blur-lg border border-white/10"
         >
-          <Edit2 className={cn(
-            "h-6 w-6 transition-transform duration-300",
-            isEditing && "rotate-12 scale-110"
-          )} />
-          {isEditing && (
-            <div className="absolute inset-0 bg-gradient-to-tr from-[#785340]/20 to-transparent animate-gradient" />
-          )}
+          <Edit2 className="h-6 w-6" />
         </Button>
       </div>
       
