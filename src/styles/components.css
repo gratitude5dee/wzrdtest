@@ -1,0 +1,29 @@
+@layer components {
+  .container {
+    @apply px-4 sm:px-6 lg:px-8 mx-auto max-w-7xl;
+  }
+
+  .mobile-safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .mobile-safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+}
+
+.word-container {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 1.8em;
+  padding: 0.1em 0.3em;
+  margin: 0.1em;
+  border-radius: 0.3em;
+  transform-origin: center;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, opacity;
+  vertical-align: middle;
+  cursor: pointer;
+}

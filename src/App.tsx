@@ -2,13 +2,15 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useParams, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useParams, Navigate, useLocation } from "react-router-dom";
 import { Home } from "./components/Home";
 import { Chat } from "./components/Chat";
 import { Login } from "./components/Login";
 import { Teleprompter } from "./components/Teleprompter";
 import { createContext, useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { AnimatePresence, motion } from "framer-motion";
+import "./styles/animations.css";
 
 const queryClient = new QueryClient();
 
@@ -19,6 +21,21 @@ export const ActiveCallContext = createContext<{
   activeCall: null,
   setActiveCall: () => {},
 });
+
+function PageTransition({ children }: { children: React.ReactNode }) {
+  const location = useLocation();
+  return (
+    <motion.div
+      key={location.pathname}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      transition={{ duration: 0.4, ease: "easeInOut" }}
+    >
+      {children}
+    </motion.div>
+  );
+}
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
@@ -38,14 +55,23 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   }, []);
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    return (
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="min-h-screen flex items-center justify-center"
+      >
+        Loading...
+      </motion.div>
+    );
   }
 
   if (!authenticated) {
     return <Navigate to="/login" replace />;
   }
 
-  return <>{children}</>;
+  return <PageTransition>{children}</PageTransition>;
 }
 
 function ChatWrapper() {
@@ -65,14 +91,19 @@ function ChatWrapper() {
 const App = () => {
   const [activeCall, setActiveCall] = useState<string | null>(null);
   const affirmationsText = "I am worthy of love and respect. Every day I grow stronger and more confident. I trust in my abilities and embrace new challenges. My potential is limitless. I radiate positivity and attract success. I am grateful for all that I have. I choose to be happy and spread joy to others. I am exactly where I need to be. My future is bright and full of possibilities. I deserve all the good things life has to offer.";
+  const location = useLocation();
 
   return (
     <QueryClientProvider client={queryClient}>
       <ActiveCallContext.Provider value={{ activeCall, setActiveCall }}>
-        <BrowserRouter>
-          <TooltipProvider>
-            <Routes>
-              <Route path="/login" element={<Login />} />
+        <TooltipProvider>
+          <AnimatePresence mode="wait">
+            <Routes location={location} key={location.pathname}>
+              <Route path="/login" element={
+                <PageTransition>
+                  <Login />
+                </PageTransition>
+              } />
               <Route path="/" element={<Navigate to="/login" replace />} />
               <Route path="/home" element={
                 <ProtectedRoute>
@@ -100,10 +131,10 @@ const App = () => {
                 </ProtectedRoute>
               } />
             </Routes>
-            <Toaster />
-            <Sonner />
-          </TooltipProvider>
-        </BrowserRouter>
+          </AnimatePresence>
+          <Toaster />
+          <Sonner />
+        </TooltipProvider>
       </ActiveCallContext.Provider>
     </QueryClientProvider>
   );

@@ -1,0 +1,45 @@
+.teleprompter-text {
+  font-family: 'Cal Sans', sans-serif;
+  line-height: 1.8;
+  font-size: 2.75rem;
+  text-align: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 100vh 0;
+  letter-spacing: -0.02em;
+  white-space: pre-wrap;
+  word-spacing: 0.2em;
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+.smooth-scroll {
+  transition: transform 800ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+.word-highlight {
+  background: linear-gradient(120deg, #A67B5B, #785340, #5C3D2E);
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 30px rgba(120, 83, 64, 0.5);
+  animation: gradient-shift 8s ease infinite;
+}
+
+@media (max-width: 640px) {
+  .teleprompter-text {
+    font-size: 2rem;
+    padding: 50vh 0;
+    max-width: 100%;
+  }
+
+  .word-container {
+    margin: 0.05em;
+    padding: 0.05em 0.15em;
+  }
+}
