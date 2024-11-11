@@ -1,20 +1,30 @@
 import { cn } from "@/lib/utils";
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect, useRef } from "react";
+import { useScrollToWord } from "@/hooks/useScrollToWord";
 
 interface TeleprompterContainerProps {
   children: ReactNode;
   containerRef: React.RefObject<HTMLDivElement>;
+  firstWordRef?: React.RefObject<HTMLElement>;
+  autoStart?: boolean;
 }
 
-export const TeleprompterContainer = ({ children, containerRef }: TeleprompterContainerProps) => {
+export const TeleprompterContainer = ({ 
+  children, 
+  containerRef,
+  firstWordRef,
+  autoStart = false
+}: TeleprompterContainerProps) => {
+  const initialScrollComplete = useRef(false);
+  const scrollToWord = useScrollToWord();
+
   useEffect(() => {
-    if (containerRef.current) {
-      containerRef.current.scrollTo({
-        top: 0,
-        behavior: 'instant'
-      });
+    if (!initialScrollComplete.current && containerRef.current && firstWordRef?.current) {
+      // Scroll to first word on mount
+      scrollToWord(firstWordRef.current, containerRef.current, true);
+      initialScrollComplete.current = true;
     }
-  }, []);
+  }, [containerRef, firstWordRef, scrollToWord]);
 
   return (
     <div

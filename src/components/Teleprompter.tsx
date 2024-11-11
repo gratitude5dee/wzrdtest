@@ -9,6 +9,7 @@ import { ArrowLeft, Edit2 } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { TeleprompterContainer } from './teleprompter/TeleprompterContainer';
 import { TeleprompterWord } from './teleprompter/TeleprompterWord';
+import { useScrollToWord } from '@/hooks/useScrollToWord';
 
 interface TeleprompterProps {
   initialScript?: string;
@@ -44,16 +45,18 @@ export const Teleprompter = ({
     fontFamily: initialFontFamily,
     textColor: initialTextColor,
   };
+  
   const highlightRef = useRef<HTMLSpanElement>(null);
+  const firstWordRef = useRef<HTMLSpanElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const scrollToWord = useScrollToWord();
   
   const {
     isPlaying,
     speed,
-    containerRef,
     togglePlay,
     updateSpeed,
     reset,
-    updateScrollPosition
   } = useTeleprompter(2, autoStart);
 
   useKeyboardShortcuts(updateSpeed, togglePlay, speed);
@@ -85,25 +88,16 @@ export const Teleprompter = ({
   }, [isPlaying, speed, words.length, togglePlay]);
 
   useEffect(() => {
-    if (highlightRef.current) {
-      updateScrollPosition(highlightRef.current);
+    if (highlightRef.current && containerRef.current) {
+      scrollToWord(highlightRef.current, containerRef.current);
     }
-  }, [currentWordIndex, updateScrollPosition]);
+  }, [currentWordIndex, scrollToWord]);
 
   const handleWordClick = useCallback((index: number) => {
     setCurrentWordIndex(index);
     if (isPlaying) {
       togglePlay();
     }
-    // Force scroll update after a short delay to ensure the DOM has updated
-    setTimeout(() => {
-      if (highlightRef.current) {
-        highlightRef.current.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center'
-        });
-      }
-    }, 50);
   }, [isPlaying, togglePlay]);
 
   const handleExit = useCallback(() => {
@@ -149,7 +143,11 @@ export const Teleprompter = ({
         </Button>
       </div>
       
-      <TeleprompterContainer containerRef={containerRef}>
+      <TeleprompterContainer 
+        containerRef={containerRef}
+        firstWordRef={firstWordRef}
+        autoStart={autoStart}
+      >
         {isEditing ? (
           <TeleprompterEditor
             editableScript={editableScript}
@@ -175,7 +173,8 @@ export const Teleprompter = ({
                 index={index}
                 currentWordIndex={currentWordIndex}
                 onClick={handleWordClick}
-                highlightRef={index === currentWordIndex ? highlightRef : null}
+                highlightRef={index === currentWordIndex ? highlightRef : 
+                            index === 0 ? firstWordRef : null}
                 textColor={textColor}
               />
             ))}
