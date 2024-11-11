@@ -6,7 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Edit2 } from 'lucide-react';
 import { cn } from "@/lib/utils";
-import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
+
+interface TeleprompterProps {
+  initialScript?: string;
+  fontSize?: number;
+  fontFamily?: string;
+  textColor?: string;
+}
 
 interface TeleprompterState {
   script: string;
@@ -15,14 +21,24 @@ interface TeleprompterState {
   textColor: string;
 }
 
-export const Teleprompter = () => {
+export const Teleprompter = ({
+  initialScript,
+  fontSize: initialFontSize,
+  fontFamily: initialFontFamily,
+  textColor: initialTextColor,
+}: TeleprompterProps = {}) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [words, setWords] = useState<string[]>([]);
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
   const [editableScript, setEditableScript] = useState('');
-  const { script, fontSize, fontFamily, textColor } = (location.state as TeleprompterState) || {};
+  const { script, fontSize, fontFamily, textColor } = (location.state as TeleprompterState) || {
+    script: initialScript,
+    fontSize: initialFontSize,
+    fontFamily: initialFontFamily,
+    textColor: initialTextColor,
+  };
   const highlightRef = useRef<HTMLSpanElement>(null);
   
   const {
