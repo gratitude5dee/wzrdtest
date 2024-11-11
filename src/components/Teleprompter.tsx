@@ -7,6 +7,8 @@ import { useEffect, useState, useRef, useCallback } from 'react';
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Edit2 } from 'lucide-react';
 import { cn } from "@/lib/utils";
+import { TeleprompterContainer } from './teleprompter/TeleprompterContainer';
+import { TeleprompterWord } from './teleprompter/TeleprompterWord';
 
 interface TeleprompterProps {
   initialScript?: string;
@@ -52,7 +54,6 @@ export const Teleprompter = ({
     updateScrollPosition
   } = useTeleprompter(2);
 
-  // Add keyboard shortcuts
   useKeyboardShortcuts(updateSpeed, togglePlay, speed);
 
   useEffect(() => {
@@ -87,6 +88,22 @@ export const Teleprompter = ({
     }
   }, [currentWordIndex, updateScrollPosition]);
 
+  const handleWordClick = useCallback((index: number) => {
+    setCurrentWordIndex(index);
+    if (isPlaying) {
+      togglePlay();
+    }
+    // Force scroll update after a short delay to ensure the DOM has updated
+    setTimeout(() => {
+      if (highlightRef.current) {
+        highlightRef.current.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        });
+      }
+    }, 50);
+  }, [isPlaying, togglePlay]);
+
   const handleExit = useCallback(() => {
     reset();
     setCurrentWordIndex(0);
@@ -105,7 +122,6 @@ export const Teleprompter = ({
     <div className="min-h-screen bg-background overflow-hidden relative">
       <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent pointer-events-none" />
       
-      {/* Navigation Controls - Split into left and right sides */}
       <div className="fixed top-8 w-full px-8 flex justify-between items-center z-[100]">
         <Button
           variant="ghost"
@@ -131,14 +147,7 @@ export const Teleprompter = ({
         </Button>
       </div>
       
-      <div
-        ref={containerRef}
-        className={cn(
-          "h-screen overflow-hidden relative z-10 smooth-scroll",
-          "px-4 md:px-8 lg:px-16",
-          "flex items-center justify-center" // Center the content vertically and horizontally
-        )}
-      >
+      <TeleprompterContainer containerRef={containerRef}>
         {isEditing ? (
           <TeleprompterEditor
             editableScript={editableScript}
@@ -149,7 +158,7 @@ export const Teleprompter = ({
           />
         ) : (
           <div 
-            className="teleprompter-text max-w-4xl mx-auto" // Limit width and center
+            className="teleprompter-text max-w-4xl mx-auto"
             style={{
               fontFamily: fontFamily === 'inter' ? 'Inter' : 
                          fontFamily === 'cal-sans' ? 'Cal Sans' : fontFamily,
@@ -158,30 +167,20 @@ export const Teleprompter = ({
             }}
           >
             {words.map((word, index) => (
-              <span
+              <TeleprompterWord
                 key={index}
-                ref={index === currentWordIndex ? highlightRef : null}
-                onClick={() => setCurrentWordIndex(index)}
-                className={cn(
-                  "inline-block mx-1 px-1 py-0.5 rounded transition-all duration-300 cursor-pointer hover:bg-teleprompter-highlight/20",
-                  index === currentWordIndex
-                    ? "text-teleprompter-highlight scale-110 bg-teleprompter-highlight/10 font-semibold"
-                    : index < currentWordIndex
-                    ? `opacity-60`
-                    : `opacity-40`
-                )}
-                style={{
-                  color: index === currentWordIndex ? '#3B82F6' : undefined
-                }}
-              >
-                {word}
-              </span>
+                word={word}
+                index={index}
+                currentWordIndex={currentWordIndex}
+                onClick={handleWordClick}
+                highlightRef={index === currentWordIndex ? highlightRef : null}
+                textColor={textColor}
+              />
             ))}
           </div>
         )}
-      </div>
+      </TeleprompterContainer>
       
-      {/* Gradient overlays */}
       <div className="fixed inset-x-0 top-0 h-40 bg-gradient-to-b from-background via-background/80 to-transparent pointer-events-none z-20" />
       <div className="fixed inset-x-0 bottom-0 h-40 bg-gradient-to-t from-background via-background/80 to-transparent pointer-events-none z-20" />
       
