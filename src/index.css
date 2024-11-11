@@ -51,36 +51,6 @@
   transform: translateZ(0);
 }
 
-.teleprompter-line {
-  display: block;
-  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-  transform-origin: center;
-  padding: 1.5em 0;
-  position: relative;
-  z-index: 1;
-  transform: perspective(1000px) translateZ(0);
-  will-change: transform, opacity;
-}
-
-.line-active {
-  transform: perspective(1000px) translateY(-0.5em) translateZ(100px) scale(1.1);
-  filter: brightness(1.5);
-  text-shadow: 0 0 30px rgba(255, 255, 255, 0.4);
-  z-index: 2;
-}
-
-.line-past {
-  opacity: 0.3;
-  transform: perspective(1000px) translateY(1em) translateZ(-50px) scale(0.9);
-  filter: brightness(0.6);
-}
-
-.line-future {
-  opacity: 0.15;
-  transform: perspective(1000px) translateY(-1em) translateZ(-50px) scale(0.9);
-  filter: brightness(0.5);
-}
-
 .word-highlight {
   display: inline-block;
   padding: 0.1em 0.3em;
@@ -94,31 +64,17 @@
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   animation: gradient-shift 3s ease infinite;
   text-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
-  position: relative;
-  transform: scale(1.2);
-  z-index: 3;
-}
-
-.word-highlight::after {
-  content: '';
-  position: absolute;
-  inset: -4px;
-  background: radial-gradient(circle, rgba(59, 130, 246, 0.4), transparent 70%);
-  opacity: 0.8;
-  transition: opacity 0.3s ease;
-  border-radius: inherit;
-  z-index: -1;
-  animation: glow-pulse 2s ease-in-out infinite;
 }
 
 .word-past {
-  opacity: 0.7;
+  opacity: 0.6;
+  transform: scale(0.98);
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  text-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
 }
 
 .word-future {
-  opacity: 0.5;
+  opacity: 0.4;
+  transform: scale(0.98);
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -128,20 +84,25 @@
   100% { background-position: 0% 50%; }
 }
 
-@keyframes glow-pulse {
-  0%, 100% { 
-    opacity: 0.5;
-    transform: scale(1);
-  }
-  50% { 
-    opacity: 0.8;
-    transform: scale(1.1);
-  }
-}
-
 @layer utilities {
   .animate-gradient {
     animation: gradient-shift 8s linear infinite;
     background-size: 200%;
+  }
+  
+  .hover-lift {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .hover-lift:hover {
+    transform: translateY(-2px);
+  }
+  
+  .hover-scale {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .hover-scale:hover {
+    transform: scale(1.05);
   }
 }

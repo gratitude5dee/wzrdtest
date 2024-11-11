@@ -40,33 +40,3 @@
 .read-the-docs {
   color: #888;
 }
-
-.teleprompter-text {
-  padding: 25vh 0;
-  line-height: 1.6;
-  letter-spacing: 0.01em;
-  will-change: transform;
-}
-
-.teleprompter-line {
-  margin: 1em 0;
-  padding: 0.5em;
-  will-change: transform, opacity;
-}
-
-.word-highlight {
-  text-shadow: 0 0 15px rgba(96, 165, 250, 0.5);
-  will-change: transform, opacity, text-shadow;
-}
-
-.word-past {
-  transition: all 0.3s ease-out;
-}
-
-.word-future {
-  transition: all 0.3s ease-out;
-}
-
-.smooth-scroll {
-  scroll-behavior: smooth;
-}
