@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ChevronUp } from "lucide-react";
+import { motion } from "framer-motion";
+import { Palette, Type, Monitor } from "lucide-react";
 
 interface PreferencesSectionProps {
   backgroundColor: string;
@@ -21,92 +22,118 @@ export function PreferencesSection({
   onAppFontFamilyChange,
 }: PreferencesSectionProps) {
   return (
-    <div className="space-y-8">
-      <div className="space-y-4">
-        <h3 className="text-2xl font-medium text-gray-900">Theme</h3>
-        <Button
-          variant="outline"
-          className="w-full justify-between py-6 text-lg font-normal bg-gray-50 hover:bg-gray-100 border-gray-200"
-        >
-          <span>Light</span>
-          <ChevronUp className="h-5 w-5 text-gray-500" />
-        </Button>
-      </div>
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="space-y-12"
+    >
+      <motion.div 
+        className="space-y-6"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+      >
+        <div className="flex items-center space-x-3">
+          <Monitor className="h-6 w-6 text-gray-400" />
+          <h3 className="text-2xl font-semibold text-gray-900">Theme</h3>
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <Button
+            variant="outline"
+            className="h-24 rounded-2xl border-2 hover:border-blue-500 hover:bg-blue-50 transition-all duration-200"
+          >
+            <div className="space-y-2">
+              <div className="w-8 h-8 rounded-full bg-white border border-gray-200 mx-auto" />
+              <div className="text-sm font-medium">Light</div>
+            </div>
+          </Button>
+          <Button
+            variant="outline"
+            className="h-24 rounded-2xl border-2 hover:border-blue-500 hover:bg-blue-50 transition-all duration-200"
+          >
+            <div className="space-y-2">
+              <div className="w-8 h-8 rounded-full bg-gray-900 mx-auto" />
+              <div className="text-sm font-medium">Dark</div>
+            </div>
+          </Button>
+        </div>
+      </motion.div>
 
-      <div className="space-y-4">
-        <h3 className="text-2xl font-medium text-gray-900">Colors</h3>
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="backgroundColor" className="text-base text-gray-600">
+      <motion.div 
+        className="space-y-6"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+      >
+        <div className="flex items-center space-x-3">
+          <Palette className="h-6 w-6 text-gray-400" />
+          <h3 className="text-2xl font-semibold text-gray-900">Colors</h3>
+        </div>
+        <div className="space-y-6">
+          <div className="space-y-4">
+            <Label className="text-base font-medium text-gray-700">
               Page Color
             </Label>
-            <div className="flex gap-3 items-center">
+            <div className="flex gap-4 items-center">
               <div 
-                className="w-10 h-10 rounded-lg border border-gray-200"
+                className="w-14 h-14 rounded-2xl border-2 border-gray-200 shadow-sm"
                 style={{ backgroundColor }}
               />
               <input
-                id="backgroundColor"
                 type="color"
                 value={backgroundColor}
                 onChange={(e) => onBackgroundColorChange(e.target.value)}
-                className="sr-only"
+                className="h-14 w-full rounded-2xl border-2 border-gray-200 cursor-pointer"
               />
-              <Button
-                variant="outline"
-                className="flex-1 justify-start text-base font-normal"
-                onClick={() => document.getElementById('backgroundColor')?.click()}
-              >
-                Choose color
-              </Button>
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="textColor" className="text-base text-gray-600">
+          <div className="space-y-4">
+            <Label className="text-base font-medium text-gray-700">
               Text Color
             </Label>
-            <div className="flex gap-3 items-center">
+            <div className="flex gap-4 items-center">
               <div 
-                className="w-10 h-10 rounded-lg border border-gray-200"
+                className="w-14 h-14 rounded-2xl border-2 border-gray-200 shadow-sm"
                 style={{ backgroundColor: textColor }}
               />
               <input
-                id="textColor"
                 type="color"
                 value={textColor}
                 onChange={(e) => onTextColorChange(e.target.value)}
-                className="sr-only"
+                className="h-14 w-full rounded-2xl border-2 border-gray-200 cursor-pointer"
               />
-              <Button
-                variant="outline"
-                className="flex-1 justify-start text-base font-normal"
-                onClick={() => document.getElementById('textColor')?.click()}
-              >
-                Choose color
-              </Button>
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
 
-      <div className="space-y-4">
-        <h3 className="text-2xl font-medium text-gray-900">Typography</h3>
-        <div className="space-y-2">
-          <Label htmlFor="appFontFamily" className="text-base text-gray-600">
-            Font
+      <motion.div 
+        className="space-y-6"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+      >
+        <div className="flex items-center space-x-3">
+          <Type className="h-6 w-6 text-gray-400" />
+          <h3 className="text-2xl font-semibold text-gray-900">Typography</h3>
+        </div>
+        <div className="space-y-4">
+          <Label className="text-base font-medium text-gray-700">
+            Font Family
           </Label>
           <Select value={appFontFamily} onValueChange={onAppFontFamilyChange}>
-            <SelectTrigger id="appFontFamily" className="h-12 text-base font-normal">
+            <SelectTrigger className="h-14 text-lg rounded-2xl border-gray-200">
               <SelectValue placeholder="Select a font" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="inter">Inter</SelectItem>
-              <SelectItem value="cal-sans">Cal Sans</SelectItem>
+              <SelectItem value="inter" className="text-lg">Inter</SelectItem>
+              <SelectItem value="cal-sans" className="text-lg">Cal Sans</SelectItem>
             </SelectContent>
           </Select>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
