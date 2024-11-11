@@ -2,6 +2,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useTeleprompter } from '@/hooks/useTeleprompter';
 import { TeleprompterControls } from '@/components/TeleprompterControls';
 import { useEffect, useState, useRef, useCallback } from 'react';
+import { toast } from 'sonner';
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from 'lucide-react';
 
