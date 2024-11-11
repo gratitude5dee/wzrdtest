@@ -1,6 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTeleprompter } from '@/hooks/useTeleprompter';
 import { TeleprompterControls } from '@/components/TeleprompterControls';
+import { TeleprompterText } from '@/components/TeleprompterText';
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -49,14 +50,14 @@ export const Teleprompter = () => {
 
   useEffect(() => {
     if (isPlaying) {
-      const interval = setInterval(() => {
+      const wordInterval = setInterval(() => {
         setCurrentWordIndex(prev => {
           const currentLine = lines[currentLineIndex];
           if (!currentLine) return prev;
           
           if (prev >= currentLine.length - 1) {
             if (currentLineIndex >= lines.length - 1) {
-              clearInterval(interval);
+              clearInterval(wordInterval);
               togglePlay();
               return prev;
             }
@@ -65,21 +66,15 @@ export const Teleprompter = () => {
           }
           return prev + 1;
         });
-      }, 60000 / (speed * 200));
+      }, 60000 / (speed * 200)); // Adjust timing based on speed
       
-      return () => clearInterval(interval);
+      return () => clearInterval(wordInterval);
     }
   }, [isPlaying, speed, lines, currentLineIndex, togglePlay]);
 
   useEffect(() => {
     if (highlightRef.current) {
-      const element = highlightRef.current;
-      element.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center',
-        inline: 'center'
-      });
-      updateScrollPosition(element);
+      updateScrollPosition(highlightRef.current);
     }
   }, [currentWordIndex, currentLineIndex, updateScrollPosition]);
 
@@ -117,13 +112,13 @@ export const Teleprompter = () => {
     <div className="min-h-screen bg-background overflow-hidden relative">
       <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent pointer-events-none" />
       
-      {/* Navigation Controls */}
       <div className="fixed top-8 left-8 z-[100] flex items-center gap-4">
         <Button
           variant="ghost"
           size="icon"
           onClick={handleExit}
-          className="w-12 h-12 rounded-full bg-black/40 hover:bg-black/60 text-white transition-all duration-300 hover:scale-105 backdrop-blur-lg border border-white/10"
+          className="w-12 h-12 rounded-full bg-black/40 hover:bg-black/60 text-white 
+                   transition-all duration-300 hover:scale-105 backdrop-blur-lg border border-white/10"
         >
           <ArrowLeft className="h-6 w-6" />
         </Button>
@@ -132,7 +127,8 @@ export const Teleprompter = () => {
           variant="ghost"
           size="icon"
           onClick={handleEditToggle}
-          className="w-12 h-12 rounded-full bg-black/40 hover:bg-black/60 text-white transition-all duration-300 hover:scale-105 backdrop-blur-lg border border-white/10"
+          className="w-12 h-12 rounded-full bg-black/40 hover:bg-black/60 text-white 
+                   transition-all duration-300 hover:scale-105 backdrop-blur-lg border border-white/10"
         >
           <Edit2 className="h-6 w-6" />
         </Button>
@@ -161,49 +157,16 @@ export const Teleprompter = () => {
             }}
           />
         ) : (
-          <div 
-            className="teleprompter-text"
-            style={{
-              fontFamily: fontFamily === 'inter' ? 'Inter' : 
-                         fontFamily === 'cal-sans' ? 'Cal Sans' : fontFamily,
-              fontSize: `${fontSize / 16}rem`,
-              color: textColor,
-            }}
-          >
-            {lines.map((line, lineIndex) => (
-              <div
-                key={lineIndex}
-                className={cn(
-                  "teleprompter-line",
-                  lineIndex === currentLineIndex && "line-active",
-                  lineIndex < currentLineIndex && "line-past",
-                  lineIndex > currentLineIndex && "line-future"
-                )}
-              >
-                {line.map((word, wordIndex) => (
-                  <span
-                    key={`${lineIndex}-${wordIndex}`}
-                    ref={lineIndex === currentLineIndex && wordIndex === currentWordIndex ? highlightRef : null}
-                    onClick={() => handleWordClick(lineIndex, wordIndex)}
-                    className={cn(
-                      "inline-block mx-1 px-1 py-0.5 rounded cursor-pointer",
-                      "transition-all duration-500 ease-out transform",
-                      "hover:bg-teleprompter-highlight/20",
-                      lineIndex === currentLineIndex && wordIndex === currentWordIndex && [
-                        "word-highlight scale-110",
-                        "bg-teleprompter-highlight/10 font-semibold",
-                        "shadow-lg shadow-blue-500/20"
-                      ],
-                      lineIndex === currentLineIndex && wordIndex < currentWordIndex && "word-past",
-                      (lineIndex === currentLineIndex && wordIndex > currentWordIndex) || lineIndex > currentLineIndex && "word-future"
-                    )}
-                  >
-                    {word}
-                  </span>
-                ))}
-              </div>
-            ))}
-          </div>
+          <TeleprompterText
+            lines={lines}
+            currentLineIndex={currentLineIndex}
+            currentWordIndex={currentWordIndex}
+            highlightRef={highlightRef}
+            handleWordClick={handleWordClick}
+            fontSize={fontSize}
+            fontFamily={fontFamily}
+            textColor={textColor}
+          />
         )}
       </div>
       

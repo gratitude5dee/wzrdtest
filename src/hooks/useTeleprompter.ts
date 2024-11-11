@@ -3,9 +3,9 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 export const useTeleprompter = (initialSpeed: number = 2) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [speed, setSpeed] = useState(initialSpeed);
-  const [scrollPosition, setScrollPosition] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollInterval = useRef<NodeJS.Timeout>();
+  const [autoScrollEnabled, setAutoScrollEnabled] = useState(true);
 
   const togglePlay = useCallback(() => {
     setIsPlaying(prev => !prev);
@@ -17,40 +17,46 @@ export const useTeleprompter = (initialSpeed: number = 2) => {
 
   const reset = useCallback(() => {
     setIsPlaying(false);
-    setScrollPosition(0);
     if (containerRef.current) {
       containerRef.current.scrollTop = 0;
     }
   }, []);
 
-  const updateScrollPosition = useCallback((wordElement: HTMLElement | null) => {
-    if (!wordElement || !containerRef.current) return;
+  const updateScrollPosition = useCallback((element: HTMLElement | null) => {
+    if (!element || !containerRef.current || !autoScrollEnabled) return;
+    
     const container = containerRef.current;
     const containerHeight = container.clientHeight;
-    const wordPosition = wordElement.offsetTop;
-    const wordHeight = wordElement.offsetHeight;
-    const targetScroll = wordPosition - (containerHeight / 2) + (wordHeight / 2);
-    setScrollPosition(targetScroll);
-  }, []);
+    const elementPosition = element.offsetTop;
+    const elementHeight = element.offsetHeight;
+    
+    // Calculate the target scroll position to center the element
+    const targetScroll = elementPosition - (containerHeight / 2) + (elementHeight / 2);
+    
+    // Smooth scroll to the target position
+    container.scrollTo({
+      top: targetScroll,
+      behavior: 'smooth'
+    });
+  }, [autoScrollEnabled]);
 
+  // Handle auto-scrolling when playing
   useEffect(() => {
-    if (isPlaying && containerRef.current) {
+    if (isPlaying && containerRef.current && autoScrollEnabled) {
+      const scrollAmount = speed * 0.5; // Adjust this value to control scroll speed
       scrollInterval.current = setInterval(() => {
-        setScrollPosition(prev => prev + speed);
+        if (containerRef.current) {
+          containerRef.current.scrollTop += scrollAmount;
+        }
       }, 16); // ~60fps
     }
+
     return () => {
       if (scrollInterval.current) {
         clearInterval(scrollInterval.current);
       }
     };
-  }, [isPlaying, speed]);
-
-  useEffect(() => {
-    if (containerRef.current) {
-      containerRef.current.scrollTop = scrollPosition;
-    }
-  }, [scrollPosition]);
+  }, [isPlaying, speed, autoScrollEnabled]);
 
   return {
     isPlaying,
@@ -60,5 +66,6 @@ export const useTeleprompter = (initialSpeed: number = 2) => {
     updateSpeed,
     reset,
     updateScrollPosition,
+    setAutoScrollEnabled
   };
 };
