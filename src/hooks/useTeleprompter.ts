@@ -1,12 +1,12 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 
 export const useTeleprompter = (initialSpeed: number = 2) => {
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [speed, setSpeed] = useState<number>(initialSpeed);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [speed, setSpeed] = useState(initialSpeed);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const animationFrameRef = useRef<number>();
   const lastTimeRef = useRef<number>(0);
-  const [autoScrollEnabled, setAutoScrollEnabled] = useState<boolean>(true);
+  const isMountedRef = useRef(true);
 
   const togglePlay = useCallback(() => {
     setIsPlaying(prev => !prev);
@@ -20,7 +20,6 @@ export const useTeleprompter = (initialSpeed: number = 2) => {
   const reset = useCallback(() => {
     if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current);
-      animationFrameRef.current = undefined;
     }
     setIsPlaying(false);
     if (containerRef.current) {
@@ -30,7 +29,7 @@ export const useTeleprompter = (initialSpeed: number = 2) => {
   }, []);
 
   const updateScrollPosition = useCallback((element: HTMLElement | null) => {
-    if (!element || !containerRef.current || !autoScrollEnabled) return;
+    if (!element || !containerRef.current || !isMountedRef.current) return;
     
     const container = containerRef.current;
     const containerHeight = container.clientHeight;
@@ -42,13 +41,11 @@ export const useTeleprompter = (initialSpeed: number = 2) => {
       top: targetScroll,
       behavior: 'smooth'
     });
-  }, [autoScrollEnabled]);
+  }, []);
 
   useEffect(() => {
-    let mounted = true;
-
     const animate = (timestamp: number) => {
-      if (!mounted) return;
+      if (!isMountedRef.current) return;
       
       if (!lastTimeRef.current) {
         lastTimeRef.current = timestamp;
@@ -56,15 +53,15 @@ export const useTeleprompter = (initialSpeed: number = 2) => {
       
       const deltaTime = timestamp - lastTimeRef.current;
       
-      if (containerRef.current && isPlaying && autoScrollEnabled) {
-        const pixelsPerSecond = speed * 40; // Reduced speed for smoother scrolling
+      if (containerRef.current && isPlaying) {
+        const pixelsPerSecond = speed * 40;
         const scrollAmount = (pixelsPerSecond * deltaTime) / 1000;
         containerRef.current.scrollTop += scrollAmount;
       }
       
       lastTimeRef.current = timestamp;
       
-      if (mounted && isPlaying) {
+      if (isPlaying && isMountedRef.current) {
         animationFrameRef.current = requestAnimationFrame(animate);
       }
     };
@@ -74,13 +71,20 @@ export const useTeleprompter = (initialSpeed: number = 2) => {
     }
 
     return () => {
-      mounted = false;
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
-        animationFrameRef.current = undefined;
       }
     };
-  }, [isPlaying, speed, autoScrollEnabled]);
+  }, [isPlaying, speed]);
+
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false;
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
+  }, []);
 
   return {
     isPlaying,
@@ -89,7 +93,6 @@ export const useTeleprompter = (initialSpeed: number = 2) => {
     togglePlay,
     updateSpeed,
     reset,
-    updateScrollPosition,
-    setAutoScrollEnabled
+    updateScrollPosition
   };
 };

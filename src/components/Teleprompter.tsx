@@ -66,7 +66,7 @@ export const Teleprompter = () => {
           }
           return prev + 1;
         });
-      }, 60000 / (speed * 200)); // Adjust timing based on speed
+      }, 60000 / (speed * 200));
       
       return () => clearInterval(wordInterval);
     }
@@ -108,6 +108,10 @@ export const Teleprompter = () => {
     setCurrentLineIndex(0);
   }, [reset]);
 
+  if (!script) {
+    return null;
+  }
+
   return (
     <div className="min-h-screen bg-background overflow-hidden relative">
       <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent pointer-events-none" />
@@ -117,8 +121,7 @@ export const Teleprompter = () => {
           variant="ghost"
           size="icon"
           onClick={handleExit}
-          className="w-12 h-12 rounded-full bg-black/40 hover:bg-black/60 text-white 
-                   transition-all duration-300 hover:scale-105 backdrop-blur-lg border border-white/10"
+          className="w-12 h-12 rounded-full bg-black/40 hover:bg-black/60 text-white transition-all duration-300 hover:scale-105 backdrop-blur-lg border border-white/10"
         >
           <ArrowLeft className="h-6 w-6" />
         </Button>
@@ -127,8 +130,7 @@ export const Teleprompter = () => {
           variant="ghost"
           size="icon"
           onClick={handleEditToggle}
-          className="w-12 h-12 rounded-full bg-black/40 hover:bg-black/60 text-white 
-                   transition-all duration-300 hover:scale-105 backdrop-blur-lg border border-white/10"
+          className="w-12 h-12 rounded-full bg-black/40 hover:bg-black/60 text-white transition-all duration-300 hover:scale-105 backdrop-blur-lg border border-white/10"
         >
           <Edit2 className="h-6 w-6" />
         </Button>
