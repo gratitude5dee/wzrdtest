@@ -72,21 +72,21 @@ export function Settings({ open, onOpenChange }: { open: boolean; onOpenChange: 
     switch (view) {
       case 'profile':
         return (
-          <div className="h-full flex flex-col">
-            <div className="flex items-center p-6 border-b border-gray-100">
+          <div className="h-full flex flex-col bg-white">
+            <div className="flex items-center p-6">
               <Button 
                 variant="ghost" 
                 size="icon" 
-                className="mr-2 rounded-full"
+                className="mr-2 rounded-full hover:bg-gray-100"
                 onClick={() => setView('main')}
               >
                 <ChevronLeft className="h-6 w-6" />
               </Button>
-              <h2 className="text-2xl font-medium">Profile</h2>
+              <h2 className="text-[28px] font-medium text-[#2A2A2A]">Profile</h2>
             </div>
 
             <div className="flex-1 overflow-auto">
-              <div className="p-6 space-y-6">
+              <div className="p-6 space-y-12">
                 <ProfileSection
                   firstName={firstName}
                   lastName={lastName}
@@ -98,9 +98,9 @@ export function Settings({ open, onOpenChange }: { open: boolean; onOpenChange: 
               </div>
             </div>
 
-            <div className="p-6 border-t border-gray-100">
+            <div className="p-6">
               <Button 
-                className="w-full h-12 rounded-full text-base font-medium bg-black hover:bg-black/90 text-white"
+                className="w-full h-14 rounded-full text-lg font-medium bg-[#6B7280] hover:bg-[#6B7280]/90 text-white"
                 onClick={handleSave}
               >
                 Save changes
@@ -162,7 +162,7 @@ export function Settings({ open, onOpenChange }: { open: boolean; onOpenChange: 
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[400px] p-0 overflow-hidden">
+      <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden bg-white">
         {renderContent()}
       </DialogContent>
     </Dialog>
