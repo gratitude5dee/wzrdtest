@@ -1,27 +1,38 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTeleprompter } from '@/hooks/useTeleprompter';
 import { TeleprompterControls } from '@/components/TeleprompterControls';
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Edit2 } from 'lucide-react';
 import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
 
-interface TeleprompterState {
-  script: string;
-  fontSize: number;
-  fontFamily: string;
-  textColor: string;
+interface TeleprompterProps {
+  initialScript?: string;
+  fontSize?: number;
+  fontFamily?: string;
+  textColor?: string;
 }
 
-export const Teleprompter = () => {
+export const Teleprompter = ({ 
+  initialScript,
+  fontSize: initialFontSize,
+  fontFamily: initialFontFamily,
+  textColor: initialTextColor 
+}: TeleprompterProps) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [words, setWords] = useState<string[]>([]);
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
   const [editableScript, setEditableScript] = useState('');
-  const { script, fontSize, fontFamily, textColor } = (location.state as TeleprompterState) || {};
+  const { script, fontSize, fontFamily, textColor } = (location.state as any) || {
+    script: initialScript,
+    fontSize: initialFontSize,
+    fontFamily: initialFontFamily,
+    textColor: initialTextColor
+  };
   const highlightRef = useRef<HTMLSpanElement>(null);
   
   const {
@@ -96,16 +107,20 @@ export const Teleprompter = () => {
   }, [reset]);
 
   return (
-    <div className="min-h-screen bg-background overflow-hidden relative">
-      <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent pointer-events-none" />
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="min-h-screen bg-gradient-to-b from-gray-900 to-black overflow-hidden relative"
+    >
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.1)_0%,transparent_100%)] pointer-events-none" />
       
-      {/* Navigation Controls */}
       <div className="fixed top-8 left-8 z-[100] flex items-center gap-4">
         <Button
           variant="ghost"
           size="icon"
-          onClick={handleExit}
-          className="w-12 h-12 rounded-full bg-black/40 hover:bg-black/60 text-white transition-all duration-300 hover:scale-105 backdrop-blur-lg border border-white/10"
+          onClick={() => navigate('/home')}
+          className="w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all duration-300 hover:scale-105 backdrop-blur-lg border border-white/10"
         >
           <ArrowLeft className="h-6 w-6" />
         </Button>
@@ -113,8 +128,8 @@ export const Teleprompter = () => {
         <Button
           variant="ghost"
           size="icon"
-          onClick={handleEditToggle}
-          className="w-12 h-12 rounded-full bg-black/40 hover:bg-black/60 text-white transition-all duration-300 hover:scale-105 backdrop-blur-lg border border-white/10"
+          onClick={() => setIsEditing(!isEditing)}
+          className="w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all duration-300 hover:scale-105 backdrop-blur-lg border border-white/10"
         >
           <Edit2 className="h-6 w-6" />
         </Button>
@@ -127,72 +142,85 @@ export const Teleprompter = () => {
           "px-4 md:px-8 lg:px-16"
         )}
       >
-        {isEditing ? (
-          <Textarea
-            value={editableScript}
-            onChange={(e) => setEditableScript(e.target.value)}
-            className={cn(
-              "w-full h-full bg-transparent border-none resize-none p-8 focus:ring-0 teleprompter-text",
-              "placeholder:text-white/40"
-            )}
-            style={{
-              fontFamily: fontFamily === 'inter' ? 'Inter' : 
-                         fontFamily === 'cal-sans' ? 'Cal Sans' : fontFamily,
-              fontSize: `${fontSize / 16}rem`,
-              color: textColor,
-            }}
-          />
-        ) : (
-          <div 
-            className="teleprompter-text"
-            style={{
-              fontFamily: fontFamily === 'inter' ? 'Inter' : 
-                         fontFamily === 'cal-sans' ? 'Cal Sans' : fontFamily,
-              fontSize: `${fontSize / 16}rem`,
-              color: textColor,
-            }}
-          >
-            {words.map((word, index) => (
-              <span
-                key={index}
-                ref={index === currentWordIndex ? highlightRef : null}
-                onClick={() => handleWordClick(index)}
+        <AnimatePresence mode="wait">
+          {isEditing ? (
+            <motion.div
+              key="editor"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Textarea
+                value={editableScript}
+                onChange={(e) => setEditableScript(e.target.value)}
                 className={cn(
-                  "inline-block mx-1 px-1 py-0.5 rounded cursor-pointer",
-                  "transition-all duration-500 ease-out transform",
-                  "hover:bg-teleprompter-highlight/20",
-                  index === currentWordIndex && [
-                    "word-highlight scale-110",
-                    "bg-teleprompter-highlight/10 font-semibold",
-                    "shadow-lg shadow-blue-500/20"
-                  ],
-                  index < currentWordIndex && "word-past",
-                  index > currentWordIndex && "word-future"
+                  "w-full h-full bg-transparent border-none resize-none p-8 focus:ring-0 teleprompter-text",
+                  "placeholder:text-white/40"
                 )}
                 style={{
-                  color: index === currentWordIndex ? '#3B82F6' : undefined,
-                  transform: index === currentWordIndex ? 'scale(1.1)' : 'scale(1)',
-                  transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)'
+                  fontFamily: fontFamily === 'inter' ? 'Inter' : 
+                           fontFamily === 'cal-sans' ? 'Cal Sans' : fontFamily,
+                  fontSize: `${fontSize / 16}rem`,
+                  color: textColor,
                 }}
-              >
-                {word}
-              </span>
-            ))}
-          </div>
-        )}
+              />
+            </motion.div>
+          ) : (
+            <motion.div 
+              key="teleprompter"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.3 }}
+              className="teleprompter-text"
+              style={{
+                fontFamily: fontFamily === 'inter' ? 'Inter' : 
+                         fontFamily === 'cal-sans' ? 'Cal Sans' : fontFamily,
+                fontSize: `${fontSize / 16}rem`,
+                color: textColor,
+              }}
+            >
+              {words.map((word, index) => (
+                <motion.span
+                  key={index}
+                  ref={index === currentWordIndex ? highlightRef : null}
+                  onClick={() => setCurrentWordIndex(index)}
+                  className={cn(
+                    "inline-block mx-1 px-1 py-0.5 rounded cursor-pointer transition-all duration-300",
+                    "hover:bg-white/10",
+                    index === currentWordIndex && [
+                      "word-highlight scale-110 bg-blue-500/10",
+                      "font-semibold shadow-lg shadow-blue-500/20"
+                    ],
+                    index < currentWordIndex ? "opacity-60" : "opacity-40"
+                  )}
+                  whileHover={{ scale: 1.05 }}
+                  animate={{
+                    scale: index === currentWordIndex ? 1.1 : 1,
+                    opacity: index === currentWordIndex ? 1 : 
+                             index < currentWordIndex ? 0.6 : 0.4
+                  }}
+                >
+                  {word}
+                </motion.span>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
       
-      <div className="fixed inset-x-0 top-0 h-40 bg-gradient-to-b from-background via-background/80 to-transparent pointer-events-none z-20" />
-      <div className="fixed inset-x-0 bottom-0 h-40 bg-gradient-to-t from-background via-background/80 to-transparent pointer-events-none z-20" />
+      <div className="fixed inset-x-0 top-0 h-40 bg-gradient-to-b from-gray-900 via-gray-900/80 to-transparent pointer-events-none z-20" />
+      <div className="fixed inset-x-0 bottom-0 h-40 bg-gradient-to-t from-gray-900 via-gray-900/80 to-transparent pointer-events-none z-20" />
       
       <TeleprompterControls
         isPlaying={isPlaying}
         speed={speed}
         onTogglePlay={togglePlay}
         onSpeedChange={updateSpeed}
-        onExit={handleExit}
-        onRestart={handleRestart}
+        onExit={() => navigate('/home')}
+        onRestart={reset}
       />
-    </div>
+    </motion.div>
   );
 };

@@ -88,23 +88,14 @@ const App = () => {
                   <ChatWrapper />
                 </ProtectedRoute>
               } />
-              <Route path="/affirmations" element={
-                <ProtectedRoute>
-                  <Navigate 
-                    to="/teleprompter" 
-                    replace 
-                    state={{ 
-                      script: affirmationsText,
-                      fontSize: 44,
-                      fontFamily: 'inter',
-                      textColor: '#F8FAFC'
-                    }} 
-                  />
-                </ProtectedRoute>
-              } />
               <Route path="/teleprompter" element={
                 <ProtectedRoute>
                   <Teleprompter />
+                </ProtectedRoute>
+              } />
+              <Route path="/affirmations" element={
+                <ProtectedRoute>
+                  <Teleprompter initialScript={affirmationsText} fontSize={44} fontFamily="inter" textColor="#F8FAFC" />
                 </ProtectedRoute>
               } />
             </Routes>
