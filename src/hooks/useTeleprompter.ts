@@ -10,6 +10,7 @@ export const useTeleprompter = (initialSpeed: number = 2) => {
 
   const togglePlay = useCallback(() => {
     setIsPlaying(prev => !prev);
+    lastTimeRef.current = 0;
   }, []);
 
   const updateSpeed = useCallback((newSpeed: number) => {
@@ -56,7 +57,7 @@ export const useTeleprompter = (initialSpeed: number = 2) => {
       const deltaTime = timestamp - lastTimeRef.current;
       
       if (containerRef.current && isPlaying && autoScrollEnabled) {
-        const pixelsPerSecond = speed * 60;
+        const pixelsPerSecond = speed * 40; // Reduced speed for smoother scrolling
         const scrollAmount = (pixelsPerSecond * deltaTime) / 1000;
         containerRef.current.scrollTop += scrollAmount;
       }

@@ -55,7 +55,7 @@
   display: block;
   transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   transform-origin: center;
-  padding: 0.75em 0;
+  padding: 1.5em 0;
   position: relative;
   z-index: 1;
   transform: perspective(1000px) translateZ(0);
@@ -63,21 +63,22 @@
 }
 
 .line-active {
-  transform: perspective(1000px) translateY(-0.25em) translateZ(50px) scale(1.05);
-  filter: brightness(1.3);
-  text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+  transform: perspective(1000px) translateY(-0.5em) translateZ(100px) scale(1.1);
+  filter: brightness(1.5);
+  text-shadow: 0 0 30px rgba(255, 255, 255, 0.4);
+  z-index: 2;
 }
 
 .line-past {
-  opacity: 0.4;
-  transform: perspective(1000px) translateY(0.5em) translateZ(-30px) scale(0.95);
-  filter: brightness(0.7);
+  opacity: 0.3;
+  transform: perspective(1000px) translateY(1em) translateZ(-50px) scale(0.9);
+  filter: brightness(0.6);
 }
 
 .line-future {
-  opacity: 0.2;
-  transform: perspective(1000px) translateY(-0.5em) translateZ(-30px) scale(0.95);
-  filter: brightness(0.6);
+  opacity: 0.15;
+  transform: perspective(1000px) translateY(-1em) translateZ(-50px) scale(0.9);
+  filter: brightness(0.5);
 }
 
 .word-highlight {
@@ -94,14 +95,15 @@
   animation: gradient-shift 3s ease infinite;
   text-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
   position: relative;
-  transform: scale(1.15);
+  transform: scale(1.2);
+  z-index: 3;
 }
 
 .word-highlight::after {
   content: '';
   position: absolute;
   inset: -4px;
-  background: radial-gradient(circle, rgba(59, 130, 246, 0.3), transparent 70%);
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.4), transparent 70%);
   opacity: 0.8;
   transition: opacity 0.3s ease;
   border-radius: inherit;
@@ -141,21 +143,5 @@
   .animate-gradient {
     animation: gradient-shift 8s linear infinite;
     background-size: 200%;
-  }
-  
-  .hover-lift {
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  
-  .hover-lift:hover {
-    transform: translateY(-2px);
-  }
-  
-  .hover-scale {
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  
-  .hover-scale:hover {
-    transform: scale(1.05);
   }
 }

@@ -41,7 +41,7 @@ export const TeleprompterText = ({
           <div
             key={lineIndex}
             className={cn(
-              "teleprompter-line relative",
+              "teleprompter-line",
               isCurrentLine && "line-active",
               isPastLine && "line-past",
               isFutureLine && "line-future"
@@ -59,14 +59,13 @@ export const TeleprompterText = ({
                   onClick={() => handleWordClick(lineIndex, wordIndex)}
                   className={cn(
                     "inline-block transition-all duration-300 cursor-pointer",
-                    "px-2 py-1 rounded-md mx-1",
                     "hover:bg-teleprompter-highlight/20",
                     isCurrentWord && "word-highlight",
                     isPastWord && "word-past",
                     isFutureWord && "word-future"
                   )}
                 >
-                  {word}
+                  {word}{" "}
                 </span>
               );
             })}
