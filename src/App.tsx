@@ -64,16 +64,13 @@ function ChatWrapper() {
 
 const App = () => {
   const [activeCall, setActiveCall] = useState<string | null>(null);
-
   const affirmationsText = "I am worthy of love and respect. Every day I grow stronger and more confident. I trust in my abilities and embrace new challenges. My potential is limitless. I radiate positivity and attract success. I am grateful for all that I have. I choose to be happy and spread joy to others. I am exactly where I need to be. My future is bright and full of possibilities. I deserve all the good things life has to offer.";
 
   return (
     <QueryClientProvider client={queryClient}>
       <ActiveCallContext.Provider value={{ activeCall, setActiveCall }}>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
+        <BrowserRouter>
+          <TooltipProvider>
             <Routes>
               <Route path="/login" element={<Login />} />
               <Route path="/" element={<Navigate to="/login" replace />} />
@@ -103,8 +100,10 @@ const App = () => {
                 </ProtectedRoute>
               } />
             </Routes>
-          </BrowserRouter>
-        </TooltipProvider>
+            <Toaster />
+            <Sonner />
+          </TooltipProvider>
+        </BrowserRouter>
       </ActiveCallContext.Provider>
     </QueryClientProvider>
   );
