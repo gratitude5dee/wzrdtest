@@ -59,7 +59,7 @@ export function Settings({ open, onOpenChange }: { open: boolean; onOpenChange: 
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden bg-white">
+      <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden bg-white dark:bg-slate-900 rounded-3xl">
         {view === 'main' ? (
           <MainMenu
             firstName={firstName}
@@ -70,7 +70,7 @@ export function Settings({ open, onOpenChange }: { open: boolean; onOpenChange: 
           />
         ) : (
           <div className="h-full flex flex-col">
-            <div className="flex items-center p-6 border-b">
+            <div className="flex items-center p-6 border-b border-gray-100 dark:border-slate-800">
               <Button 
                 variant="ghost" 
                 size="icon" 
@@ -79,11 +79,11 @@ export function Settings({ open, onOpenChange }: { open: boolean; onOpenChange: 
               >
                 <ChevronLeft className="h-6 w-6" />
               </Button>
-              <h2 className="text-2xl font-medium">Profile</h2>
+              <h2 className="text-2xl font-display">Profile</h2>
             </div>
 
             <div className="flex-1 overflow-auto">
-              <div className="p-6 space-y-8">
+              <div className="p-6 space-y-6">
                 <ProfileSection
                   firstName={firstName}
                   lastName={lastName}
@@ -95,9 +95,9 @@ export function Settings({ open, onOpenChange }: { open: boolean; onOpenChange: 
               </div>
             </div>
 
-            <div className="p-6">
+            <div className="p-6 bg-white dark:bg-slate-900 border-t border-gray-100 dark:border-slate-800">
               <Button 
-                className="w-full h-14 rounded-full text-lg"
+                className="w-full h-14 rounded-full text-lg font-medium bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-100"
                 onClick={handleSave}
               >
                 Save changes
