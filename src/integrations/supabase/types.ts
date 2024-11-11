@@ -33,6 +33,179 @@ export type Database = {
         }
         Relationships: []
       }
+      script_analytics: {
+        Row: {
+          completion_percentage: number | null
+          created_at: string | null
+          duration_seconds: number | null
+          id: string
+          reading_speed: number | null
+          script_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          completion_percentage?: number | null
+          created_at?: string | null
+          duration_seconds?: number | null
+          id?: string
+          reading_speed?: number | null
+          script_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          completion_percentage?: number | null
+          created_at?: string | null
+          duration_seconds?: number | null
+          id?: string
+          reading_speed?: number | null
+          script_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "script_analytics_script_id_fkey"
+            columns: ["script_id"]
+            isOneToOne: false
+            referencedRelation: "scripts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "script_analytics_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      script_shares: {
+        Row: {
+          created_at: string | null
+          id: string
+          owner_id: string | null
+          permissions: string | null
+          script_id: string | null
+          shared_with_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          owner_id?: string | null
+          permissions?: string | null
+          script_id?: string | null
+          shared_with_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          owner_id?: string | null
+          permissions?: string | null
+          script_id?: string | null
+          shared_with_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "script_shares_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "script_shares_script_id_fkey"
+            columns: ["script_id"]
+            isOneToOne: false
+            referencedRelation: "scripts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "script_shares_shared_with_id_fkey"
+            columns: ["shared_with_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      scripts: {
+        Row: {
+          category: string | null
+          content: string
+          created_at: string | null
+          id: string
+          is_public: boolean | null
+          last_read_at: string | null
+          title: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          category?: string | null
+          content: string
+          created_at?: string | null
+          id?: string
+          is_public?: boolean | null
+          last_read_at?: string | null
+          title: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          category?: string | null
+          content?: string
+          created_at?: string | null
+          id?: string
+          is_public?: boolean | null
+          last_read_at?: string | null
+          title?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scripts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_preferences: {
+        Row: {
+          created_at: string | null
+          font_family: string | null
+          font_size: number | null
+          id: string
+          text_color: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          font_family?: string | null
+          font_size?: number | null
+          id: string
+          text_color?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          font_family?: string | null
+          font_size?: number | null
+          id?: string
+          text_color?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_preferences_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
