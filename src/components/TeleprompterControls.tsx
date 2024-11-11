@@ -19,7 +19,7 @@ export const TeleprompterControls = ({
   onRestart,
 }: TeleprompterControlsProps) => {
   return (
-    <div className="affirmations-controls">
+    <div className="fixed bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-4 px-6 py-3 bg-white/80 backdrop-blur-lg rounded-full border border-[#785340]/10 shadow-lg z-50">
       <Button
         variant="ghost"
         size="icon"
@@ -53,7 +53,7 @@ export const TeleprompterControls = ({
             max={2}
             step={0.1}
             onValueChange={([value]) => onSpeedChange(value)}
-            className="[&_[role=slider]]:bg-[#785340]"
+            className="[&_[role=slider]]:bg-[#785340] [&_[role=slider]]:border-[#785340]"
           />
         </div>
         <div className="flex flex-col items-center text-xs text-[#785340]/60 gap-1">
