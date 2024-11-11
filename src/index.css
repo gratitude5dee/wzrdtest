@@ -28,6 +28,46 @@
     --ring: 221.2 83.2% 53.3%;
     --radius: 0.5rem;
   }
+
+  /* Prevent text size adjustment on orientation change */
+  html {
+    -webkit-text-size-adjust: 100%;
+    height: 100%;
+    overflow-x: hidden;
+  }
+
+  body {
+    height: 100%;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Improve touch targets */
+  button, a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Prevent pull-to-refresh on mobile */
+  body {
+    overscroll-behavior-y: none;
+  }
+}
+
+/* Mobile-first responsive classes */
+@layer components {
+  .container {
+    @apply px-4 sm:px-6 lg:px-8 mx-auto max-w-7xl;
+  }
+
+  .mobile-safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .mobile-safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
 }
 
 .teleprompter-text {
@@ -136,5 +176,26 @@
 
   .hover-scale:hover {
     transform: scale(1.05);
+  }
+}
+
+/* Mobile optimizations */
+@media (max-width: 640px) {
+  .teleprompter-text {
+    font-size: 2rem;
+    padding: 50vh 0;
+    max-width: 100%;
+  }
+
+  .word-container {
+    margin: 0.05em;
+    padding: 0.05em 0.15em;
+  }
+}
+
+/* PWA display modes */
+@media all and (display-mode: standalone) {
+  .hide-in-pwa {
+    display: none;
   }
 }
