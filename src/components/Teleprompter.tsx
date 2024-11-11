@@ -9,7 +9,6 @@ import { ArrowLeft, Edit2 } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { TeleprompterContainer } from './teleprompter/TeleprompterContainer';
 import { TeleprompterWord } from './teleprompter/TeleprompterWord';
-import { TeleprompterText } from './teleprompter/TeleprompterText';
 
 interface TeleprompterProps {
   initialScript?: string;
@@ -39,13 +38,16 @@ export const Teleprompter = ({
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
   const [editableScript, setEditableScript] = useState('');
-  
   const { script, fontSize, fontFamily, textColor } = (location.state as TeleprompterState) || {
     script: initialScript,
     fontSize: initialFontSize,
     fontFamily: initialFontFamily,
     textColor: initialTextColor,
   };
+  
+  const highlightRef = useRef<HTMLSpanElement>(null);
+  const firstWordRef = useRef<HTMLSpanElement>(null);
+  const scrollIntervalRef = useRef<number>();
   
   const {
     isPlaying,
@@ -68,29 +70,32 @@ export const Teleprompter = ({
     setEditableScript(script);
   }, [script, navigate]);
 
-  // Update word index and scroll position
   useEffect(() => {
-    let intervalId: number;
-    
     if (isPlaying) {
-      intervalId = window.setInterval(() => {
+      scrollIntervalRef.current = window.setInterval(() => {
         setCurrentWordIndex(prev => {
           if (prev >= words.length - 1) {
-            clearInterval(intervalId);
+            clearInterval(scrollIntervalRef.current);
             togglePlay();
             return prev;
           }
           return prev + 1;
         });
       }, 60000 / (speed * 200));
+      
+      return () => {
+        if (scrollIntervalRef.current) {
+          clearInterval(scrollIntervalRef.current);
+        }
+      };
     }
-    
-    return () => {
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
-    };
   }, [isPlaying, speed, words.length, togglePlay]);
+
+  useEffect(() => {
+    if (highlightRef.current) {
+      updateScrollPosition(highlightRef.current);
+    }
+  }, [currentWordIndex, updateScrollPosition]);
 
   const handleWordClick = useCallback((index: number) => {
     setCurrentWordIndex(index);
@@ -100,6 +105,9 @@ export const Teleprompter = ({
   }, [isPlaying, togglePlay]);
 
   const handleExit = useCallback(() => {
+    if (scrollIntervalRef.current) {
+      clearInterval(scrollIntervalRef.current);
+    }
     reset();
     setCurrentWordIndex(0);
     navigate('/');
@@ -114,6 +122,9 @@ export const Teleprompter = ({
   }, [isEditing, editableScript]);
 
   const handleRestart = useCallback(() => {
+    if (scrollIntervalRef.current) {
+      clearInterval(scrollIntervalRef.current);
+    }
     reset();
     setCurrentWordIndex(0);
   }, [reset]);
@@ -149,8 +160,7 @@ export const Teleprompter = ({
       
       <TeleprompterContainer 
         containerRef={containerRef}
-        currentWordIndex={currentWordIndex}
-        words={words}
+        firstWordRef={firstWordRef}
         autoStart={autoStart}
       >
         {isEditing ? (
@@ -162,15 +172,28 @@ export const Teleprompter = ({
             textColor={textColor}
           />
         ) : (
-          <TeleprompterText
-            words={words}
-            currentWordIndex={currentWordIndex}
-            handleWordClick={handleWordClick}
-            fontFamily={fontFamily}
-            fontSize={fontSize}
-            textColor={textColor}
-            updateScrollPosition={updateScrollPosition}
-          />
+          <div 
+            className="teleprompter-text max-w-4xl mx-auto"
+            style={{
+              fontFamily: fontFamily === 'inter' ? 'Inter' : 
+                         fontFamily === 'cal-sans' ? 'Cal Sans' : fontFamily,
+              fontSize: `${fontSize / 16}rem`,
+              color: textColor,
+            }}
+          >
+            {words.map((word, index) => (
+              <TeleprompterWord
+                key={index}
+                word={word}
+                index={index}
+                currentWordIndex={currentWordIndex}
+                onClick={handleWordClick}
+                highlightRef={index === currentWordIndex ? highlightRef : 
+                            index === 0 ? firstWordRef : null}
+                textColor={textColor}
+              />
+            ))}
+          </div>
         )}
       </TeleprompterContainer>
       
