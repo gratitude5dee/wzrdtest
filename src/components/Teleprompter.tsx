@@ -50,6 +50,7 @@ export const Teleprompter = ({
   const firstWordRef = useRef<HTMLSpanElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollToWord = useScrollToWord();
+  const scrollIntervalRef = useRef<number>();
   
   const {
     isPlaying,
@@ -72,10 +73,10 @@ export const Teleprompter = ({
 
   useEffect(() => {
     if (isPlaying) {
-      const interval = setInterval(() => {
+      scrollIntervalRef.current = window.setInterval(() => {
         setCurrentWordIndex(prev => {
           if (prev >= words.length - 1) {
-            clearInterval(interval);
+            clearInterval(scrollIntervalRef.current);
             togglePlay();
             return prev;
           }
@@ -83,7 +84,11 @@ export const Teleprompter = ({
         });
       }, 60000 / (speed * 200));
       
-      return () => clearInterval(interval);
+      return () => {
+        if (scrollIntervalRef.current) {
+          clearInterval(scrollIntervalRef.current);
+        }
+      };
     }
   }, [isPlaying, speed, words.length, togglePlay]);
 
@@ -101,6 +106,9 @@ export const Teleprompter = ({
   }, [isPlaying, togglePlay]);
 
   const handleExit = useCallback(() => {
+    if (scrollIntervalRef.current) {
+      clearInterval(scrollIntervalRef.current);
+    }
     reset();
     setCurrentWordIndex(0);
     navigate('/');
@@ -113,6 +121,14 @@ export const Teleprompter = ({
     }
     setIsEditing(!isEditing);
   }, [isEditing, editableScript]);
+
+  const handleRestart = useCallback(() => {
+    if (scrollIntervalRef.current) {
+      clearInterval(scrollIntervalRef.current);
+    }
+    reset();
+    setCurrentWordIndex(0);
+  }, [reset]);
 
   return (
     <div className="min-h-screen bg-background overflow-hidden relative">
@@ -191,10 +207,7 @@ export const Teleprompter = ({
         onTogglePlay={togglePlay}
         onSpeedChange={updateSpeed}
         onExit={handleExit}
-        onRestart={() => {
-          reset();
-          setCurrentWordIndex(0);
-        }}
+        onRestart={handleRestart}
       />
     </div>
   );
