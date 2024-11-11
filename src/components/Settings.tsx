@@ -33,9 +33,15 @@ export function Settings({ open, onOpenChange }: { open: boolean; onOpenChange: 
   useEffect(() => {
     if (open) {
       loadUserProfile();
-      setView('main');
     }
   }, [open, loadUserProfile]);
+
+  // Reset view to main menu when dialog is closed
+  useEffect(() => {
+    if (!open) {
+      setView('main');
+    }
+  }, [open]);
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
