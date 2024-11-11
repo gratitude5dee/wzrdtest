@@ -59,6 +59,7 @@
   -webkit-background-clip: text;
   color: transparent;
   transition: all 0.3s ease;
+  animation: gradient-shift 3s ease infinite;
 }
 
 .word-past {

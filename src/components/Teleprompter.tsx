@@ -3,6 +3,7 @@ import { useTeleprompter } from '@/hooks/useTeleprompter';
 import { TeleprompterControls } from '@/components/TeleprompterControls';
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
+import { cn } from "@/lib/utils";
 
 interface TeleprompterState {
   script: string;
@@ -89,7 +90,10 @@ export const Teleprompter = () => {
       
       <div
         ref={containerRef}
-        className="h-screen overflow-hidden relative z-10 smooth-scroll"
+        className={cn(
+          "h-screen overflow-hidden relative z-10 smooth-scroll",
+          "px-4 md:px-8 lg:px-16"
+        )}
       >
         <div
           style={{
@@ -113,18 +117,17 @@ export const Teleprompter = () => {
                 key={virtualItem.key}
                 data-index={virtualItem.index}
                 onClick={() => handleWordClick(virtualItem.index)}
-                className={`inline-block mx-1 px-1 py-0.5 rounded transition-all duration-300 cursor-pointer hover:bg-teleprompter-highlight/20 ${
-                  virtualItem.index === currentWordIndex
-                    ? 'text-teleprompter-highlight scale-110 bg-teleprompter-highlight/10 font-semibold animate-highlight'
-                    : virtualItem.index < currentWordIndex
-                    ? `${textColor}/60`
-                    : `${textColor}/40`
-                }`}
+                className={cn(
+                  "inline-block mx-1 px-1 py-0.5 rounded transition-all duration-300 cursor-pointer",
+                  "hover:bg-teleprompter-highlight/20",
+                  virtualItem.index === currentWordIndex && "word-highlight scale-110",
+                  virtualItem.index < currentWordIndex && "word-past",
+                  virtualItem.index > currentWordIndex && "word-future"
+                )}
                 style={{
                   fontFamily: fontFamily === 'inter' ? 'Inter' : 
                            fontFamily === 'cal-sans' ? 'Cal Sans' : fontFamily,
                   fontSize: `${fontSize / 16}rem`,
-                  color: virtualItem.index === currentWordIndex ? '#3B82F6' : undefined,
                 }}
               >
                 {words[virtualItem.index]}
