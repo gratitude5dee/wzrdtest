@@ -20,18 +20,18 @@ export function ProfileSection({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="space-y-8"
+      className="space-y-6"
     >
-      <div className="space-y-2">
-        <h3 className="text-3xl font-semibold text-gray-900 tracking-tight">Personal details</h3>
-        <p className="text-gray-500">Update your personal information.</p>
+      <div className="space-y-1.5">
+        <h3 className="text-xl font-semibold text-gray-900">Personal details</h3>
+        <p className="text-sm text-gray-500">Update your personal information.</p>
       </div>
       
-      <div className="space-y-6">
-        <div className="space-y-4">
+      <div className="grid gap-4">
+        <div className="space-y-2.5">
           <Label 
             htmlFor="firstName" 
-            className="text-base font-medium text-gray-700"
+            className="text-sm font-medium text-gray-700"
           >
             First name
           </Label>
@@ -39,15 +39,15 @@ export function ProfileSection({
             id="firstName"
             value={firstName}
             onChange={(e) => onFirstNameChange(e.target.value)}
-            className="h-14 text-lg rounded-2xl border-gray-200 bg-white/50 backdrop-blur-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200"
+            className="h-10 text-sm rounded-lg border-gray-200 bg-white/50 backdrop-blur-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-200 transition-all duration-200"
             placeholder="Enter your first name"
           />
         </div>
         
-        <div className="space-y-4">
+        <div className="space-y-2.5">
           <Label 
             htmlFor="lastName" 
-            className="text-base font-medium text-gray-700"
+            className="text-sm font-medium text-gray-700"
           >
             Last name
           </Label>
@@ -55,7 +55,7 @@ export function ProfileSection({
             id="lastName"
             value={lastName}
             onChange={(e) => onLastNameChange(e.target.value)}
-            className="h-14 text-lg rounded-2xl border-gray-200 bg-white/50 backdrop-blur-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200"
+            className="h-10 text-sm rounded-lg border-gray-200 bg-white/50 backdrop-blur-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-200 transition-all duration-200"
             placeholder="Enter your last name"
           />
         </div>
