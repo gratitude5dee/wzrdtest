@@ -54,6 +54,10 @@ export default {
         },
       },
       keyframes: {
+        "magnetic-float": {
+          "0%, 100%": { transform: "translate(calc(var(--mouse-x, 0) * 0.1px), calc(var(--mouse-y, 0) * 0.1px)) scale(1)" },
+          "50%": { transform: "translate(calc(var(--mouse-x, 0) * 0.15px), calc(var(--mouse-y, 0) * 0.15px)) scale(1.02)" },
+        },
         "card-hover": {
           "0%, 100%": { transform: "translateY(0) scale(1)" },
           "50%": { transform: "translateY(-8px) scale(1.02)" },
@@ -72,17 +76,12 @@ export default {
           "0%, 100%": { borderColor: "rgba(255, 255, 255, 0.3)" },
           "50%": { borderColor: "rgba(255, 255, 255, 0.8)" },
         },
-        "gradient-shift": {
-          "0%": { backgroundPosition: "0% 50%" },
-          "50%": { backgroundPosition: "100% 50%" },
-          "100%": { backgroundPosition: "0% 50%" },
-        },
       },
       animation: {
+        "magnetic-float": "magnetic-float 3s ease-in-out infinite",
         "card-hover": "card-hover 3s ease-in-out infinite",
         "glow-pulse": "glow-pulse 3s ease-in-out infinite",
         "border-glow": "border-glow 3s ease-in-out infinite",
-        "gradient-shift": "gradient-shift 3s ease-in-out infinite",
       },
     },
   },
