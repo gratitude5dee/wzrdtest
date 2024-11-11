@@ -54,7 +54,7 @@ export const Teleprompter = () => {
           }
           return prev + 1;
         });
-      }, 60000 / (speed * 200));
+      }, 60000 / (speed * 200)); // Adjusted timing for smoother transitions
       
       return () => clearInterval(interval);
     }
@@ -62,7 +62,13 @@ export const Teleprompter = () => {
 
   useEffect(() => {
     if (highlightRef.current) {
-      updateScrollPosition(highlightRef.current);
+      const element = highlightRef.current;
+      element.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+        inline: 'center'
+      });
+      updateScrollPosition(element);
     }
   }, [currentWordIndex, updateScrollPosition]);
 
@@ -151,15 +157,22 @@ export const Teleprompter = () => {
                 key={index}
                 ref={index === currentWordIndex ? highlightRef : null}
                 onClick={() => handleWordClick(index)}
-                className={`inline-block mx-1 px-1 py-0.5 rounded transition-all duration-300 cursor-pointer hover:bg-teleprompter-highlight/20 ${
-                  index === currentWordIndex
-                    ? 'text-teleprompter-highlight scale-110 bg-teleprompter-highlight/10 font-semibold'
-                    : index < currentWordIndex
-                    ? `${textColor}/60`
-                    : `${textColor}/40`
-                }`}
+                className={cn(
+                  "inline-block mx-1 px-1 py-0.5 rounded cursor-pointer",
+                  "transition-all duration-500 ease-out transform",
+                  "hover:bg-teleprompter-highlight/20",
+                  index === currentWordIndex && [
+                    "word-highlight scale-110",
+                    "bg-teleprompter-highlight/10 font-semibold",
+                    "shadow-lg shadow-blue-500/20"
+                  ],
+                  index < currentWordIndex && "word-past",
+                  index > currentWordIndex && "word-future"
+                )}
                 style={{
-                  color: index === currentWordIndex ? '#3B82F6' : undefined
+                  color: index === currentWordIndex ? '#3B82F6' : undefined,
+                  transform: index === currentWordIndex ? 'scale(1.1)' : 'scale(1)',
+                  transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)'
                 }}
               >
                 {word}

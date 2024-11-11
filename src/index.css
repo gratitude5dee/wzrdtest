@@ -45,31 +45,43 @@
 }
 
 .smooth-scroll {
-  transition: transform 50ms linear;
+  transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
 
 .word-highlight {
   display: inline-block;
   padding: 0.1em 0.3em;
   margin: 0 0.1em;
-  border-radius: 0.2em;
-  background: linear-gradient(90deg, #60A5FA, #3B82F6, #2563EB);
+  border-radius: 0.3em;
+  background: linear-gradient(120deg, #60A5FA, #3B82F6, #2563EB);
   background-size: 200% auto;
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
-  transition: all 0.3s ease;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   animation: gradient-shift 3s ease infinite;
+  text-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
 }
 
 .word-past {
   opacity: 0.6;
-  transition: all 0.3s ease;
+  transform: scale(0.98);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .word-future {
   opacity: 0.4;
-  transition: all 0.3s ease;
+  transform: scale(0.98);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 @layer utilities {
