@@ -41,25 +41,17 @@ export const TeleprompterText = ({
           onClick={() => handleWordClick(index)}
           className={cn(
             "inline-flex items-center justify-center",
-            "mx-1 px-1 py-0.5 rounded cursor-pointer min-h-[1.8em]",
-            "transition-all duration-400 ease-in-out",
+            "mx-1 px-1 py-0.5 rounded cursor-pointer",
             index === currentWordIndex && "word-highlight",
             index < currentWordIndex ? "word-past" : "word-future"
           )}
-          layout="position"
-          layoutId={`word-${index}`}
           animate={{
-            scale: index === currentWordIndex ? 1.1 : 1,
             opacity: index === currentWordIndex ? 1 : 
                      index < currentWordIndex ? 0.6 : 0.4,
           }}
           transition={{
             duration: 0.4,
             ease: [0.4, 0, 0.2, 1],
-            layout: {
-              duration: 0.4,
-              ease: [0.4, 0, 0.2, 1],
-            }
           }}
         >
           {word}
