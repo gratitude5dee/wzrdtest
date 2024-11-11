@@ -2,11 +2,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useTeleprompter } from '@/hooks/useTeleprompter';
 import { TeleprompterControls } from '@/components/TeleprompterControls';
 import { useEffect, useState, useRef, useCallback } from 'react';
-import { Button } from "@/components/ui/button";
-import { Edit2, ArrowLeft } from 'lucide-react';
-import { Textarea } from "@/components/ui/textarea";
-import { toast } from 'sonner';
-import { cn } from '@/lib/utils';
+import { useVirtualizer } from '@tanstack/react-virtual';
 
 interface TeleprompterState {
   script: string;
@@ -20,10 +16,8 @@ export const Teleprompter = () => {
   const navigate = useNavigate();
   const [words, setWords] = useState<string[]>([]);
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
-  const [isEditing, setIsEditing] = useState(false);
-  const [editedText, setEditedText] = useState('');
   const { script, fontSize, fontFamily, textColor } = (location.state as TeleprompterState) || {};
-  const highlightRef = useRef<HTMLSpanElement>(null);
+  const parentRef = useRef<HTMLDivElement>(null);
   
   const {
     isPlaying,
@@ -35,17 +29,23 @@ export const Teleprompter = () => {
     updateScrollPosition
   } = useTeleprompter(2);
 
+  const rowVirtualizer = useVirtualizer({
+    count: words.length,
+    getScrollElement: () => containerRef.current,
+    estimateSize: useCallback(() => fontSize * 1.5, [fontSize]),
+    overscan: 20,
+  });
+
   useEffect(() => {
     if (!script) {
       navigate('/');
       return;
     }
     setWords(script.split(/\s+/).filter(word => word.length > 0));
-    setEditedText(script);
   }, [script, navigate]);
 
   useEffect(() => {
-    if (isPlaying && !isEditing) {
+    if (isPlaying) {
       const interval = setInterval(() => {
         setCurrentWordIndex(prev => {
           if (prev >= words.length - 1) {
@@ -59,13 +59,19 @@ export const Teleprompter = () => {
       
       return () => clearInterval(interval);
     }
-  }, [isPlaying, speed, words.length, togglePlay, isEditing]);
+  }, [isPlaying, speed, words.length, togglePlay]);
 
   useEffect(() => {
-    if (highlightRef.current && !isEditing) {
-      updateScrollPosition(highlightRef.current);
+    if (containerRef.current) {
+      const virtualItem = rowVirtualizer.getVirtualItems().find(
+        virtualItem => virtualItem.index === currentWordIndex
+      );
+      
+      if (virtualItem) {
+        containerRef.current.scrollTop = virtualItem.start - containerRef.current.clientHeight / 2;
+      }
     }
-  }, [currentWordIndex, updateScrollPosition, isEditing]);
+  }, [currentWordIndex, rowVirtualizer]);
 
   const handleExit = useCallback(() => {
     reset();
@@ -74,98 +80,62 @@ export const Teleprompter = () => {
   }, [reset, navigate]);
 
   const handleWordClick = useCallback((index: number) => {
-    if (!isEditing) {
-      setCurrentWordIndex(index);
-    }
-  }, [isEditing]);
-
-  const handleEditToggle = () => {
-    if (isEditing) {
-      const newWords = editedText.split(/\s+/).filter(word => word.length > 0);
-      setWords(newWords);
-      setCurrentWordIndex(Math.min(currentWordIndex, newWords.length - 1));
-      toast.success('Text updated successfully');
-    }
-    setIsEditing(!isEditing);
-  };
-
-  const handleBack = () => {
-    navigate('/home');
-  };
+    setCurrentWordIndex(index);
+  }, []);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white overflow-hidden relative">
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={handleBack}
-        className="absolute top-6 left-6 z-50 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all duration-300 hover:scale-105"
-      >
-        <ArrowLeft className="h-6 w-6" />
-      </Button>
-
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={handleEditToggle}
-        className="absolute top-6 right-6 z-50 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all duration-300 hover:scale-105"
-      >
-        <Edit2 className="h-6 w-6" />
-      </Button>
-
+    <div className="min-h-screen bg-teleprompter-bg overflow-hidden relative">
       <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent pointer-events-none" />
       
       <div
         ref={containerRef}
-        className="h-screen overflow-hidden relative z-10 smooth-scroll px-8"
+        className="h-screen overflow-hidden relative z-10 smooth-scroll"
       >
-        {isEditing ? (
-          <div className="max-w-4xl mx-auto pt-24">
-            <Textarea
-              value={editedText}
-              onChange={(e) => setEditedText(e.target.value)}
-              className="min-h-[60vh] w-full bg-black/30 border-white/20 text-white resize-none p-6 rounded-xl"
-              style={{
-                fontFamily: fontFamily === 'inter' ? 'Inter' : 
-                         fontFamily === 'cal-sans' ? 'Cal Sans' : fontFamily,
-                fontSize: `${fontSize / 16}rem`,
-                lineHeight: '1.8',
-                whiteSpace: 'pre-wrap',
-                wordSpacing: '0.2em'
-              }}
-            />
-          </div>
-        ) : (
-          <div 
-            className="teleprompter-text"
+        <div
+          style={{
+            height: `${rowVirtualizer.getTotalSize()}px`,
+            width: '100%',
+            position: 'relative',
+          }}
+        >
+          <div
             style={{
-              fontFamily: fontFamily === 'inter' ? 'Inter' : 
-                       fontFamily === 'cal-sans' ? 'Cal Sans' : fontFamily,
-              fontSize: `${fontSize / 16}rem`,
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              transform: `translateY(${rowVirtualizer.getVirtualItems()[0]?.start ?? 0}px)`,
             }}
+            className="teleprompter-text"
           >
-            {words.map((word, index) => (
+            {rowVirtualizer.getVirtualItems().map(virtualItem => (
               <span
-                key={index}
-                ref={index === currentWordIndex ? highlightRef : null}
-                onClick={() => handleWordClick(index)}
-                className={cn(
-                  "inline-block px-2 py-1 rounded cursor-pointer transition-all duration-300",
-                  index === currentWordIndex && "word-highlight",
-                  index < currentWordIndex && "word-past",
-                  index > currentWordIndex && "word-future",
-                  "hover:opacity-100"
-                )}
+                key={virtualItem.key}
+                data-index={virtualItem.index}
+                onClick={() => handleWordClick(virtualItem.index)}
+                className={`inline-block mx-1 px-1 py-0.5 rounded transition-all duration-300 cursor-pointer hover:bg-teleprompter-highlight/20 ${
+                  virtualItem.index === currentWordIndex
+                    ? 'text-teleprompter-highlight scale-110 bg-teleprompter-highlight/10 font-semibold animate-highlight'
+                    : virtualItem.index < currentWordIndex
+                    ? `${textColor}/60`
+                    : `${textColor}/40`
+                }`}
+                style={{
+                  fontFamily: fontFamily === 'inter' ? 'Inter' : 
+                           fontFamily === 'cal-sans' ? 'Cal Sans' : fontFamily,
+                  fontSize: `${fontSize / 16}rem`,
+                  color: virtualItem.index === currentWordIndex ? '#3B82F6' : undefined,
+                }}
               >
-                {word}
+                {words[virtualItem.index]}
               </span>
             ))}
           </div>
-        )}
+        </div>
       </div>
       
-      <div className="fixed inset-x-0 top-0 h-40 bg-gradient-to-b from-slate-950 via-slate-950/80 to-transparent pointer-events-none z-20" />
-      <div className="fixed inset-x-0 bottom-0 h-40 bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent pointer-events-none z-20" />
+      <div className="fixed inset-x-0 top-0 h-40 bg-gradient-to-b from-teleprompter-bg via-teleprompter-bg/80 to-transparent pointer-events-none z-20" />
+      <div className="fixed inset-x-0 bottom-0 h-40 bg-gradient-to-t from-teleprompter-bg via-teleprompter-bg/80 to-transparent pointer-events-none z-20" />
       
       <TeleprompterControls
         isPlaying={isPlaying}
