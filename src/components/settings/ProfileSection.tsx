@@ -15,27 +15,27 @@ export function ProfileSection({
   onLastNameChange,
 }: ProfileSectionProps) {
   return (
-    <div className="space-y-8 bg-white dark:bg-slate-900 rounded-3xl p-8">
+    <div className="space-y-4">
       <div className="space-y-6">
-        <h3 className="text-2xl font-display">Personal details</h3>
-        <div className="space-y-6">
+        <h3 className="text-2xl font-medium">Personal details</h3>
+        <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="firstName" className="text-gray-600 text-lg">First name</Label>
+            <Label htmlFor="firstName" className="text-gray-600">First name</Label>
             <Input
               id="firstName"
               value={firstName}
               onChange={(e) => onFirstNameChange(e.target.value)}
-              className="h-14 rounded-[20px] text-xl bg-gray-50 border-gray-100 px-6"
+              className="h-14 rounded-2xl text-lg bg-gray-50 border-gray-100"
               placeholder="Enter your first name"
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="lastName" className="text-gray-600 text-lg">Last name</Label>
+            <Label htmlFor="lastName" className="text-gray-600">Last name</Label>
             <Input
               id="lastName"
               value={lastName}
               onChange={(e) => onLastNameChange(e.target.value)}
-              className="h-14 rounded-[20px] text-xl bg-gray-50 border-gray-100 px-6"
+              className="h-14 rounded-2xl text-lg bg-gray-50 border-gray-100"
               placeholder="Enter your last name"
             />
           </div>

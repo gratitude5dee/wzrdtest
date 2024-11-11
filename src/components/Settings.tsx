@@ -72,7 +72,7 @@ export function Settings({ open, onOpenChange }: { open: boolean; onOpenChange: 
     switch (view) {
       case 'profile':
         return (
-          <div className="h-full flex flex-col bg-white">
+          <div className="h-full flex flex-col">
             <div className="flex items-center p-6 border-b border-gray-100">
               <Button 
                 variant="ghost" 
@@ -98,9 +98,9 @@ export function Settings({ open, onOpenChange }: { open: boolean; onOpenChange: 
               </div>
             </div>
 
-            <div className="p-6 bg-white border-t border-gray-100">
+            <div className="p-6 border-t border-gray-100">
               <Button 
-                className="w-full h-12 rounded-full text-base font-medium bg-gray-500 hover:bg-gray-600 text-white"
+                className="w-full h-12 rounded-full text-base font-medium bg-black hover:bg-black/90 text-white"
                 onClick={handleSave}
               >
                 Save changes
@@ -110,7 +110,7 @@ export function Settings({ open, onOpenChange }: { open: boolean; onOpenChange: 
         );
       case 'preferences':
         return (
-          <div className="h-full flex flex-col bg-white">
+          <div className="h-full flex flex-col">
             <div className="flex items-center p-6 border-b border-gray-100">
               <Button 
                 variant="ghost" 
@@ -136,9 +136,9 @@ export function Settings({ open, onOpenChange }: { open: boolean; onOpenChange: 
               </div>
             </div>
 
-            <div className="p-6 bg-white border-t border-gray-100">
+            <div className="p-6 border-t border-gray-100">
               <Button 
-                className="w-full h-12 rounded-full text-base font-medium bg-gray-500 hover:bg-gray-600 text-white"
+                className="w-full h-12 rounded-full text-base font-medium bg-black hover:bg-black/90 text-white"
                 onClick={handleSave}
               >
                 Save changes
@@ -162,7 +162,7 @@ export function Settings({ open, onOpenChange }: { open: boolean; onOpenChange: 
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[400px] p-0 overflow-hidden bg-white">
+      <DialogContent className="sm:max-w-[400px] p-0 overflow-hidden">
         {renderContent()}
       </DialogContent>
     </Dialog>
