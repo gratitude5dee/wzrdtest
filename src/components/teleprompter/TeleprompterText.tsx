@@ -23,9 +23,9 @@ export const TeleprompterText = ({
   return (
     <motion.div 
       className="teleprompter-text"
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
       transition={{ duration: 0.3 }}
       style={{
         fontFamily: fontFamily === 'inter' ? 'Inter' : 
@@ -40,20 +40,26 @@ export const TeleprompterText = ({
           ref={index === currentWordIndex ? highlightRef : null}
           onClick={() => handleWordClick(index)}
           className={cn(
-            "inline-block mx-1 px-1 py-0.5 rounded cursor-pointer transition-all duration-300",
-            "hover:bg-white/10 backdrop-blur-sm",
-            index === currentWordIndex && [
-              "word-highlight scale-110 bg-blue-500/10",
-              "font-semibold shadow-lg shadow-blue-500/20"
-            ],
-            index < currentWordIndex ? "opacity-60" : "opacity-40"
+            "inline-flex items-center justify-center",
+            "mx-1 px-1 py-0.5 rounded cursor-pointer min-h-[1.8em]",
+            "transition-all duration-400 ease-in-out",
+            index === currentWordIndex && "word-highlight",
+            index < currentWordIndex ? "word-past" : "word-future"
           )}
-          whileHover={{ scale: 1.05 }}
+          layout="position"
+          layoutId={`word-${index}`}
           animate={{
             scale: index === currentWordIndex ? 1.1 : 1,
             opacity: index === currentWordIndex ? 1 : 
                      index < currentWordIndex ? 0.6 : 0.4,
-            transition: { duration: 0.3 }
+          }}
+          transition={{
+            duration: 0.4,
+            ease: [0.4, 0, 0.2, 1],
+            layout: {
+              duration: 0.4,
+              ease: [0.4, 0, 0.2, 1],
+            }
           }}
         >
           {word}

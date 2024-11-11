@@ -42,6 +42,9 @@
   letter-spacing: -0.02em;
   white-space: pre-wrap;
   word-spacing: 0.2em;
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
 }
 
 .smooth-scroll {
@@ -52,7 +55,10 @@
 }
 
 .word-highlight {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 1.8em;
   padding: 0.1em 0.3em;
   margin: 0 0.1em;
   border-radius: 0.3em;
@@ -61,7 +67,7 @@
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
-  transition: all 0.8s cubic-bezier(0.2, 0, 0, 1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   animation: gradient-shift 8s ease infinite;
   text-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
   position: relative;
@@ -77,22 +83,26 @@
   border-radius: inherit;
   z-index: -1;
   opacity: 0;
-  transition: opacity 0.8s cubic-bezier(0.2, 0, 0, 1);
+  transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   animation: glow-ripple 4s ease-in-out infinite;
 }
 
 .word-past {
   opacity: 0.5;
-  transform: scale(0.998);
-  transition: all 0.8s cubic-bezier(0.2, 0, 0, 1);
-  filter: blur(0.3px);
+  transform: scale(1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  min-height: 1.8em;
+  display: inline-flex;
+  align-items: center;
 }
 
 .word-future {
   opacity: 0.3;
-  transform: scale(0.998);
-  transition: all 0.8s cubic-bezier(0.2, 0, 0, 1);
-  filter: blur(0.3px);
+  transform: scale(1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  min-height: 1.8em;
+  display: inline-flex;
+  align-items: center;
 }
 
 @keyframes gradient-shift {
