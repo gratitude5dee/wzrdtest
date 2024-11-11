@@ -66,7 +66,7 @@ export const Teleprompter = () => {
           }
           return prev + 1;
         });
-      }, 60000 / (speed * 200));
+      }, 60000 / (speed * 200)); // Adjust timing based on speed
       
       return () => clearInterval(wordInterval);
     }

@@ -6,6 +6,7 @@ export const useTeleprompter = (initialSpeed: number = 2) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const animationFrameRef = useRef<number>();
   const lastTimeRef = useRef<number>(0);
+  const [autoScrollEnabled, setAutoScrollEnabled] = useState<boolean>(true);
   const mountedRef = useRef<boolean>(true);
 
   const togglePlay = useCallback(() => {
@@ -18,18 +19,19 @@ export const useTeleprompter = (initialSpeed: number = 2) => {
   }, []);
 
   const reset = useCallback(() => {
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current);
+      animationFrameRef.current = undefined;
+    }
+    setIsPlaying(false);
     if (containerRef.current) {
       containerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
     }
-    setIsPlaying(false);
     lastTimeRef.current = 0;
-    if (animationFrameRef.current) {
-      cancelAnimationFrame(animationFrameRef.current);
-    }
   }, []);
 
   const updateScrollPosition = useCallback((element: HTMLElement | null) => {
-    if (!element || !containerRef.current) return;
+    if (!element || !containerRef.current || !autoScrollEnabled) return;
     
     const container = containerRef.current;
     const containerHeight = container.clientHeight;
@@ -41,28 +43,31 @@ export const useTeleprompter = (initialSpeed: number = 2) => {
       top: targetScroll,
       behavior: 'smooth'
     });
-  }, []);
+  }, [autoScrollEnabled]);
 
   useEffect(() => {
     mountedRef.current = true;
-
+    
     const animate = (timestamp: number) => {
-      if (!mountedRef.current || !isPlaying) return;
-
+      if (!mountedRef.current) return;
+      
       if (!lastTimeRef.current) {
         lastTimeRef.current = timestamp;
       }
-
+      
       const deltaTime = timestamp - lastTimeRef.current;
       
-      if (containerRef.current) {
-        const pixelsPerSecond = speed * 30;
+      if (containerRef.current && isPlaying && autoScrollEnabled) {
+        const pixelsPerSecond = speed * 30; // Adjusted for smoother scrolling
         const scrollAmount = (pixelsPerSecond * deltaTime) / 1000;
         containerRef.current.scrollTop += scrollAmount;
       }
-
+      
       lastTimeRef.current = timestamp;
-      animationFrameRef.current = requestAnimationFrame(animate);
+      
+      if (mountedRef.current && isPlaying) {
+        animationFrameRef.current = requestAnimationFrame(animate);
+      }
     };
 
     if (isPlaying) {
@@ -75,7 +80,7 @@ export const useTeleprompter = (initialSpeed: number = 2) => {
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [isPlaying, speed]);
+  }, [isPlaying, speed, autoScrollEnabled]);
 
   return {
     isPlaying,
@@ -84,6 +89,7 @@ export const useTeleprompter = (initialSpeed: number = 2) => {
     togglePlay,
     updateSpeed,
     reset,
-    updateScrollPosition
+    updateScrollPosition,
+    setAutoScrollEnabled
   };
 };
