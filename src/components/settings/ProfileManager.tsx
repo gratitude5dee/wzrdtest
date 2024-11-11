@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -20,35 +20,34 @@ export function useProfileManager() {
         .from('profiles')
         .select('*')
         .eq('id', user.id)
-        .single();
+        .maybeSingle();
 
       if (profileError) {
-        // If profile doesn't exist, create it
-        if (profileError.code === 'PGRST116') {
-          const { error: insertError } = await supabase
-            .from('profiles')
-            .insert([{ 
-              id: user.id,
-              email: user.email,
-              first_name: "",
-              last_name: ""
-            }]);
-
-          if (insertError) {
-            throw new Error("Failed to create profile");
-          }
-          
-          setEmail(user.email || "");
-          return;
-        }
         throw new Error("Failed to load profile");
       }
 
-      if (profile) {
-        setFirstName(profile.first_name || "");
-        setLastName(profile.last_name || "");
-        setEmail(profile.email || "");
+      if (!profile) {
+        // Create new profile if it doesn't exist
+        const { error: insertError } = await supabase
+          .from('profiles')
+          .insert([{ 
+            id: user.id,
+            email: user.email,
+            first_name: "",
+            last_name: ""
+          }]);
+
+        if (insertError) {
+          throw new Error("Failed to create profile");
+        }
+        
+        setEmail(user.email || "");
+        return;
       }
+
+      setFirstName(profile.first_name || "");
+      setLastName(profile.last_name || "");
+      setEmail(profile.email || "");
     } catch (error) {
       toast({
         title: "Error",
