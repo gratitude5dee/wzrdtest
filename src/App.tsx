@@ -122,14 +122,20 @@ const App = () => {
               } />
               <Route path="/affirmations" element={
                 <ProtectedRoute>
-                  <div className="affirmations-background">
+                  <motion.div 
+                    className="affirmations-background"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.5 }}
+                  >
                     <Teleprompter 
                       initialScript={affirmationsText} 
                       fontSize={44} 
                       fontFamily="cal-sans" 
                       textColor="#785340" 
                     />
-                  </div>
+                  </motion.div>
                 </ProtectedRoute>
               } />
             </Routes>

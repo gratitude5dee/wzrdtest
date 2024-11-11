@@ -31,13 +31,14 @@ export const TeleprompterEditor = ({
         onChange={(e) => setEditableScript(e.target.value)}
         className={cn(
           "w-full h-full bg-transparent border-none resize-none p-8 focus:ring-0 teleprompter-text",
-          "placeholder:text-white/40"
+          "placeholder:text-white/40 leading-relaxed"
         )}
         style={{
           fontFamily: fontFamily === 'inter' ? 'Inter' : 
                      fontFamily === 'cal-sans' ? 'Cal Sans' : fontFamily,
           fontSize: `${fontSize / 16}rem`,
           color: textColor,
+          lineHeight: "2.2",
         }}
       />
     </motion.div>
