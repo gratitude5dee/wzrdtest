@@ -1,5 +1,4 @@
 import { useState, useRef, useCallback } from 'react';
-import { useScrollToWord } from './useScrollToWord';
 import type { TeleprompterHookReturn } from '@/types/teleprompter';
 
 export const useTeleprompter = (
@@ -9,7 +8,6 @@ export const useTeleprompter = (
   const [isPlaying, setIsPlaying] = useState(autoStart);
   const [speed, setSpeed] = useState(initialSpeed);
   const containerRef = useRef<HTMLDivElement>(null);
-  const scrollToWord = useScrollToWord();
 
   const togglePlay = useCallback(() => {
     setIsPlaying(prev => !prev);
@@ -18,10 +16,6 @@ export const useTeleprompter = (
   const updateSpeed = useCallback((newSpeed: number) => {
     setSpeed(newSpeed);
   }, []);
-
-  const updateScrollPosition = useCallback((element: HTMLElement, container: HTMLElement) => {
-    scrollToWord(element, container);
-  }, [scrollToWord]);
 
   const reset = useCallback(() => {
     setIsPlaying(false);
@@ -35,6 +29,5 @@ export const useTeleprompter = (
     updateSpeed,
     reset,
     containerRef,
-    updateScrollPosition,
   };
 };

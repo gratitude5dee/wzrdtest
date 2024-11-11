@@ -9,6 +9,7 @@ import { ArrowLeft, Edit2 } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { TeleprompterContainer } from './teleprompter/TeleprompterContainer';
 import { TeleprompterWord } from './teleprompter/TeleprompterWord';
+import { TeleprompterScroll } from './teleprompter/TeleprompterScroll';
 
 interface TeleprompterProps {
   initialScript?: string;
@@ -56,7 +57,6 @@ export const Teleprompter = ({
     updateSpeed,
     reset,
     containerRef,
-    updateScrollPosition
   } = useTeleprompter(2, autoStart);
 
   useKeyboardShortcuts(updateSpeed, togglePlay, speed);
@@ -90,13 +90,6 @@ export const Teleprompter = ({
       };
     }
   }, [isPlaying, speed, words.length, togglePlay]);
-
-  // Add effect to handle scrolling when currentWordIndex changes
-  useEffect(() => {
-    if (highlightRef.current && containerRef.current) {
-      updateScrollPosition(highlightRef.current, containerRef.current);
-    }
-  }, [currentWordIndex, updateScrollPosition]);
 
   const handleWordClick = useCallback((index: number) => {
     setCurrentWordIndex(index);
@@ -197,6 +190,12 @@ export const Teleprompter = ({
           </div>
         )}
       </TeleprompterContainer>
+
+      <TeleprompterScroll
+        highlightRef={highlightRef}
+        containerRef={containerRef}
+        currentWordIndex={currentWordIndex}
+      />
       
       <div className="fixed inset-x-0 top-0 h-40 bg-gradient-to-b from-background via-background/80 to-transparent pointer-events-none z-20" />
       <div className="fixed inset-x-0 bottom-0 h-40 bg-gradient-to-t from-background via-background/80 to-transparent pointer-events-none z-20" />
