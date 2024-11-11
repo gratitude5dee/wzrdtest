@@ -31,7 +31,7 @@
 }
 
 .teleprompter-text {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Cal Sans', sans-serif;
   line-height: 1.8;
   font-size: 2.75rem;
   text-align: center;
@@ -68,6 +68,7 @@
   will-change: transform, opacity;
   vertical-align: middle;
   line-height: 1;
+  cursor: pointer;
 }
 
 .word-highlight {

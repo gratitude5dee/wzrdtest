@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
-import { X, Play, Pause, Settings2, ArrowUp, ArrowDown, Space, RotateCcw } from 'lucide-react';
+import { X, Play, Pause, Settings2, ArrowUp, ArrowDown, RotateCcw } from 'lucide-react';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { cn } from '@/lib/utils';
+import { motion, AnimatePresence } from "framer-motion";
 
 interface TeleprompterControlsProps {
   isPlaying: boolean;
@@ -86,94 +87,99 @@ export const TeleprompterControls = ({
   }, [handleMouseMove]);
 
   return (
-    <div
-      ref={controlsRef}
-      className={cn(
-        "fixed bottom-8 left-1/2 transform -translate-x-1/2 rounded-2xl px-12 py-8",
-        "flex items-center space-x-12 transition-all duration-700 ease-in-out z-50",
-        "bg-gradient-to-b from-slate-900/95 to-slate-950/95 backdrop-blur-xl",
-        "border border-white/10 shadow-2xl",
-        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8 pointer-events-none"
-      )}
-    >
-      <div className="flex items-center space-x-8">
-        <Button
-          ref={playButtonRef}
-          type="button"
-          variant="ghost"
-          size="icon"
-          onClick={onTogglePlay}
-          className={cn(
-            "w-16 h-16 rounded-2xl transition-all duration-300",
-            "hover:scale-105 active:scale-95 relative group",
-            "bg-gradient-to-b from-white/10 to-white/5",
-            "hover:from-white/15 hover:to-white/10",
-            "border border-white/20 hover:border-white/30",
-            "text-white shadow-lg"
-          )}
-        >
-          {isPlaying ? <Pause size={32} /> : <Play size={32} />}
-        </Button>
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 20 }}
+        ref={controlsRef}
+        className={cn(
+          "fixed bottom-8 left-1/2 transform -translate-x-1/2 rounded-3xl px-12 py-8",
+          "flex items-center space-x-12 transition-all duration-700 ease-in-out z-50",
+          "bg-gradient-to-b from-[#FFF8F0]/95 to-[#FFF4E8]/95 backdrop-blur-xl",
+          "border border-[#785340]/10 shadow-[0_8px_32px_-4px_rgba(120,83,64,0.1)]",
+          isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8 pointer-events-none"
+        )}
+      >
+        <div className="flex items-center space-x-8">
+          <Button
+            ref={playButtonRef}
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={onTogglePlay}
+            className={cn(
+              "w-16 h-16 rounded-2xl transition-all duration-300",
+              "hover:scale-105 active:scale-95 relative group",
+              "bg-gradient-to-b from-[#785340]/10 to-[#785340]/5",
+              "hover:from-[#785340]/15 hover:to-[#785340]/10",
+              "border border-[#785340]/20 hover:border-[#785340]/30",
+              "text-[#785340] shadow-lg"
+            )}
+          >
+            {isPlaying ? <Pause size={32} /> : <Play size={32} />}
+          </Button>
+
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={onRestart}
+            className={cn(
+              "w-16 h-16 rounded-2xl transition-all duration-300",
+              "hover:scale-105 active:scale-95",
+              "bg-gradient-to-b from-[#785340]/10 to-[#785340]/5",
+              "hover:from-[#785340]/15 hover:to-[#785340]/10",
+              "border border-[#785340]/20 hover:border-[#785340]/30",
+              "text-[#785340] shadow-lg"
+            )}
+          >
+            <RotateCcw size={32} />
+          </Button>
+        </div>
+
+        <div className="flex flex-col space-y-6 min-w-[280px]">
+          <div className="flex items-center space-x-6">
+            <Settings2 size={20} className="text-[#785340]/70" />
+            <Slider
+              value={[speed]}
+              min={0.1}
+              max={10}
+              step={0.1}
+              onValueChange={value => onSpeedChange(value[0])}
+              className="cursor-pointer"
+            />
+            <span className="text-lg font-semibold text-[#785340] min-w-[56px] text-center">
+              {speed.toFixed(1)}x
+            </span>
+          </div>
+          <div className="flex items-center justify-center space-x-8 text-sm text-[#785340]/70 font-medium">
+            <div className="flex items-center space-x-2">
+              <ArrowUp size={14} /> <span>Faster</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <ArrowDown size={14} /> <span>Slower</span>
+            </div>
+          </div>
+        </div>
 
         <Button
           type="button"
           variant="ghost"
           size="icon"
-          onClick={onRestart}
+          onClick={onExit}
           className={cn(
             "w-16 h-16 rounded-2xl transition-all duration-300",
             "hover:scale-105 active:scale-95",
-            "bg-gradient-to-b from-white/10 to-white/5",
-            "hover:from-white/15 hover:to-white/10",
-            "border border-white/20 hover:border-white/30",
-            "text-white shadow-lg"
+            "bg-gradient-to-b from-[#785340]/10 to-[#785340]/5",
+            "hover:from-[#785340]/20 hover:to-[#785340]/10",
+            "border border-[#785340]/20 hover:border-[#785340]/30",
+            "text-[#785340]/90 hover:text-[#785340]"
           )}
         >
-          <RotateCcw size={32} />
+          <X size={32} />
         </Button>
-      </div>
-
-      <div className="flex flex-col space-y-6 min-w-[280px]">
-        <div className="flex items-center space-x-6">
-          <Settings2 size={20} className="text-white/70" />
-          <Slider
-            value={[speed]}
-            min={0.1}
-            max={10}
-            step={0.1}
-            onValueChange={value => onSpeedChange(value[0])}
-            className="cursor-pointer"
-          />
-          <span className="text-lg font-semibold text-white min-w-[56px] text-center">
-            {speed.toFixed(1)}x
-          </span>
-        </div>
-        <div className="flex items-center justify-center space-x-8 text-sm text-white/70 font-medium">
-          <div className="flex items-center space-x-2">
-            <ArrowUp size={14} /> <span>Faster</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <ArrowDown size={14} /> <span>Slower</span>
-          </div>
-        </div>
-      </div>
-
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon"
-        onClick={onExit}
-        className={cn(
-          "w-16 h-16 rounded-2xl transition-all duration-300",
-          "hover:scale-105 active:scale-95",
-          "bg-gradient-to-b from-red-500/10 to-red-600/5",
-          "hover:from-red-500/20 hover:to-red-600/10",
-          "border border-red-500/20 hover:border-red-500/30",
-          "text-white/90 hover:text-red-500"
-        )}
-      >
-        <X size={32} />
-      </Button>
-    </div>
+      </motion.div>
+    </AnimatePresence>
   );
 };
