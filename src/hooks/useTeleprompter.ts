@@ -27,7 +27,8 @@ export const useTeleprompter = (
 
   const reset = useCallback(() => {
     setIsPlaying(false);
-  }, []);
+    setSpeed(initialSpeed);
+  }, [initialSpeed]);
 
   return {
     isPlaying,

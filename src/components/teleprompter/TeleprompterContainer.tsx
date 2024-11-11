@@ -20,7 +20,6 @@ export const TeleprompterContainer = ({
 
   useEffect(() => {
     if (!initialScrollComplete.current && containerRef.current && firstWordRef?.current) {
-      // Initial positioning with instant scroll
       scrollToWord(firstWordRef.current, containerRef.current, true);
       initialScrollComplete.current = true;
     }
@@ -30,7 +29,7 @@ export const TeleprompterContainer = ({
     <div
       ref={containerRef}
       className={cn(
-        "h-screen overflow-hidden relative z-10",
+        "h-screen overflow-y-auto overflow-x-hidden relative z-10 smooth-scroll",
         "px-4 md:px-8 lg:px-16"
       )}
     >

@@ -17,9 +17,9 @@
 
 .smooth-scroll {
   scroll-behavior: smooth;
-  will-change: transform, scroll-position;
-  backface-visibility: hidden;
-  transform: translateZ(0);
+  -webkit-overflow-scrolling: touch;
+  will-change: scroll-position;
+  overscroll-behavior-y: contain;
 }
 
 .word-highlight {
