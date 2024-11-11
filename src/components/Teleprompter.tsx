@@ -15,6 +15,7 @@ interface TeleprompterProps {
   fontSize?: number;
   fontFamily?: string;
   textColor?: string;
+  autoStart?: boolean;
 }
 
 interface TeleprompterState {
@@ -29,6 +30,7 @@ export const Teleprompter = ({
   fontSize: initialFontSize,
   fontFamily: initialFontFamily,
   textColor: initialTextColor,
+  autoStart = false,
 }: TeleprompterProps = {}) => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -52,7 +54,7 @@ export const Teleprompter = ({
     updateSpeed,
     reset,
     updateScrollPosition
-  } = useTeleprompter(2);
+  } = useTeleprompter(2, autoStart);
 
   useKeyboardShortcuts(updateSpeed, togglePlay, speed);
 
