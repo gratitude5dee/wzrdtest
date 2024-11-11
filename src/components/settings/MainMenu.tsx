@@ -55,7 +55,7 @@ export function MainMenu({ firstName, lastName, email, onProfileClick, onLogout 
         <div className="text-xs text-gray-500 text-center">
           Version 0.2.7 (497)
           <br />
-          © 2024 Hume AI, Inc.
+          © 2024 wzrd.tech
         </div>
         <Button 
           variant="destructive" 

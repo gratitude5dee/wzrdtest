@@ -45,9 +45,9 @@ export function Home() {
       <header className="flex justify-between items-center mb-8">
         <div className="flex items-center space-x-3">
           <div className="w-8 h-8 animate-float">
-            <img src="/hume-logo.png" alt="Hume" className="w-full h-full" />
+            <img src="/wzrd-logo.png" alt="WZRD" className="w-full h-full" />
           </div>
-          <span className="text-2xl font-semibold gradient-text">hume</span>
+          <span className="text-2xl font-semibold gradient-text">wzrd</span>
         </div>
         <Button 
           variant="ghost" 

@@ -14,7 +14,7 @@ export default {
         inter: ['Inter', 'sans-serif'],
       },
       colors: {
-        hume: {
+        wzrd: {
           pink: "#FFE5E5",
           purple: "#F0E5FF",
           blue: "#E5F0FF",
