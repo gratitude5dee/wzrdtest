@@ -4,6 +4,9 @@ import { ActiveCallContext } from "../App";
 import { ChatHeader } from "./chat/ChatHeader";
 import { ChatMessages } from "./chat/ChatMessages";
 import { ChatControls } from "./chat/ChatControls";
+import { motion, AnimatePresence } from "framer-motion";
+import { Mic, MessageSquare } from "lucide-react";
+import { Button } from "./ui/button";
 
 interface Message {
   text: string;
@@ -28,10 +31,7 @@ export function Chat({ personality }: ChatProps) {
 
   useEffect(() => {
     setActiveCall(personality);
-    return () => {
-      // Only clear the active call if we're actually ending the call
-      // Don't clear it when just navigating back
-    };
+    return () => setActiveCall(null);
   }, [personality, setActiveCall]);
 
   const handleMessageClick = () => {
@@ -55,7 +55,6 @@ export function Chat({ personality }: ChatProps) {
   };
 
   const handleBack = () => {
-    // Navigate back to home without ending the call
     navigate('/home');
   };
 
@@ -95,12 +94,36 @@ export function Chat({ personality }: ChatProps) {
         personality={personality}
       />
       
-      <ChatControls 
-        isMicMuted={isMicMuted}
-        onMicToggle={handleMicToggle}
-        onEndCall={handleEndCall}
-        onMessageClick={handleMessageClick}
-      />
+      <AnimatePresence>
+        {isListening && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            className="fixed bottom-8 left-1/2 -translate-x-1/2 flex gap-4"
+          >
+            <Button
+              onClick={handleMicToggle}
+              variant="secondary"
+              size="lg"
+              className={`rounded-full p-6 ${
+                isMicMuted ? 'bg-red-100 hover:bg-red-200' : 'bg-white/80 hover:bg-white'
+              } backdrop-blur-sm shadow-lg transition-all duration-300`}
+            >
+              <Mic className={`h-6 w-6 ${isMicMuted ? 'text-red-600' : 'text-gray-600'}`} />
+            </Button>
+            
+            <Button
+              onClick={handleMessageClick}
+              variant="secondary"
+              size="lg"
+              className="rounded-full p-6 bg-white/80 hover:bg-white backdrop-blur-sm shadow-lg transition-all duration-300"
+            >
+              <MessageSquare className="h-6 w-6 text-gray-600" />
+            </Button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
