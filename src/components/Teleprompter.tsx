@@ -28,14 +28,15 @@ export const Teleprompter = ({
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
   const [editableScript, setEditableScript] = useState('');
+  const highlightRef = useRef<HTMLSpanElement>(null);
+  
   const { script, fontSize, fontFamily, textColor } = (location.state as any) || {
     script: initialScript,
     fontSize: initialFontSize,
     fontFamily: initialFontFamily,
     textColor: initialTextColor
   };
-  const highlightRef = useRef<HTMLSpanElement>(null);
-  
+
   const {
     isPlaying,
     speed,
@@ -45,38 +46,6 @@ export const Teleprompter = ({
     reset,
     updateScrollPosition
   } = useTeleprompter(2);
-
-  useEffect(() => {
-    if (!script) {
-      navigate('/');
-      return;
-    }
-    setWords(script.split(/\s+/).filter(word => word.length > 0));
-    setEditableScript(script);
-  }, [script, navigate]);
-
-  useEffect(() => {
-    if (isPlaying) {
-      const interval = setInterval(() => {
-        setCurrentWordIndex(prev => {
-          if (prev >= words.length - 1) {
-            clearInterval(interval);
-            togglePlay();
-            return prev;
-          }
-          return prev + 1;
-        });
-      }, 60000 / (speed * 200));
-      
-      return () => clearInterval(interval);
-    }
-  }, [isPlaying, speed, words.length, togglePlay]);
-
-  useEffect(() => {
-    if (highlightRef.current) {
-      updateScrollPosition(highlightRef.current);
-    }
-  }, [currentWordIndex, updateScrollPosition]);
 
   const handleExit = useCallback(() => {
     reset();
@@ -95,6 +64,44 @@ export const Teleprompter = ({
   const handleWordClick = useCallback((index: number) => {
     setCurrentWordIndex(index);
   }, []);
+
+  useEffect(() => {
+    if (!script) {
+      navigate('/');
+      return;
+    }
+    setWords(script.split(/\s+/).filter(word => word.length > 0));
+    setEditableScript(script);
+  }, [script, navigate]);
+
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout;
+    
+    if (isPlaying) {
+      intervalId = setInterval(() => {
+        setCurrentWordIndex(prev => {
+          if (prev >= words.length - 1) {
+            clearInterval(intervalId);
+            togglePlay();
+            return prev;
+          }
+          return prev + 1;
+        });
+      }, 60000 / (speed * 200));
+    }
+    
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [isPlaying, speed, words.length, togglePlay]);
+
+  useEffect(() => {
+    if (highlightRef.current) {
+      updateScrollPosition(highlightRef.current);
+    }
+  }, [currentWordIndex, updateScrollPosition]);
 
   return (
     <motion.div 
