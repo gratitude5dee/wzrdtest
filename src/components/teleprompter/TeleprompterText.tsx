@@ -32,9 +32,6 @@ export const TeleprompterText = ({
                    fontFamily === 'cal-sans' ? 'Cal Sans' : fontFamily,
         fontSize: `${fontSize / 16}rem`,
         color: textColor,
-        transform: 'translateZ(0)',
-        backfaceVisibility: 'hidden',
-        perspective: '1000px'
       }}
     >
       {words.map((word, index) => (
@@ -43,24 +40,20 @@ export const TeleprompterText = ({
           ref={index === currentWordIndex ? highlightRef : null}
           onClick={() => handleWordClick(index)}
           className={cn(
-            "inline-block mx-1 px-1 py-0.5 rounded cursor-pointer",
+            "inline-block mx-1 px-1 py-0.5 rounded cursor-pointer transition-all duration-300",
             "hover:bg-white/10 backdrop-blur-sm",
-            index === currentWordIndex && "word-highlight",
-            index < currentWordIndex ? "word-past" : "word-future"
+            index === currentWordIndex && [
+              "word-highlight scale-110 bg-blue-500/10",
+              "font-semibold shadow-lg shadow-blue-500/20"
+            ],
+            index < currentWordIndex ? "opacity-60" : "opacity-40"
           )}
-          style={{
-            transform: 'translateZ(0)',
-            backfaceVisibility: 'hidden'
-          }}
-          initial={false}
+          whileHover={{ scale: 1.05 }}
           animate={{
+            scale: index === currentWordIndex ? 1.1 : 1,
             opacity: index === currentWordIndex ? 1 : 
                      index < currentWordIndex ? 0.6 : 0.4,
-            scale: index === currentWordIndex ? 1.05 : 1,
-            transition: { 
-              duration: 0.5,
-              ease: [0.4, 0, 0.2, 1]
-            }
+            transition: { duration: 0.3 }
           }}
         >
           {word}
