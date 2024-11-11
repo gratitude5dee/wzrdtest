@@ -76,12 +76,18 @@ export default {
           "0%, 100%": { borderColor: "rgba(255, 255, 255, 0.3)" },
           "50%": { borderColor: "rgba(255, 255, 255, 0.8)" },
         },
+        "gradient-shift": {
+          "0%": { backgroundPosition: "0% 50%" },
+          "50%": { backgroundPosition: "100% 50%" },
+          "100%": { backgroundPosition: "0% 50%" },
+        },
       },
       animation: {
         "magnetic-float": "magnetic-float 3s ease-in-out infinite",
         "card-hover": "card-hover 3s ease-in-out infinite",
         "glow-pulse": "glow-pulse 3s ease-in-out infinite",
         "border-glow": "border-glow 3s ease-in-out infinite",
+        "gradient-shift": "gradient-shift 3s ease-in-out infinite",
       },
     },
   },

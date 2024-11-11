@@ -111,7 +111,7 @@
   inset: -2px;
   background: linear-gradient(90deg, #60A5FA, #3B82F6, #2563EB);
   background-size: 200% auto;
-  animation: gradient-shift 8s ease infinite;
+  animation: gradient-shift 3s ease infinite;
   opacity: 0;
   transition: opacity 0.3s ease;
   border-radius: inherit;
