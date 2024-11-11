@@ -4,11 +4,11 @@ export const useTeleprompter = (initialSpeed: number = 2) => {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [speed, setSpeed] = useState<number>(initialSpeed);
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const scrollInterval = useRef<number | null>(null);
+  const intervalRef = useRef<number | null>(null);
   const [autoScrollEnabled, setAutoScrollEnabled] = useState<boolean>(true);
 
   const togglePlay = useCallback(() => {
-    setIsPlaying((prevState) => !prevState);
+    setIsPlaying(prev => !prev);
   }, []);
 
   const updateSpeed = useCallback((newSpeed: number) => {
@@ -16,9 +16,9 @@ export const useTeleprompter = (initialSpeed: number = 2) => {
   }, []);
 
   const reset = useCallback(() => {
-    if (scrollInterval.current) {
-      window.clearInterval(scrollInterval.current);
-      scrollInterval.current = null;
+    if (intervalRef.current !== null) {
+      window.clearInterval(intervalRef.current);
+      intervalRef.current = null;
     }
     setIsPlaying(false);
     if (containerRef.current) {
@@ -45,19 +45,25 @@ export const useTeleprompter = (initialSpeed: number = 2) => {
   useEffect(() => {
     if (isPlaying && containerRef.current && autoScrollEnabled) {
       const scrollAmount = speed * 0.5;
-      scrollInterval.current = window.setInterval(() => {
+      
+      if (intervalRef.current !== null) {
+        window.clearInterval(intervalRef.current);
+      }
+      
+      intervalRef.current = window.setInterval(() => {
         if (containerRef.current) {
           containerRef.current.scrollTop += scrollAmount;
         }
       }, 16);
-    }
 
-    return () => {
-      if (scrollInterval.current) {
-        window.clearInterval(scrollInterval.current);
-        scrollInterval.current = null;
-      }
-    };
+      return () => {
+        if (intervalRef.current !== null) {
+          window.clearInterval(intervalRef.current);
+          intervalRef.current = null;
+        }
+      };
+    }
+    return undefined;
   }, [isPlaying, speed, autoScrollEnabled]);
 
   return {

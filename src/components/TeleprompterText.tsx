@@ -36,37 +36,36 @@ export const TeleprompterText = ({
         <div
           key={lineIndex}
           className={cn(
-            "teleprompter-line transition-all duration-500 ease-out",
-            lineIndex === currentLineIndex && [
-              "line-active transform -translate-y-2 scale-[1.02]",
-              "relative z-10"
-            ],
-            lineIndex < currentLineIndex && "line-past opacity-50 translate-y-2",
-            lineIndex > currentLineIndex && "line-future opacity-50 -translate-y-2"
+            "teleprompter-line",
+            lineIndex === currentLineIndex && "line-active",
+            lineIndex < currentLineIndex && "line-past",
+            lineIndex > currentLineIndex && "line-future"
           )}
         >
-          {line.map((word, wordIndex) => (
-            <span
-              key={`${lineIndex}-${wordIndex}`}
-              ref={lineIndex === currentLineIndex && wordIndex === currentWordIndex ? highlightRef : null}
-              onClick={() => handleWordClick(lineIndex, wordIndex)}
-              className={cn(
-                "inline-block mx-1 px-1 py-0.5 rounded cursor-pointer",
-                "transition-all duration-300 ease-out transform",
-                "hover:bg-teleprompter-highlight/20",
-                lineIndex === currentLineIndex && wordIndex === currentWordIndex && [
-                  "word-highlight scale-110",
-                  "bg-teleprompter-highlight/10 font-semibold",
-                  "shadow-lg shadow-blue-500/20"
-                ],
-                lineIndex === currentLineIndex && wordIndex < currentWordIndex && "word-past opacity-75",
-                (lineIndex === currentLineIndex && wordIndex > currentWordIndex) || 
-                lineIndex > currentLineIndex && "word-future opacity-75"
-              )}
-            >
-              {word}
-            </span>
-          ))}
+          {line.map((word, wordIndex) => {
+            const isCurrentWord = lineIndex === currentLineIndex && wordIndex === currentWordIndex;
+            const isPastWord = (lineIndex === currentLineIndex && wordIndex < currentWordIndex) || 
+                             lineIndex < currentLineIndex;
+            const isFutureWord = (lineIndex === currentLineIndex && wordIndex > currentWordIndex) || 
+                               lineIndex > currentLineIndex;
+            
+            return (
+              <span
+                key={`${lineIndex}-${wordIndex}`}
+                ref={isCurrentWord ? highlightRef : null}
+                onClick={() => handleWordClick(lineIndex, wordIndex)}
+                className={cn(
+                  "inline-block mx-1 px-2 py-1 rounded-md transition-all duration-300",
+                  "cursor-pointer hover:bg-teleprompter-highlight/20",
+                  isCurrentWord && "word-highlight",
+                  isPastWord && "word-past",
+                  isFutureWord && "word-future"
+                )}
+              >
+                {word}
+              </span>
+            );
+          })}
         </div>
       ))}
     </div>
