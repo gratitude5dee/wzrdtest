@@ -6,7 +6,6 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
@@ -27,21 +26,19 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 221.2 83.2% 53.3%;
     --radius: 0.5rem;
-  }
 }
 
 .teleprompter-text {
   font-family: 'Inter', sans-serif;
-  line-height: 1.8;
-  font-size: 2.75rem;
+  line-height: 1.6;
+  font-size: 2.5rem;
   text-align: center;
   color: theme('colors.white');
-  max-width: 1200px;
+  max-width: 900px;
   margin: 0 auto;
   padding: 100vh 0;
   letter-spacing: -0.02em;
   white-space: pre-wrap;
-  word-spacing: 0.2em;
 }
 
 .smooth-scroll {
@@ -53,90 +50,76 @@
 
 .teleprompter-line {
   display: block;
-  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   transform-origin: center;
-  padding: 1.5em 0;
+  padding: 1em 0;
+  margin: 0.5em 0;
   position: relative;
   z-index: 1;
-  transform: perspective(1000px) translateZ(0);
-  will-change: transform, opacity;
 }
 
 .line-active {
-  transform: perspective(1000px) translateY(-0.5em) translateZ(100px) scale(1.1);
-  filter: brightness(1.5);
-  text-shadow: 0 0 30px rgba(255, 255, 255, 0.4);
+  transform: perspective(1000px) translateY(-0.25em) translateZ(50px) scale(1.05);
+  filter: brightness(1.2);
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
   z-index: 2;
 }
 
 .line-past {
-  opacity: 0.3;
-  transform: perspective(1000px) translateY(1em) translateZ(-50px) scale(0.9);
-  filter: brightness(0.6);
+  opacity: 0.4;
+  transform: perspective(1000px) translateY(0.5em) translateZ(-25px) scale(0.95);
+  filter: brightness(0.8);
 }
 
 .line-future {
-  opacity: 0.15;
-  transform: perspective(1000px) translateY(-1em) translateZ(-50px) scale(0.9);
-  filter: brightness(0.5);
+  opacity: 0.25;
+  transform: perspective(1000px) translateY(-0.5em) translateZ(-25px) scale(0.95);
+  filter: brightness(0.7);
 }
 
 .word-highlight {
   display: inline-block;
-  padding: 0.1em 0.3em;
+  padding: 0.1em 0.2em;
   margin: 0 0.1em;
-  border-radius: 0.3em;
+  border-radius: 0.2em;
   background: linear-gradient(120deg, #60A5FA, #3B82F6, #2563EB);
   background-size: 200% auto;
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   animation: gradient-shift 3s ease infinite;
-  text-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
+  text-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
   position: relative;
-  transform: scale(1.2);
+  transform: scale(1.1);
   z-index: 3;
 }
 
 .word-highlight::after {
   content: '';
   position: absolute;
-  inset: -4px;
-  background: radial-gradient(circle, rgba(59, 130, 246, 0.4), transparent 70%);
-  opacity: 0.8;
+  inset: -2px;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.3), transparent 70%);
+  opacity: 0.6;
   transition: opacity 0.3s ease;
   border-radius: inherit;
   z-index: -1;
-  animation: glow-pulse 2s ease-in-out infinite;
 }
 
 .word-past {
   opacity: 0.7;
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  text-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+  transition: all 0.3s ease-out;
 }
 
 .word-future {
   opacity: 0.5;
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s ease-out;
 }
 
 @keyframes gradient-shift {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
-}
-
-@keyframes glow-pulse {
-  0%, 100% { 
-    opacity: 0.5;
-    transform: scale(1);
-  }
-  50% { 
-    opacity: 0.8;
-    transform: scale(1.1);
-  }
 }
 
 @layer utilities {
