@@ -17,7 +17,6 @@
 
 .smooth-scroll {
   scroll-behavior: smooth;
-  transition: all 1200ms cubic-bezier(0.22, 1, 0.36, 1);
   will-change: transform, scroll-position;
   backface-visibility: hidden;
   transform: translateZ(0);
@@ -29,6 +28,7 @@
   background: rgba(120, 83, 64, 0.04);
   border-radius: 1em;
   padding: 0.3em 0.6em;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 
     0 0 40px rgba(120, 83, 64, 0.15),
     0 8px 24px rgba(120, 83, 64, 0.1);

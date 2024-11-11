@@ -20,20 +20,11 @@ export const TeleprompterContainer = ({
 
   useEffect(() => {
     if (!initialScrollComplete.current && containerRef.current && firstWordRef?.current) {
-      // Position first word at the top with a small offset
-      const container = containerRef.current;
-      const word = firstWordRef.current;
-      const topOffset = container.clientHeight * 0.2; // 20% from the top
-      const targetScroll = word.offsetTop - topOffset;
-      
-      container.scrollTo({
-        top: targetScroll,
-        behavior: 'instant'
-      });
-      
+      // Initial positioning with instant scroll
+      scrollToWord(firstWordRef.current, containerRef.current, true);
       initialScrollComplete.current = true;
     }
-  }, [containerRef, firstWordRef]);
+  }, [containerRef, firstWordRef, scrollToWord]);
 
   return (
     <div
