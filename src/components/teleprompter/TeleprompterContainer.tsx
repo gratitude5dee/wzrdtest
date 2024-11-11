@@ -20,22 +20,30 @@ export const TeleprompterContainer = ({
 
   useEffect(() => {
     if (!initialScrollComplete.current && containerRef.current && firstWordRef?.current) {
-      // Scroll to first word on mount
-      scrollToWord(firstWordRef.current, containerRef.current, true);
+      // Position first word at the top with a small offset
+      const container = containerRef.current;
+      const word = firstWordRef.current;
+      const topOffset = container.clientHeight * 0.2; // 20% from the top
+      const targetScroll = word.offsetTop - topOffset;
+      
+      container.scrollTo({
+        top: targetScroll,
+        behavior: 'instant'
+      });
+      
       initialScrollComplete.current = true;
     }
-  }, [containerRef, firstWordRef, scrollToWord]);
+  }, [containerRef, firstWordRef]);
 
   return (
     <div
       ref={containerRef}
       className={cn(
         "h-screen overflow-hidden relative z-10",
-        "px-4 md:px-8 lg:px-16",
-        "flex items-center justify-center"
+        "px-4 md:px-8 lg:px-16"
       )}
     >
-      <div className="max-w-4xl w-full py-24">
+      <div className="max-w-4xl w-full mx-auto py-[40vh]">
         {children}
       </div>
     </div>
