@@ -33,13 +33,40 @@ export const useTeleprompter = (initialSpeed: number = 2) => {
     const containerHeight = container.clientHeight;
     const wordPosition = wordElement.offsetTop;
     const wordHeight = wordElement.offsetHeight;
+    
+    // Calculate the target scroll position to center the word
     const targetScroll = wordPosition - (containerHeight / 2) + (wordHeight / 2);
     
-    container.scrollTo({
-      top: targetScroll,
-      behavior: 'smooth'
-    });
+    // Use spring-like easing for smooth scrolling
+    const startPosition = container.scrollTop;
+    const distance = targetScroll - startPosition;
+    const duration = 800; // ms
+    const startTime = performance.now();
     
+    const easeOutSpring = (t: number): number => {
+      const c4 = (2 * Math.PI) / 3;
+      return t === 0
+        ? 0
+        : t === 1
+        ? 1
+        : Math.pow(2, -10 * t) * Math.sin((t * 10 - 0.75) * c4) + 1;
+    };
+
+    const animateScroll = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      
+      const eased = easeOutSpring(progress);
+      const currentPosition = startPosition + distance * eased;
+      
+      container.scrollTop = currentPosition;
+      
+      if (progress < 1) {
+        requestAnimationFrame(animateScroll);
+      }
+    };
+    
+    requestAnimationFrame(animateScroll);
     setScrollPosition(targetScroll);
   }, []);
 
