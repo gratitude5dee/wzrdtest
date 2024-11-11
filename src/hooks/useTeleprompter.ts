@@ -4,7 +4,8 @@ export const useTeleprompter = (initialSpeed: number = 2) => {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [speed, setSpeed] = useState<number>(initialSpeed);
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const intervalRef = useRef<number | null>(null);
+  const animationFrameRef = useRef<number>();
+  const lastTimeRef = useRef<number>(0);
   const [autoScrollEnabled, setAutoScrollEnabled] = useState<boolean>(true);
 
   const togglePlay = useCallback(() => {
@@ -16,13 +17,12 @@ export const useTeleprompter = (initialSpeed: number = 2) => {
   }, []);
 
   const reset = useCallback(() => {
-    if (intervalRef.current !== null) {
-      window.clearInterval(intervalRef.current);
-      intervalRef.current = null;
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current);
     }
     setIsPlaying(false);
     if (containerRef.current) {
-      containerRef.current.scrollTop = 0;
+      containerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }, []);
 
@@ -35,7 +35,6 @@ export const useTeleprompter = (initialSpeed: number = 2) => {
     const elementHeight = element.offsetHeight;
     
     const targetScroll = elementPosition - (containerHeight / 2) + (elementHeight / 2);
-    
     container.scrollTo({
       top: targetScroll,
       behavior: 'smooth'
@@ -43,27 +42,29 @@ export const useTeleprompter = (initialSpeed: number = 2) => {
   }, [autoScrollEnabled]);
 
   useEffect(() => {
-    if (isPlaying && containerRef.current && autoScrollEnabled) {
-      const scrollAmount = speed * 0.5;
+    const animate = (timestamp: number) => {
+      if (!lastTimeRef.current) lastTimeRef.current = timestamp;
+      const deltaTime = timestamp - lastTimeRef.current;
       
-      if (intervalRef.current !== null) {
-        window.clearInterval(intervalRef.current);
+      if (containerRef.current && isPlaying && autoScrollEnabled) {
+        const pixelsPerSecond = speed * 60; // Adjust this multiplier to control scroll speed
+        const scrollAmount = (pixelsPerSecond * deltaTime) / 1000;
+        containerRef.current.scrollTop += scrollAmount;
       }
       
-      intervalRef.current = window.setInterval(() => {
-        if (containerRef.current) {
-          containerRef.current.scrollTop += scrollAmount;
-        }
-      }, 16);
+      lastTimeRef.current = timestamp;
+      animationFrameRef.current = requestAnimationFrame(animate);
+    };
 
-      return () => {
-        if (intervalRef.current !== null) {
-          window.clearInterval(intervalRef.current);
-          intervalRef.current = null;
-        }
-      };
+    if (isPlaying) {
+      animationFrameRef.current = requestAnimationFrame(animate);
     }
-    return undefined;
+
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
   }, [isPlaying, speed, autoScrollEnabled]);
 
   return {

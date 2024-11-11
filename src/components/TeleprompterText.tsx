@@ -32,42 +32,47 @@ export const TeleprompterText = ({
         color: textColor,
       }}
     >
-      {lines.map((line, lineIndex) => (
-        <div
-          key={lineIndex}
-          className={cn(
-            "teleprompter-line",
-            lineIndex === currentLineIndex && "line-active",
-            lineIndex < currentLineIndex && "line-past",
-            lineIndex > currentLineIndex && "line-future"
-          )}
-        >
-          {line.map((word, wordIndex) => {
-            const isCurrentWord = lineIndex === currentLineIndex && wordIndex === currentWordIndex;
-            const isPastWord = (lineIndex === currentLineIndex && wordIndex < currentWordIndex) || 
-                             lineIndex < currentLineIndex;
-            const isFutureWord = (lineIndex === currentLineIndex && wordIndex > currentWordIndex) || 
-                               lineIndex > currentLineIndex;
-            
-            return (
-              <span
-                key={`${lineIndex}-${wordIndex}`}
-                ref={isCurrentWord ? highlightRef : null}
-                onClick={() => handleWordClick(lineIndex, wordIndex)}
-                className={cn(
-                  "inline-block mx-1 px-2 py-1 rounded-md transition-all duration-300",
-                  "cursor-pointer hover:bg-teleprompter-highlight/20",
-                  isCurrentWord && "word-highlight",
-                  isPastWord && "word-past",
-                  isFutureWord && "word-future"
-                )}
-              >
-                {word}
-              </span>
-            );
-          })}
-        </div>
-      ))}
+      {lines.map((line, lineIndex) => {
+        const isCurrentLine = lineIndex === currentLineIndex;
+        const isPastLine = lineIndex < currentLineIndex;
+        const isFutureLine = lineIndex > currentLineIndex;
+        
+        return (
+          <div
+            key={lineIndex}
+            className={cn(
+              "teleprompter-line relative",
+              isCurrentLine && "line-active",
+              isPastLine && "line-past",
+              isFutureLine && "line-future"
+            )}
+          >
+            {line.map((word, wordIndex) => {
+              const isCurrentWord = isCurrentLine && wordIndex === currentWordIndex;
+              const isPastWord = (isCurrentLine && wordIndex < currentWordIndex) || isPastLine;
+              const isFutureWord = (isCurrentLine && wordIndex > currentWordIndex) || isFutureLine;
+              
+              return (
+                <span
+                  key={`${lineIndex}-${wordIndex}`}
+                  ref={isCurrentWord ? highlightRef : null}
+                  onClick={() => handleWordClick(lineIndex, wordIndex)}
+                  className={cn(
+                    "inline-block transition-all duration-300 cursor-pointer",
+                    "px-2 py-1 rounded-md mx-1",
+                    "hover:bg-teleprompter-highlight/20",
+                    isCurrentWord && "word-highlight",
+                    isPastWord && "word-past",
+                    isFutureWord && "word-future"
+                  )}
+                >
+                  {word}
+                </span>
+              );
+            })}
+          </div>
+        );
+      })}
     </div>
   );
 };
