@@ -14,7 +14,7 @@ export function DataManagement({ onClearData }: DataManagementProps) {
         </p>
         <Button 
           variant="outline" 
-          className="h-14 px-8 rounded-full text-lg bg-black text-white hover:bg-black/90 dark:bg-white dark:text-black dark:hover:bg-white/90"
+          className="h-14 px-8 rounded-full text-lg bg-black text-white hover:bg-black/90"
           onClick={onClearData}
         >
           Clear local data

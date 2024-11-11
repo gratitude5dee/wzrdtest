@@ -60,6 +60,10 @@ export function Settings({ open, onOpenChange }: { open: boolean; onOpenChange: 
   const handleSave = async () => {
     const success = await saveProfile();
     if (success) {
+      toast({
+        title: "Success",
+        description: "Changes saved successfully",
+      });
       setView('main');
     }
   };
@@ -96,7 +100,7 @@ export function Settings({ open, onOpenChange }: { open: boolean; onOpenChange: 
 
             <div className="p-6 bg-white border-t border-gray-100">
               <Button 
-                className="w-full h-12 rounded-full text-base font-medium bg-black hover:bg-black/90"
+                className="w-full h-12 rounded-full text-base font-medium bg-gray-500 hover:bg-gray-600 text-white"
                 onClick={handleSave}
               >
                 Save changes
@@ -134,7 +138,7 @@ export function Settings({ open, onOpenChange }: { open: boolean; onOpenChange: 
 
             <div className="p-6 bg-white border-t border-gray-100">
               <Button 
-                className="w-full h-12 rounded-full text-base font-medium bg-black hover:bg-black/90"
+                className="w-full h-12 rounded-full text-base font-medium bg-gray-500 hover:bg-gray-600 text-white"
                 onClick={handleSave}
               >
                 Save changes
