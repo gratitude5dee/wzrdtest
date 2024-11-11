@@ -5,7 +5,6 @@ import { useEffect, useState, useRef, useCallback } from 'react';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Edit2 } from 'lucide-react';
-import { cn } from "@/lib/utils";
 
 interface TeleprompterState {
   script: string;
@@ -72,10 +71,6 @@ const Teleprompter = () => {
     navigate('/');
   }, [reset, navigate]);
 
-  const handleWordClick = useCallback((index: number) => {
-    setCurrentWordIndex(index);
-  }, []);
-
   const handleEditToggle = useCallback(() => {
     if (isEditing) {
       setWords(editableScript.split(/\s+/).filter(word => word.length > 0));
@@ -84,17 +79,21 @@ const Teleprompter = () => {
     setIsEditing(!isEditing);
   }, [isEditing, editableScript]);
 
+  const handleWordClick = useCallback((index: number) => {
+    setCurrentWordIndex(index);
+  }, []);
+
   return (
     <div className="min-h-screen bg-teleprompter-bg overflow-hidden relative">
       <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent pointer-events-none" />
       
       {/* Navigation Controls */}
-      <div className="fixed top-8 left-8 z-50 flex items-center gap-4">
+      <div className="fixed top-8 left-8 z-[100] flex items-center gap-4">
         <Button
           variant="ghost"
           size="icon"
           onClick={handleExit}
-          className="w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all duration-300 hover:scale-105"
+          className="w-12 h-12 rounded-full bg-black/40 hover:bg-black/60 text-white transition-all duration-300 hover:scale-105 backdrop-blur-lg border border-white/10"
         >
           <ArrowLeft className="h-6 w-6" />
         </Button>
@@ -103,7 +102,7 @@ const Teleprompter = () => {
           variant="ghost"
           size="icon"
           onClick={handleEditToggle}
-          className="w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all duration-300 hover:scale-105"
+          className="w-12 h-12 rounded-full bg-black/40 hover:bg-black/60 text-white transition-all duration-300 hover:scale-105 backdrop-blur-lg border border-white/10"
         >
           <Edit2 className="h-6 w-6" />
         </Button>
@@ -117,10 +116,7 @@ const Teleprompter = () => {
           <Textarea
             value={editableScript}
             onChange={(e) => setEditableScript(e.target.value)}
-            className={cn(
-              "w-full h-full bg-transparent border-none resize-none p-8 focus:ring-0 teleprompter-text",
-              "placeholder:text-white/40"
-            )}
+            className="w-full h-full bg-transparent border-none resize-none p-8 focus:ring-0 teleprompter-text"
             style={{
               fontFamily: fontFamily === 'inter' ? 'Inter' : 
                          fontFamily === 'cal-sans' ? 'Cal Sans' : fontFamily,
@@ -145,10 +141,10 @@ const Teleprompter = () => {
                 onClick={() => handleWordClick(index)}
                 className={`inline-block mx-1 px-1 py-0.5 rounded transition-all duration-300 cursor-pointer hover:bg-teleprompter-highlight/20 ${
                   index === currentWordIndex
-                    ? 'text-teleprompter-highlight scale-110 bg-teleprompter-highlight/10 font-semibold animate-highlight'
+                    ? 'text-teleprompter-highlight scale-110 bg-teleprompter-highlight/10 font-semibold'
                     : index < currentWordIndex
-                    ? `opacity-60`
-                    : `opacity-40`
+                    ? `${textColor}/60`
+                    : `${textColor}/40`
                 }`}
                 style={{
                   color: index === currentWordIndex ? '#3B82F6' : undefined
