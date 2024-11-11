@@ -70,6 +70,8 @@
   transform-origin: center;
   text-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
   position: relative;
+  animation: gradient-shift 8s ease infinite;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .word-highlight::before {
@@ -89,6 +91,7 @@
   align-items: center;
   justify-content: center;
   height: 1.8em;
+  transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .word-future {
@@ -97,6 +100,7 @@
   align-items: center;
   justify-content: center;
   height: 1.8em;
+  transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @keyframes gradient-shift {

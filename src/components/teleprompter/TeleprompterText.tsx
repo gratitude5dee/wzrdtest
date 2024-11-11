@@ -46,6 +46,7 @@ export const TeleprompterText = ({
             index < currentWordIndex ? "word-past" : "word-future"
           )}
           animate={{
+            scale: index === currentWordIndex ? 1.1 : 1,
             opacity: index === currentWordIndex ? 1 : 
                      index < currentWordIndex ? 0.6 : 0.4,
           }}
