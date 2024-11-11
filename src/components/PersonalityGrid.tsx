@@ -1,6 +1,7 @@
 import { personalities } from "@/data/personalities";
 import { cn } from "@/lib/utils";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
+import { debounce } from "lodash";
 
 interface PersonalityGridProps {
   hoveredCard: string | null;
@@ -8,53 +9,126 @@ interface PersonalityGridProps {
   navigate: (path: string) => void;
 }
 
+const SPRING = { tension: 0.1, friction: 0.9 };
+const MAX_ROTATION = 15;
+const MAX_LIFT = 1.08;
+const MAGNETIC_PULL = 0.3;
+const TRANSITION_BASE = "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)";
+
 export function PersonalityGrid({ hoveredCard, setHoveredCard, navigate }: PersonalityGridProps) {
   const cardRefs = useRef<{ [key: string]: HTMLButtonElement | null }>({});
+  const velocities = useRef<{ [key: string]: { x: number; y: number } }>({});
+  const rafId = useRef<number>();
+  const isPointerDown = useRef(false);
+
+  const calculateDynamics = useCallback((e: MouseEvent, card: HTMLElement, rect: DOMRect) => {
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    const mouseX = e.clientX;
+    const mouseY = e.clientY;
+
+    const deltaX = mouseX - centerX;
+    const deltaY = mouseY - centerY;
+    const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+    const maxDistance = Math.max(rect.width, rect.height);
+
+    // Calculate rotation and lift based on distance
+    const rotationX = (deltaY / maxDistance) * MAX_ROTATION;
+    const rotationY = -(deltaX / maxDistance) * MAX_ROTATION;
+    const lift = 1 + ((maxDistance - distance) / maxDistance) * (MAX_LIFT - 1);
+
+    // Add magnetic pull effect
+    const pull = Math.min(distance / maxDistance, 1);
+    const pullX = (deltaX * MAGNETIC_PULL * pull) / maxDistance;
+    const pullY = (deltaY * MAGNETIC_PULL * pull) / maxDistance;
+
+    return { rotationX, rotationY, lift, pullX, pullY, distance };
+  }, []);
+
+  const applyCardTransform = useCallback((
+    card: HTMLElement, 
+    dynamics: { rotationX: number; rotationY: number; lift: number; pullX: number; pullY: number }
+  ) => {
+    const { rotationX, rotationY, lift, pullX, pullY } = dynamics;
+    
+    // Apply spring physics
+    const targetX = rotationX + pullX;
+    const targetY = rotationY + pullY;
+    const cardId = card.getAttribute('data-card-id') || '';
+    
+    if (!velocities.current[cardId]) {
+      velocities.current[cardId] = { x: 0, y: 0 };
+    }
+
+    velocities.current[cardId].x += (targetX - velocities.current[cardId].x) * SPRING.tension;
+    velocities.current[cardId].y += (targetY - velocities.current[cardId].y) * SPRING.friction;
+
+    const transform = `
+      perspective(1000px) 
+      rotateX(${velocities.current[cardId].x}deg) 
+      rotateY(${velocities.current[cardId].y}deg) 
+      scale3d(${lift}, ${lift}, 1)
+      translate3d(${pullX * 20}px, ${pullY * 20}px, 0)
+    `;
+
+    card.style.transform = transform;
+    
+    // Parallax effect for card content
+    const content = card.querySelector('.card-content') as HTMLElement;
+    if (content) {
+      content.style.transform = `translate3d(${-pullX * 30}px, ${-pullY * 30}px, 0)`;
+    }
+  }, []);
+
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (!hoveredCard || !cardRefs.current[hoveredCard]) return;
+    
+    const card = cardRefs.current[hoveredCard];
+    const rect = card?.getBoundingClientRect();
+    if (!card || !rect) return;
+
+    const dynamics = calculateDynamics(e, card, rect);
+    
+    if (dynamics.distance < rect.width * 1.5) {
+      applyCardTransform(card, dynamics);
+      card.style.transition = 'transform 0.1s cubic-bezier(0.4, 0, 0.2, 1)';
+    }
+  }, [hoveredCard, calculateDynamics, applyCardTransform]);
+
+  const resetCard = useCallback((cardId: string) => {
+    const card = cardRefs.current[cardId];
+    if (!card) return;
+
+    velocities.current[cardId] = { x: 0, y: 0 };
+    
+    card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1) translate3d(0, 0, 0)';
+    card.style.transition = TRANSITION_BASE;
+    
+    const content = card.querySelector('.card-content') as HTMLElement;
+    if (content) {
+      content.style.transform = 'translate3d(0, 0, 0)';
+      content.style.transition = TRANSITION_BASE;
+    }
+  }, []);
+
+  const debouncedMouseMove = debounce(handleMouseMove, 5);
 
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!hoveredCard || !cardRefs.current[hoveredCard]) return;
-
-      const card = cardRefs.current[hoveredCard];
-      const rect = card?.getBoundingClientRect();
-      if (!rect) return;
-
-      const centerX = rect.left + rect.width / 2;
-      const centerY = rect.top + rect.height / 2;
-      const mouseX = e.clientX;
-      const mouseY = e.clientY;
-
-      const angleX = (mouseY - centerY) / 15;
-      const angleY = (centerX - mouseX) / 15;
-      const glowX = ((mouseX - rect.left) / rect.width) * 100;
-      const glowY = ((mouseY - rect.top) / rect.height) * 100;
-
-      if (card) {
-        card.style.transform = `perspective(1000px) rotateX(${angleX}deg) rotateY(${angleY}deg) scale3d(1.05, 1.05, 1.05)`;
-        card.style.setProperty('--glow-x', `${glowX}%`);
-        card.style.setProperty('--glow-y', `${glowY}%`);
-        card.style.transition = 'transform 0.15s cubic-bezier(0.4, 0, 0.2, 1)';
+    document.addEventListener('mousemove', debouncedMouseMove);
+    document.addEventListener('mouseup', () => isPointerDown.current = false);
+    document.addEventListener('mouseleave', () => {
+      if (hoveredCard) {
+        resetCard(hoveredCard);
+        setHoveredCard(null);
       }
-    };
-
-    const handleMouseLeave = () => {
-      if (!hoveredCard || !cardRefs.current[hoveredCard]) return;
-      const card = cardRefs.current[hoveredCard];
-      if (card) {
-        card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
-        card.style.transition = 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
-      }
-      setHoveredCard(null);
-    };
-
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseleave', handleMouseLeave);
+    });
 
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseleave', handleMouseLeave);
+      document.removeEventListener('mousemove', debouncedMouseMove);
+      if (rafId.current) cancelAnimationFrame(rafId.current);
+      debouncedMouseMove.cancel();
     };
-  }, [hoveredCard, setHoveredCard]);
+  }, [hoveredCard, setHoveredCard, debouncedMouseMove, resetCard]);
 
   return (
     <div className="grid grid-cols-2 auto-rows-[180px] gap-4">
@@ -62,6 +136,7 @@ export function PersonalityGrid({ hoveredCard, setHoveredCard, navigate }: Perso
         <button
           key={personality.id}
           ref={el => cardRefs.current[personality.id] = el}
+          data-card-id={personality.id}
           className={cn(
             personality.gradient,
             personality.span || '',
@@ -79,13 +154,15 @@ export function PersonalityGrid({ hoveredCard, setHoveredCard, navigate }: Perso
             navigate(`/chat/${personality.id}`)
           }
           onMouseEnter={() => setHoveredCard(personality.id)}
-          onMouseLeave={() => setHoveredCard(null)}
-          style={{ 
-            transition: 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-            willChange: 'transform, box-shadow'
+          onMouseLeave={() => {
+            resetCard(personality.id);
+            setHoveredCard(null);
           }}
+          onMouseDown={() => isPointerDown.current = true}
+          style={{ willChange: 'transform, box-shadow' }}
+          aria-label={`Select ${personality.title} personality`}
         >
-          <div className="relative z-10 space-y-3">
+          <div className="card-content relative z-10 space-y-3 transition-transform duration-300">
             <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center overflow-hidden mb-3 group-hover:animate-card-hover">
               <img 
                 src={personality.icon} 
