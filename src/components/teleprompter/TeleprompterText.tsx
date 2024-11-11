@@ -41,16 +41,14 @@ export const TeleprompterText = ({
           ref={index === currentWordIndex ? highlightRef : null}
           onClick={() => handleWordClick(index)}
           className={cn(
-            "word-container relative",
+            "word-container relative inline-block mx-1 px-1 py-0.5 rounded cursor-pointer",
             index === currentWordIndex && "word-highlight",
-            index < currentWordIndex ? "word-past" : "word-future"
+            index < currentWordIndex ? "opacity-40" : "opacity-30"
           )}
           initial={false}
           animate={{
             scale: index === currentWordIndex ? 1.05 : 1,
-            opacity: index === currentWordIndex ? 1 : 
-                     index < currentWordIndex ? 0.4 : 0.3,
-            y: index === currentWordIndex ? -8 : 0,
+            y: index === currentWordIndex ? -4 : 0,
           }}
           transition={{
             duration: 0.4,
@@ -59,22 +57,10 @@ export const TeleprompterText = ({
               type: "spring",
               stiffness: 400,
               damping: 30
-            },
-            y: {
-              type: "spring",
-              stiffness: 500,
-              damping: 35
             }
           }}
         >
           {word}
-          {index === currentWordIndex && (
-            <motion.div
-              className="absolute inset-0 -z-10 rounded-xl bg-[#785340]/5"
-              layoutId="highlight"
-              transition={{ duration: 0.3, ease: "easeOut" }}
-            />
-          )}
         </motion.span>
       ))}
     </motion.div>

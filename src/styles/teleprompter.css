@@ -9,6 +9,7 @@
   letter-spacing: -0.02em;
   white-space: pre-wrap;
   word-spacing: 0.2em;
+  color: rgba(120, 83, 64, 0.6);
   transform: translateZ(0);
   will-change: transform;
   backface-visibility: hidden;
@@ -22,13 +23,45 @@
 }
 
 .word-highlight {
-  background: linear-gradient(120deg, #A67B5B, #785340, #5C3D2E);
-  background-size: 200% auto;
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-  text-shadow: 0 0 30px rgba(120, 83, 64, 0.5);
-  animation: gradient-shift 8s ease infinite;
+  color: rgb(120, 83, 64);
+  font-weight: 500;
+}
+
+.affirmations-background {
+  background-color: #FFF8F6;
+}
+
+.affirmations-controls {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(8px);
+  border-radius: 9999px;
+  border: 1px solid rgba(120, 83, 64, 0.1);
+  z-index: 50;
+}
+
+.nav-button {
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(120, 83, 64, 0.1);
+  color: rgb(120, 83, 64);
+  transition: all 0.2s;
+}
+
+.nav-button:hover {
+  background: rgba(120, 83, 64, 0.1);
 }
 
 @media (max-width: 640px) {
