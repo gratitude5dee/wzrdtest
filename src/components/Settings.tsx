@@ -7,11 +7,12 @@ import { MainMenu } from "./settings/MainMenu";
 import { ProfileSection } from "./settings/ProfileSection";
 import { ConnectedAccounts } from "./settings/ConnectedAccounts";
 import { DataManagement } from "./settings/DataManagement";
+import { PreferencesSection } from "./settings/PreferencesSection";
 import { useProfileManager } from "./settings/ProfileManager";
 import { useToast } from "@/hooks/use-toast";
 
 export function Settings({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
-  const [view, setView] = useState<'main' | 'profile'>('main');
+  const [view, setView] = useState<'main' | 'profile' | 'preferences'>('main');
   const { toast } = useToast();
   const {
     firstName,
@@ -35,20 +36,6 @@ export function Settings({ open, onOpenChange }: { open: boolean; onOpenChange: 
       setView('main');
     }
   }, [open, loadUserProfile]);
-
-  useEffect(() => {
-    // Apply the preferences to the document
-    if (backgroundColor) document.body.style.backgroundColor = backgroundColor;
-    if (textColor) document.body.style.color = textColor;
-    if (appFontFamily) document.body.style.fontFamily = appFontFamily === 'inter' ? 'Inter' : 'Cal Sans';
-
-    return () => {
-      // Clean up when component unmounts
-      document.body.style.removeProperty('background-color');
-      document.body.style.removeProperty('color');
-      document.body.style.removeProperty('font-family');
-    };
-  }, [backgroundColor, textColor, appFontFamily]);
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
@@ -77,29 +64,21 @@ export function Settings({ open, onOpenChange }: { open: boolean; onOpenChange: 
     }
   };
 
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden bg-white dark:bg-slate-900 rounded-3xl">
-        {view === 'main' ? (
-          <MainMenu
-            firstName={firstName}
-            lastName={lastName}
-            email={email}
-            onProfileClick={() => setView('profile')}
-            onLogout={handleLogout}
-          />
-        ) : (
-          <div className="h-full flex flex-col">
-            <div className="flex items-center p-6 border-b border-gray-100 dark:border-slate-800">
+  const renderContent = () => {
+    switch (view) {
+      case 'profile':
+        return (
+          <div className="h-full flex flex-col bg-white">
+            <div className="flex items-center p-6 border-b border-gray-100">
               <Button 
                 variant="ghost" 
                 size="icon" 
-                className="mr-2"
+                className="mr-2 rounded-full"
                 onClick={() => setView('main')}
               >
                 <ChevronLeft className="h-6 w-6" />
               </Button>
-              <h2 className="text-2xl font-display">Profile</h2>
+              <h2 className="text-2xl font-medium">Profile</h2>
             </div>
 
             <div className="flex-1 overflow-auto">
@@ -107,30 +86,80 @@ export function Settings({ open, onOpenChange }: { open: boolean; onOpenChange: 
                 <ProfileSection
                   firstName={firstName}
                   lastName={lastName}
-                  backgroundColor={backgroundColor}
-                  textColor={textColor}
-                  appFontFamily={appFontFamily}
                   onFirstNameChange={setFirstName}
                   onLastNameChange={setLastName}
-                  onBackgroundColorChange={setBackgroundColor}
-                  onTextColorChange={setTextColor}
-                  onAppFontFamilyChange={setAppFontFamily}
                 />
                 <ConnectedAccounts email={email} />
                 <DataManagement onClearData={handleClearLocalData} />
               </div>
             </div>
 
-            <div className="p-6 bg-white dark:bg-slate-900 border-t border-gray-100 dark:border-slate-800">
+            <div className="p-6 bg-white border-t border-gray-100">
               <Button 
-                className="w-full h-14 rounded-full text-lg font-medium bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-100"
+                className="w-full h-12 rounded-full text-base font-medium bg-black hover:bg-black/90"
                 onClick={handleSave}
               >
                 Save changes
               </Button>
             </div>
           </div>
-        )}
+        );
+      case 'preferences':
+        return (
+          <div className="h-full flex flex-col bg-white">
+            <div className="flex items-center p-6 border-b border-gray-100">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="mr-2 rounded-full"
+                onClick={() => setView('main')}
+              >
+                <ChevronLeft className="h-6 w-6" />
+              </Button>
+              <h2 className="text-2xl font-medium">Preferences</h2>
+            </div>
+
+            <div className="flex-1 overflow-auto">
+              <div className="p-6">
+                <PreferencesSection
+                  backgroundColor={backgroundColor}
+                  textColor={textColor}
+                  appFontFamily={appFontFamily}
+                  onBackgroundColorChange={setBackgroundColor}
+                  onTextColorChange={setTextColor}
+                  onAppFontFamilyChange={setAppFontFamily}
+                />
+              </div>
+            </div>
+
+            <div className="p-6 bg-white border-t border-gray-100">
+              <Button 
+                className="w-full h-12 rounded-full text-base font-medium bg-black hover:bg-black/90"
+                onClick={handleSave}
+              >
+                Save changes
+              </Button>
+            </div>
+          </div>
+        );
+      default:
+        return (
+          <MainMenu
+            firstName={firstName}
+            lastName={lastName}
+            email={email}
+            onProfileClick={() => setView('profile')}
+            onPreferencesClick={() => setView('preferences')}
+            onLogout={handleLogout}
+          />
+        );
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-[400px] p-0 overflow-hidden bg-white">
+        {renderContent()}
       </DialogContent>
     </Dialog>
   );
