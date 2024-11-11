@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 
 export const useTeleprompter = (initialSpeed: number = 2) => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -36,11 +36,6 @@ export const useTeleprompter = (initialSpeed: number = 2) => {
     // Update scroll position
     setScrollPosition(targetScroll);
   }, []);
-
-  useEffect(() => {
-    if (!containerRef.current) return;
-    containerRef.current.scrollTop = scrollPosition;
-  }, [scrollPosition]);
 
   return {
     isPlaying,

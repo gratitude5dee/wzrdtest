@@ -1,12 +1,12 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { TeleprompterControls } from '@/components/TeleprompterControls';
 import { useEffect, useState, useRef, useCallback } from 'react';
-import { useVirtualizer } from '@tanstack/react-virtual';
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Edit2 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import { useTeleprompter } from '@/hooks/useTeleprompter';
 
 interface TeleprompterState {
   script: string;
