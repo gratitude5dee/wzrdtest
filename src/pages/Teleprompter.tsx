@@ -77,7 +77,7 @@ const Teleprompter = () => {
         variant="ghost"
         size="icon"
         onClick={handleExit}
-        className="absolute top-6 left-6 z-50 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all duration-300 hover:scale-105"
+        className="fixed top-6 left-6 z-50 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all duration-300 hover:scale-105"
       >
         <ArrowLeft className="h-6 w-6" />
       </Button>
@@ -106,9 +106,13 @@ const Teleprompter = () => {
                 index === currentWordIndex
                   ? 'text-teleprompter-highlight scale-110 bg-teleprompter-highlight/10 font-semibold'
                   : index < currentWordIndex
-                  ? 'opacity-60'
-                  : 'opacity-40'
+                  ? 'text-white/60'
+                  : 'text-white/40'
               }`}
+              style={{
+                color: index === currentWordIndex ? '#3B82F6' : undefined,
+                opacity: index === currentWordIndex ? 1 : undefined
+              }}
             >
               {word}
             </span>
