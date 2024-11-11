@@ -94,7 +94,12 @@ const App = () => {
               } />
               <Route path="/affirmations" element={
                 <ProtectedRoute>
-                  <Teleprompter initialScript={affirmationsText} fontSize={44} fontFamily="inter" textColor="#F8FAFC" />
+                  <Teleprompter 
+                    initialScript={affirmationsText} 
+                    fontSize={44} 
+                    fontFamily="inter" 
+                    textColor="#785340" 
+                  />
                 </ProtectedRoute>
               } />
             </Routes>

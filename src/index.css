@@ -71,12 +71,12 @@
 }
 
 .word-highlight {
-  background: linear-gradient(120deg, #60A5FA, #3B82F6, #2563EB);
+  background: linear-gradient(120deg, #A67B5B, #785340, #5C3D2E);
   background-size: 200% auto;
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
-  text-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
+  text-shadow: 0 0 30px rgba(120, 83, 64, 0.5);
   animation: gradient-shift 8s ease infinite;
   transform: translateY(-8px);
 }
@@ -85,7 +85,7 @@
   content: '';
   position: absolute;
   inset: -4px;
-  background: radial-gradient(circle at center, rgba(59, 130, 246, 0.12), transparent 80%);
+  background: radial-gradient(circle at center, rgba(120, 83, 64, 0.12), transparent 80%);
   border-radius: inherit;
   z-index: -1;
   opacity: 0;
@@ -110,10 +110,10 @@
 
 @keyframes glow-pulse {
   0%, 100% { 
-    text-shadow: 0 0 25px rgba(59, 130, 246, 0.15);
+    text-shadow: 0 0 25px rgba(120, 83, 64, 0.15);
   }
   50% { 
-    text-shadow: 0 0 35px rgba(59, 130, 246, 0.3);
+    text-shadow: 0 0 35px rgba(120, 83, 64, 0.3);
   }
 }
 

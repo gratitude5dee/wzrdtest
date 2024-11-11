@@ -108,16 +108,16 @@ export const Teleprompter = ({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900 overflow-hidden relative"
+      className="min-h-screen bg-gradient-to-br from-[#FFF8F0] via-[#FFF4E8] to-[#FFF8F0] overflow-hidden relative"
     >
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.08)_0%,transparent_100%)] pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(120,83,64,0.05)_0%,transparent_100%)] pointer-events-none" />
       
       <div className="fixed top-8 left-8 z-[100] flex items-center gap-4">
         <Button
           variant="ghost"
           size="icon"
           onClick={handleExit}
-          className="w-12 h-12 rounded-full bg-white/5 hover:bg-white/10 text-white transition-all duration-300 hover:scale-105 backdrop-blur-lg border border-white/10"
+          className="w-12 h-12 rounded-full bg-[#785340]/5 hover:bg-[#785340]/10 text-[#785340] transition-all duration-300 hover:scale-105 backdrop-blur-lg border border-[#785340]/10"
         >
           <ArrowLeft className="h-6 w-6" />
         </Button>
@@ -126,7 +126,7 @@ export const Teleprompter = ({
           variant="ghost"
           size="icon"
           onClick={handleEditToggle}
-          className="w-12 h-12 rounded-full bg-white/5 hover:bg-white/10 text-white transition-all duration-300 hover:scale-105 backdrop-blur-lg border border-white/10"
+          className="w-12 h-12 rounded-full bg-[#785340]/5 hover:bg-[#785340]/10 text-[#785340] transition-all duration-300 hover:scale-105 backdrop-blur-lg border border-[#785340]/10"
         >
           <Edit2 className="h-6 w-6" />
         </Button>
@@ -162,8 +162,8 @@ export const Teleprompter = ({
         </AnimatePresence>
       </div>
       
-      <div className="fixed inset-x-0 top-0 h-40 bg-gradient-to-b from-gray-900 via-gray-900/80 to-transparent pointer-events-none z-20" />
-      <div className="fixed inset-x-0 bottom-0 h-40 bg-gradient-to-t from-gray-900 via-gray-900/80 to-transparent pointer-events-none z-20" />
+      <div className="fixed inset-x-0 top-0 h-40 bg-gradient-to-b from-[#FFF8F0] via-[#FFF8F0]/80 to-transparent pointer-events-none z-20" />
+      <div className="fixed inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#FFF8F0] via-[#FFF8F0]/80 to-transparent pointer-events-none z-20" />
       
       <TeleprompterControls
         isPlaying={isPlaying}
