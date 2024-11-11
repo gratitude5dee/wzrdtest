@@ -1,38 +1,42 @@
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { useEffect, useRef } from "react";
 
 interface TeleprompterTextProps {
   words: string[];
   currentWordIndex: number;
   handleWordClick: (index: number) => void;
-  highlightRef: React.RefObject<HTMLSpanElement>;
   fontFamily: string;
   fontSize: number;
   textColor: string;
+  updateScrollPosition: (element: HTMLElement) => void;
 }
 
 export const TeleprompterText = ({
   words,
   currentWordIndex,
   handleWordClick,
-  highlightRef,
   fontFamily,
   fontSize,
   textColor,
+  updateScrollPosition,
 }: TeleprompterTextProps) => {
+  const highlightRef = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    if (highlightRef.current) {
+      updateScrollPosition(highlightRef.current);
+    }
+  }, [currentWordIndex, updateScrollPosition]);
+
   return (
-    <motion.div 
-      className="teleprompter-text"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
+    <div 
+      className="teleprompter-text max-w-4xl mx-auto"
       style={{
         fontFamily: fontFamily === 'inter' ? 'Inter' : 
                    fontFamily === 'cal-sans' ? 'Cal Sans' : fontFamily,
         fontSize: `${fontSize / 16}rem`,
         color: textColor,
-        letterSpacing: "-0.02em",
       }}
     >
       {words.map((word, index) => (
@@ -43,7 +47,7 @@ export const TeleprompterText = ({
           className={cn(
             "word-container relative inline-block mx-2 px-2 py-1 rounded-xl cursor-pointer transition-all duration-500",
             index === currentWordIndex && "word-highlight",
-            index < currentWordIndex ? "opacity-20" : "opacity-10"
+            index < currentWordIndex ? "opacity-40" : "opacity-80"
           )}
           initial={false}
           animate={{
@@ -65,7 +69,7 @@ export const TeleprompterText = ({
           {word}
           {index === currentWordIndex && (
             <motion.div
-              className="absolute inset-0 rounded-xl bg-[#785340]/5"
+              className="absolute inset-0 rounded-xl bg-teleprompter-highlight/5"
               initial={{ opacity: 0 }}
               animate={{ 
                 opacity: [0.2, 0.8, 0.2],
@@ -80,6 +84,6 @@ export const TeleprompterText = ({
           )}
         </motion.span>
       ))}
-    </motion.div>
+    </div>
   );
 };
