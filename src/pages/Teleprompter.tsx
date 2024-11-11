@@ -87,7 +87,6 @@ const Teleprompter = () => {
     <div className="min-h-screen bg-background overflow-hidden relative">
       <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent pointer-events-none" />
       
-      {/* Navigation Controls */}
       <div className="fixed top-8 left-8 z-[100] flex items-center gap-4">
         <Button
           variant="ghost"
@@ -167,6 +166,7 @@ const Teleprompter = () => {
         highlightRef={highlightRef}
         containerRef={containerRef}
         currentWordIndex={currentWordIndex}
+        isPlaying={isPlaying}
       />
       
       <div className="fixed inset-x-0 top-0 h-40 bg-gradient-to-b from-background via-background/80 to-transparent pointer-events-none z-20" />
