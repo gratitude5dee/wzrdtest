@@ -1,14 +1,14 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 
 export const useTeleprompter = (initialSpeed: number = 2) => {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [speed, setSpeed] = useState(initialSpeed);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const scrollInterval = useRef<NodeJS.Timeout>();
-  const [autoScrollEnabled, setAutoScrollEnabled] = useState(true);
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [speed, setSpeed] = useState<number>(initialSpeed);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const scrollInterval = useRef<number | null>(null);
+  const [autoScrollEnabled, setAutoScrollEnabled] = useState<boolean>(true);
 
   const togglePlay = useCallback(() => {
-    setIsPlaying(prev => !prev);
+    setIsPlaying((prevState) => !prevState);
   }, []);
 
   const updateSpeed = useCallback((newSpeed: number) => {
@@ -16,6 +16,10 @@ export const useTeleprompter = (initialSpeed: number = 2) => {
   }, []);
 
   const reset = useCallback(() => {
+    if (scrollInterval.current) {
+      window.clearInterval(scrollInterval.current);
+      scrollInterval.current = null;
+    }
     setIsPlaying(false);
     if (containerRef.current) {
       containerRef.current.scrollTop = 0;
@@ -30,30 +34,28 @@ export const useTeleprompter = (initialSpeed: number = 2) => {
     const elementPosition = element.offsetTop;
     const elementHeight = element.offsetHeight;
     
-    // Calculate the target scroll position to center the element
     const targetScroll = elementPosition - (containerHeight / 2) + (elementHeight / 2);
     
-    // Smooth scroll to the target position
     container.scrollTo({
       top: targetScroll,
       behavior: 'smooth'
     });
   }, [autoScrollEnabled]);
 
-  // Handle auto-scrolling when playing
   useEffect(() => {
     if (isPlaying && containerRef.current && autoScrollEnabled) {
-      const scrollAmount = speed * 0.5; // Adjust this value to control scroll speed
-      scrollInterval.current = setInterval(() => {
+      const scrollAmount = speed * 0.5;
+      scrollInterval.current = window.setInterval(() => {
         if (containerRef.current) {
           containerRef.current.scrollTop += scrollAmount;
         }
-      }, 16); // ~60fps
+      }, 16);
     }
 
     return () => {
       if (scrollInterval.current) {
-        clearInterval(scrollInterval.current);
+        window.clearInterval(scrollInterval.current);
+        scrollInterval.current = null;
       }
     };
   }, [isPlaying, speed, autoScrollEnabled]);
