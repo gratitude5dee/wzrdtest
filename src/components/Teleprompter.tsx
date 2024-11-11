@@ -105,8 +105,8 @@ export const Teleprompter = ({
     <div className="min-h-screen bg-background overflow-hidden relative">
       <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent pointer-events-none" />
       
-      {/* Navigation Controls */}
-      <div className="fixed top-8 right-8 z-[100] flex items-center gap-4">
+      {/* Navigation Controls - Split into left and right sides */}
+      <div className="fixed top-8 w-full px-8 flex justify-between items-center z-[100]">
         <Button
           variant="ghost"
           size="icon"
@@ -135,7 +135,8 @@ export const Teleprompter = ({
         ref={containerRef}
         className={cn(
           "h-screen overflow-hidden relative z-10 smooth-scroll",
-          "px-4 md:px-8 lg:px-16"
+          "px-4 md:px-8 lg:px-16",
+          "flex items-center justify-center" // Center the content vertically and horizontally
         )}
       >
         {isEditing ? (
@@ -148,7 +149,7 @@ export const Teleprompter = ({
           />
         ) : (
           <div 
-            className="teleprompter-text"
+            className="teleprompter-text max-w-4xl mx-auto" // Limit width and center
             style={{
               fontFamily: fontFamily === 'inter' ? 'Inter' : 
                          fontFamily === 'cal-sans' ? 'Cal Sans' : fontFamily,
@@ -161,13 +162,14 @@ export const Teleprompter = ({
                 key={index}
                 ref={index === currentWordIndex ? highlightRef : null}
                 onClick={() => setCurrentWordIndex(index)}
-                className={`inline-block mx-1 px-1 py-0.5 rounded transition-all duration-300 cursor-pointer hover:bg-teleprompter-highlight/20 ${
+                className={cn(
+                  "inline-block mx-1 px-1 py-0.5 rounded transition-all duration-300 cursor-pointer hover:bg-teleprompter-highlight/20",
                   index === currentWordIndex
-                    ? 'text-teleprompter-highlight scale-110 bg-teleprompter-highlight/10 font-semibold'
+                    ? "text-teleprompter-highlight scale-110 bg-teleprompter-highlight/10 font-semibold"
                     : index < currentWordIndex
-                    ? `${textColor}/60`
-                    : `${textColor}/40`
-                }`}
+                    ? `opacity-60`
+                    : `opacity-40`
+                )}
                 style={{
                   color: index === currentWordIndex ? '#3B82F6' : undefined
                 }}
@@ -179,6 +181,7 @@ export const Teleprompter = ({
         )}
       </div>
       
+      {/* Gradient overlays */}
       <div className="fixed inset-x-0 top-0 h-40 bg-gradient-to-b from-background via-background/80 to-transparent pointer-events-none z-20" />
       <div className="fixed inset-x-0 bottom-0 h-40 bg-gradient-to-t from-background via-background/80 to-transparent pointer-events-none z-20" />
       
