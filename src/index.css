@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500,600,700&display=swap');
 @import url('https://api.fontshare.com/v2/css?f[]=cal-sans@400,500,600&display=swap');
 
 @tailwind base;
@@ -32,7 +32,7 @@
 
 .teleprompter-text {
   font-family: 'Inter', sans-serif;
-  line-height: 2;
+  line-height: 1.8;
   font-size: 2.75rem;
   text-align: center;
   color: theme('colors.white');
@@ -40,33 +40,19 @@
   margin: 0 auto;
   padding: 100vh 0;
   letter-spacing: -0.02em;
+  white-space: pre-wrap;
+  word-spacing: 0.2em;
 }
 
 .smooth-scroll {
   transition: transform 50ms linear;
 }
 
-@keyframes word-glow {
-  0% {
-    text-shadow: 0 0 10px rgba(59, 130, 246, 0.5),
-                 0 0 20px rgba(59, 130, 246, 0.3);
-    transform: scale(1);
-  }
-  50% {
-    text-shadow: 0 0 20px rgba(59, 130, 246, 0.8),
-                 0 0 30px rgba(59, 130, 246, 0.5),
-                 0 0 40px rgba(59, 130, 246, 0.3);
-    transform: scale(1.05);
-  }
-  100% {
-    text-shadow: 0 0 10px rgba(59, 130, 246, 0.5),
-                 0 0 20px rgba(59, 130, 246, 0.3);
-    transform: scale(1);
-  }
-}
-
 .word-highlight {
-  animation: word-glow 2s ease-in-out infinite;
+  display: inline-block;
+  padding: 0.1em 0.3em;
+  margin: 0 0.1em;
+  border-radius: 0.2em;
   background: linear-gradient(90deg, #60A5FA, #3B82F6, #2563EB);
   background-size: 200% auto;
   background-clip: text;
@@ -83,43 +69,6 @@
 .word-future {
   opacity: 0.4;
   transition: all 0.3s ease;
-}
-
-.gradient-text {
-  @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 animate-gradient-shift;
-  background-size: 200% auto;
-}
-
-.magnetic-button {
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.magnetic-button:hover {
-  --mouse-x: 0px;
-  --mouse-y: 0px;
-  animation: magnetic-float 3s ease-in-out infinite;
-}
-
-.glow-card {
-  position: relative;
-  overflow: hidden;
-}
-
-.glow-card::before {
-  content: '';
-  position: absolute;
-  inset: -2px;
-  background: linear-gradient(90deg, #60A5FA, #3B82F6, #2563EB);
-  background-size: 200% auto;
-  animation: gradient-shift 3s ease infinite;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  border-radius: inherit;
-  z-index: -1;
-}
-
-.glow-card:hover::before {
-  opacity: 1;
 }
 
 @layer utilities {

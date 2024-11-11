@@ -117,18 +117,21 @@ export const Teleprompter = () => {
       
       <div
         ref={containerRef}
-        className="h-screen overflow-hidden relative z-10 smooth-scroll"
+        className="h-screen overflow-hidden relative z-10 smooth-scroll px-8"
       >
         {isEditing ? (
-          <div className="max-w-4xl mx-auto pt-24 px-6">
+          <div className="max-w-4xl mx-auto pt-24">
             <Textarea
               value={editedText}
               onChange={(e) => setEditedText(e.target.value)}
-              className="min-h-[60vh] w-full bg-black/30 border-white/20 text-white resize-none p-6"
+              className="min-h-[60vh] w-full bg-black/30 border-white/20 text-white resize-none p-6 rounded-xl"
               style={{
                 fontFamily: fontFamily === 'inter' ? 'Inter' : 
                          fontFamily === 'cal-sans' ? 'Cal Sans' : fontFamily,
                 fontSize: `${fontSize / 16}rem`,
+                lineHeight: '1.8',
+                whiteSpace: 'pre-wrap',
+                wordSpacing: '0.2em'
               }}
             />
           </div>
@@ -147,7 +150,7 @@ export const Teleprompter = () => {
                 ref={index === currentWordIndex ? highlightRef : null}
                 onClick={() => handleWordClick(index)}
                 className={cn(
-                  "inline-block mx-1 px-1 py-0.5 rounded cursor-pointer transition-all duration-300",
+                  "inline-block px-2 py-1 rounded cursor-pointer transition-all duration-300",
                   index === currentWordIndex && "word-highlight",
                   index < currentWordIndex && "word-past",
                   index > currentWordIndex && "word-future",
