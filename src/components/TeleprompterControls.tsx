@@ -30,6 +30,8 @@ export const TeleprompterControls = ({
   const playButtonRef = useRef<HTMLButtonElement>(null);
   const hideTimeout = useRef<NodeJS.Timeout>();
 
+  useKeyboardShortcuts(onSpeedChange, onTogglePlay, speed);
+
   const handleMouseMove = useCallback((e: MouseEvent) => {
     setMousePosition({ x: e.clientX, y: e.clientY });
     setIsVisible(true);
@@ -61,23 +63,24 @@ export const TeleprompterControls = ({
       }
     }
 
-    hideTimeout.current = setTimeout(() => {
-      if (isPlaying) {
-        setIsVisible(false);
+    // Check if mouse is near the controls
+    if (controlsRef.current) {
+      const rect = controlsRef.current.getBoundingClientRect();
+      const isNearControls = e.clientY <= (rect.bottom + 100); // 100px buffer zone
+
+      if (!isNearControls) {
+        hideTimeout.current = setTimeout(() => {
+          setIsVisible(false);
+        }, 1000);
       }
-    }, 2000);
-  }, [isPlaying]);
+    }
+  }, []);
 
   useEffect(() => {
-    const teleprompterElement = document.querySelector('.teleprompter-text')?.parentElement;
-    if (teleprompterElement) {
-      teleprompterElement.addEventListener('mousemove', handleMouseMove);
-    }
+    document.addEventListener('mousemove', handleMouseMove);
     
     return () => {
-      if (teleprompterElement) {
-        teleprompterElement.removeEventListener('mousemove', handleMouseMove);
-      }
+      document.removeEventListener('mousemove', handleMouseMove);
       if (hideTimeout.current) {
         clearTimeout(hideTimeout.current);
       }
@@ -99,8 +102,8 @@ export const TeleprompterControls = ({
         exit={{ opacity: 0, y: -20 }}
         ref={controlsRef}
         className={cn(
-          "fixed top-8 left-1/2 transform -translate-x-1/2 rounded-3xl px-12 py-8",
-          "flex items-center space-x-12 transition-all duration-700 ease-in-out z-50",
+          "fixed top-6 left-1/2 -translate-x-1/2 rounded-3xl px-12 py-6",
+          "flex items-center space-x-12 transition-all duration-300 ease-in-out z-50",
           "bg-gradient-to-b from-[#FFF8F0]/95 to-[#FFF4E8]/95 backdrop-blur-xl",
           "border border-[#785340]/10 shadow-[0_8px_32px_-4px_rgba(120,83,64,0.1)]",
           isVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-8 pointer-events-none"
