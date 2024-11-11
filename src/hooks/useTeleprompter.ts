@@ -6,6 +6,7 @@ export const useTeleprompter = (initialSpeed: number = 2) => {
   const [scrollPosition, setScrollPosition] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollInterval = useRef<NodeJS.Timeout>();
+  const frameRef = useRef<number>();
 
   const togglePlay = useCallback(() => {
     setIsPlaying(prev => !prev);
@@ -30,18 +31,28 @@ export const useTeleprompter = (initialSpeed: number = 2) => {
     const wordPosition = wordElement.offsetTop;
     const wordHeight = wordElement.offsetHeight;
     const targetScroll = wordPosition - (containerHeight / 2) + (wordHeight / 2);
-    setScrollPosition(targetScroll);
+    
+    // Smooth interpolation between current and target scroll position
+    const currentScroll = container.scrollTop;
+    const distance = targetScroll - currentScroll;
+    const smoothness = 0.15; // Lower = smoother
+    
+    setScrollPosition(prev => prev + (distance * smoothness));
   }, []);
 
   useEffect(() => {
     if (isPlaying && containerRef.current) {
-      scrollInterval.current = setInterval(() => {
-        setScrollPosition(prev => prev + speed);
-      }, 16); // ~60fps
+      const animate = () => {
+        setScrollPosition(prev => prev + (speed * 0.5));
+        frameRef.current = requestAnimationFrame(animate);
+      };
+      
+      frameRef.current = requestAnimationFrame(animate);
     }
+    
     return () => {
-      if (scrollInterval.current) {
-        clearInterval(scrollInterval.current);
+      if (frameRef.current) {
+        cancelAnimationFrame(frameRef.current);
       }
     };
   }, [isPlaying, speed]);

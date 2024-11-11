@@ -45,7 +45,7 @@
 }
 
 .smooth-scroll {
-  transition: transform 600ms cubic-bezier(0.2, 0, 0, 1);
+  transition: transform 800ms cubic-bezier(0.16, 1, 0.3, 1);
   will-change: transform;
   backface-visibility: hidden;
   transform: translateZ(0);
