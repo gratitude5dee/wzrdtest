@@ -1,9 +1,10 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTeleprompter } from '@/hooks/useTeleprompter';
 import { TeleprompterControls } from '@/components/TeleprompterControls';
+import { TeleprompterEditor } from '@/components/teleprompter/TeleprompterEditor';
+import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Edit2 } from 'lucide-react';
 import { cn } from "@/lib/utils";
 
@@ -51,6 +52,9 @@ export const Teleprompter = ({
     updateScrollPosition
   } = useTeleprompter(2);
 
+  // Add keyboard shortcuts
+  useKeyboardShortcuts(updateSpeed, togglePlay, speed);
+
   useEffect(() => {
     if (!script) {
       navigate('/');
@@ -97,21 +101,12 @@ export const Teleprompter = ({
     setIsEditing(!isEditing);
   }, [isEditing, editableScript]);
 
-  const handleWordClick = useCallback((index: number) => {
-    setCurrentWordIndex(index);
-  }, []);
-
-  const handleRestart = useCallback(() => {
-    reset();
-    setCurrentWordIndex(0);
-  }, [reset]);
-
   return (
     <div className="min-h-screen bg-background overflow-hidden relative">
       <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent pointer-events-none" />
       
       {/* Navigation Controls */}
-      <div className="fixed top-8 left-8 z-[100] flex items-center gap-4">
+      <div className="fixed top-8 right-8 z-[100] flex items-center gap-4">
         <Button
           variant="ghost"
           size="icon"
@@ -125,7 +120,12 @@ export const Teleprompter = ({
           variant="ghost"
           size="icon"
           onClick={handleEditToggle}
-          className="w-12 h-12 rounded-full bg-black/40 hover:bg-black/60 text-white transition-all duration-300 hover:scale-105 backdrop-blur-lg border border-white/10"
+          className={cn(
+            "w-12 h-12 rounded-full transition-all duration-300 hover:scale-105 backdrop-blur-lg border",
+            isEditing ? 
+              "bg-white/90 text-black hover:bg-white border-black/10" :
+              "bg-black/40 hover:bg-black/60 text-white border-white/10"
+          )}
         >
           <Edit2 className="h-6 w-6" />
         </Button>
@@ -139,19 +139,12 @@ export const Teleprompter = ({
         )}
       >
         {isEditing ? (
-          <Textarea
-            value={editableScript}
-            onChange={(e) => setEditableScript(e.target.value)}
-            className={cn(
-              "w-full h-full bg-transparent border-none resize-none p-8 focus:ring-0 teleprompter-text",
-              "placeholder:text-white/40"
-            )}
-            style={{
-              fontFamily: fontFamily === 'inter' ? 'Inter' : 
-                         fontFamily === 'cal-sans' ? 'Cal Sans' : fontFamily,
-              fontSize: `${fontSize / 16}rem`,
-              color: textColor,
-            }}
+          <TeleprompterEditor
+            editableScript={editableScript}
+            setEditableScript={setEditableScript}
+            fontFamily={fontFamily}
+            fontSize={fontSize}
+            textColor={textColor}
           />
         ) : (
           <div 
@@ -167,7 +160,7 @@ export const Teleprompter = ({
               <span
                 key={index}
                 ref={index === currentWordIndex ? highlightRef : null}
-                onClick={() => handleWordClick(index)}
+                onClick={() => setCurrentWordIndex(index)}
                 className={`inline-block mx-1 px-1 py-0.5 rounded transition-all duration-300 cursor-pointer hover:bg-teleprompter-highlight/20 ${
                   index === currentWordIndex
                     ? 'text-teleprompter-highlight scale-110 bg-teleprompter-highlight/10 font-semibold'
@@ -195,7 +188,10 @@ export const Teleprompter = ({
         onTogglePlay={togglePlay}
         onSpeedChange={updateSpeed}
         onExit={handleExit}
-        onRestart={handleRestart}
+        onRestart={() => {
+          reset();
+          setCurrentWordIndex(0);
+        }}
       />
     </div>
   );
