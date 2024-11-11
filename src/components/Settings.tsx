@@ -17,8 +17,14 @@ export function Settings({ open, onOpenChange }: { open: boolean; onOpenChange: 
     firstName,
     lastName,
     email,
+    backgroundColor,
+    textColor,
+    appFontFamily,
     setFirstName,
     setLastName,
+    setBackgroundColor,
+    setTextColor,
+    setAppFontFamily,
     loadUserProfile,
     saveProfile
   } = useProfileManager();
@@ -29,6 +35,20 @@ export function Settings({ open, onOpenChange }: { open: boolean; onOpenChange: 
       setView('main');
     }
   }, [open, loadUserProfile]);
+
+  useEffect(() => {
+    // Apply the preferences to the document
+    if (backgroundColor) document.body.style.backgroundColor = backgroundColor;
+    if (textColor) document.body.style.color = textColor;
+    if (appFontFamily) document.body.style.fontFamily = appFontFamily === 'inter' ? 'Inter' : 'Cal Sans';
+
+    return () => {
+      // Clean up when component unmounts
+      document.body.style.removeProperty('background-color');
+      document.body.style.removeProperty('color');
+      document.body.style.removeProperty('font-family');
+    };
+  }, [backgroundColor, textColor, appFontFamily]);
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
@@ -87,8 +107,14 @@ export function Settings({ open, onOpenChange }: { open: boolean; onOpenChange: 
                 <ProfileSection
                   firstName={firstName}
                   lastName={lastName}
+                  backgroundColor={backgroundColor}
+                  textColor={textColor}
+                  appFontFamily={appFontFamily}
                   onFirstNameChange={setFirstName}
                   onLastNameChange={setLastName}
+                  onBackgroundColorChange={setBackgroundColor}
+                  onTextColorChange={setTextColor}
+                  onAppFontFamilyChange={setAppFontFamily}
                 />
                 <ConnectedAccounts email={email} />
                 <DataManagement onClearData={handleClearLocalData} />

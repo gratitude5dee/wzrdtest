@@ -6,6 +6,9 @@ export function useProfileManager() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
+  const [backgroundColor, setBackgroundColor] = useState("#FFF8F6");
+  const [textColor, setTextColor] = useState("#000000");
+  const [appFontFamily, setAppFontFamily] = useState("inter");
   const { toast } = useToast();
 
   const loadUserProfile = async () => {
@@ -18,7 +21,7 @@ export function useProfileManager() {
 
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
-        .select('*')
+        .select('*, user_preferences(*)')
         .eq('id', user.id)
         .maybeSingle();
 
@@ -27,7 +30,6 @@ export function useProfileManager() {
       }
 
       if (!profile) {
-        // Create new profile if it doesn't exist
         const { error: insertError } = await supabase
           .from('profiles')
           .insert([{ 
@@ -48,6 +50,12 @@ export function useProfileManager() {
       setFirstName(profile.first_name || "");
       setLastName(profile.last_name || "");
       setEmail(profile.email || "");
+      
+      if (profile.user_preferences) {
+        setBackgroundColor(profile.user_preferences.background_color || "#FFF8F6");
+        setTextColor(profile.user_preferences.text_color || "#000000");
+        setAppFontFamily(profile.user_preferences.app_font_family || "inter");
+      }
     } catch (error) {
       toast({
         title: "Error",
@@ -65,7 +73,7 @@ export function useProfileManager() {
         throw new Error("Authentication error");
       }
 
-      const { error: updateError } = await supabase
+      const { error: updateProfileError } = await supabase
         .from('profiles')
         .upsert({
           id: user.id,
@@ -74,8 +82,21 @@ export function useProfileManager() {
           email: email,
         });
 
-      if (updateError) {
+      if (updateProfileError) {
         throw new Error("Failed to update profile");
+      }
+
+      const { error: updatePreferencesError } = await supabase
+        .from('user_preferences')
+        .upsert({
+          id: user.id,
+          background_color: backgroundColor,
+          text_color: textColor,
+          app_font_family: appFontFamily,
+        });
+
+      if (updatePreferencesError) {
+        throw new Error("Failed to update preferences");
       }
 
       toast({
@@ -98,8 +119,14 @@ export function useProfileManager() {
     firstName,
     lastName,
     email,
+    backgroundColor,
+    textColor,
+    appFontFamily,
     setFirstName,
     setLastName,
+    setBackgroundColor,
+    setTextColor,
+    setAppFontFamily,
     loadUserProfile,
     saveProfile
   };

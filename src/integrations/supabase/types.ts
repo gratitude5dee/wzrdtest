@@ -173,6 +173,8 @@ export type Database = {
       }
       user_preferences: {
         Row: {
+          app_font_family: string | null
+          background_color: string | null
           created_at: string | null
           font_family: string | null
           font_size: number | null
@@ -181,6 +183,8 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          app_font_family?: string | null
+          background_color?: string | null
           created_at?: string | null
           font_family?: string | null
           font_size?: number | null
@@ -189,6 +193,8 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          app_font_family?: string | null
+          background_color?: string | null
           created_at?: string | null
           font_family?: string | null
           font_size?: number | null
