@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
-import { X, Play, Pause, Settings2, ArrowUp, ArrowDown, RotateCcw } from 'lucide-react';
+import { X, Play, Pause, Settings2, ArrowUp, ArrowDown, RotateCcw, GripHorizontal } from 'lucide-react';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { cn } from '@/lib/utils';
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useDragControls } from "framer-motion";
 
 interface TeleprompterControlsProps {
   isPlaying: boolean;
@@ -29,6 +29,7 @@ export const TeleprompterControls = ({
   const controlsRef = useRef<HTMLDivElement>(null);
   const playButtonRef = useRef<HTMLButtonElement>(null);
   const hideTimeout = useRef<NodeJS.Timeout>();
+  const dragControls = useDragControls();
 
   useKeyboardShortcuts(onSpeedChange, onTogglePlay, speed);
 
@@ -63,10 +64,9 @@ export const TeleprompterControls = ({
       }
     }
 
-    // Check if mouse is near the controls
     if (controlsRef.current) {
       const rect = controlsRef.current.getBoundingClientRect();
-      const isNearControls = e.clientY <= (rect.bottom + 100); // 100px buffer zone
+      const isNearControls = e.clientY <= (rect.bottom + 100);
 
       if (!isNearControls) {
         hideTimeout.current = setTimeout(() => {
@@ -101,14 +101,25 @@ export const TeleprompterControls = ({
         }}
         exit={{ opacity: 0, y: -20 }}
         ref={controlsRef}
+        drag
+        dragControls={dragControls}
+        dragMomentum={false}
+        dragElastic={0.1}
         className={cn(
           "fixed top-6 left-1/2 -translate-x-1/2 rounded-3xl px-12 py-6",
-          "flex items-center space-x-12 transition-all duration-300 ease-in-out z-50",
+          "flex items-center space-x-12 transition-colors duration-300 ease-in-out z-50",
           "bg-gradient-to-b from-[#FFF8F0]/95 to-[#FFF4E8]/95 backdrop-blur-xl",
           "border border-[#785340]/10 shadow-[0_8px_32px_-4px_rgba(120,83,64,0.1)]",
-          isVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-8 pointer-events-none"
+          isVisible ? "opacity-100" : "opacity-0 pointer-events-none"
         )}
       >
+        <div 
+          className="absolute -top-3 left-1/2 -translate-x-1/2 cursor-move p-1 rounded-full bg-[#785340]/5 hover:bg-[#785340]/10 transition-colors"
+          onPointerDown={(e) => dragControls.start(e)}
+        >
+          <GripHorizontal className="w-4 h-4 text-[#785340]/60" />
+        </div>
+
         <div className="flex items-center space-x-8">
           <Button
             ref={playButtonRef}
