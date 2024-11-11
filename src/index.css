@@ -45,7 +45,7 @@
 }
 
 .smooth-scroll {
-  transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 500ms cubic-bezier(0.2, 0, 0, 1);
   will-change: transform;
   backface-visibility: hidden;
   transform: translateZ(0);
@@ -61,36 +61,37 @@
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  animation: gradient-shift 4s ease infinite;
+  transition: all 0.6s cubic-bezier(0.2, 0, 0, 1);
+  animation: gradient-shift 6s ease infinite;
   text-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
   position: relative;
   transform-origin: center center;
+  transform: scale(1);
 }
 
 .word-highlight::before {
   content: '';
   position: absolute;
   inset: -2px;
-  background: radial-gradient(circle at center, rgba(59, 130, 246, 0.2), transparent 70%);
+  background: radial-gradient(circle at center, rgba(59, 130, 246, 0.15), transparent 70%);
   border-radius: inherit;
   z-index: -1;
   opacity: 0;
-  transition: opacity 0.3s ease;
-  animation: glow-ripple 2s ease-in-out infinite;
+  transition: opacity 0.6s cubic-bezier(0.2, 0, 0, 1);
+  animation: glow-ripple 3s ease-in-out infinite;
 }
 
 .word-past {
   opacity: 0.6;
-  transform: scale(0.99);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: scale(0.995);
+  transition: all 0.6s cubic-bezier(0.2, 0, 0, 1);
   filter: blur(0.5px);
 }
 
 .word-future {
   opacity: 0.4;
-  transform: scale(0.99);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: scale(0.995);
+  transition: all 0.6s cubic-bezier(0.2, 0, 0, 1);
   filter: blur(0.5px);
 }
 
@@ -102,10 +103,10 @@
 
 @keyframes glow-pulse {
   0%, 100% { 
-    text-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+    text-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
   }
   50% { 
-    text-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
+    text-shadow: 0 0 25px rgba(59, 130, 246, 0.4);
   }
 }
 
@@ -115,8 +116,8 @@
     transform: scale(1);
   }
   50% { 
-    opacity: 0.5;
-    transform: scale(1.02);
+    opacity: 0.3;
+    transform: scale(1.01);
   }
 }
 
@@ -125,19 +126,19 @@
     animation: gradient-shift 8s linear infinite;
     background-size: 200%;
   }
-  
+
   .hover-lift {
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
-  
+
   .hover-lift:hover {
     transform: translateY(-2px);
   }
-  
+
   .hover-scale {
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
-  
+
   .hover-scale:hover {
     transform: scale(1.05);
   }
