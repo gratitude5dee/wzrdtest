@@ -5,6 +5,7 @@ import { useEffect, useState, useRef, useCallback } from 'react';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Edit2 } from 'lucide-react';
+import { cn } from "@/lib/utils";
 
 interface TeleprompterState {
   script: string;
@@ -116,7 +117,10 @@ const Teleprompter = () => {
           <Textarea
             value={editableScript}
             onChange={(e) => setEditableScript(e.target.value)}
-            className="w-full h-full bg-transparent border-none resize-none p-8 focus:ring-0 teleprompter-text"
+            className={cn(
+              "w-full h-full bg-transparent border-none resize-none p-8 focus:ring-0 teleprompter-text",
+              "placeholder:text-white/40"
+            )}
             style={{
               fontFamily: fontFamily === 'inter' ? 'Inter' : 
                          fontFamily === 'cal-sans' ? 'Cal Sans' : fontFamily,
