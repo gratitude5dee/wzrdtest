@@ -25,10 +25,14 @@
 .word-highlight {
   color: rgb(120, 83, 64);
   font-weight: 500;
+  background: rgba(120, 83, 64, 0.08);
+  border-radius: 0.3em;
+  padding: 0.1em 0.3em;
 }
 
 .affirmations-background {
   background-color: #FFF8F6;
+  min-height: 100vh;
 }
 
 .affirmations-controls {
