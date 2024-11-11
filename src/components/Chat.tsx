@@ -12,6 +12,7 @@ interface Message {
     color: string;
   }>;
   isUser?: boolean;
+  isInterruption?: boolean;
 }
 
 interface ChatProps {
@@ -41,8 +42,20 @@ export function Chat({ personality }: ChatProps) {
       {
         text: "Hello! How can I help you today?",
         emotions: [
-          { name: "WARMTH", color: "bg-orange-300" },
+          { name: "WARMTH", color: "bg-amber-300" },
           { name: "OPENNESS", color: "bg-blue-300" },
+        ],
+        isUser: false
+      },
+      {
+        isInterruption: true,
+        text: "USER INTERRUPTION DETECTED"
+      },
+      {
+        text: "I notice you seem uncertain. Would you like to discuss what's on your mind?",
+        emotions: [
+          { name: "DOUBT", color: "bg-amber-700" },
+          { name: "EMPATHY", color: "bg-purple-300" },
         ],
         isUser: false
       }
@@ -55,7 +68,6 @@ export function Chat({ personality }: ChatProps) {
   };
 
   const handleBack = () => {
-    // Navigate back to home without ending the call
     navigate('/home');
   };
 
