@@ -51,6 +51,28 @@
   transform: translateZ(0);
 }
 
+.teleprompter-line {
+  display: block;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center;
+  padding: 0.5em 0;
+}
+
+.line-active {
+  transform: translateY(-0.2em) scale(1.02);
+  filter: brightness(1.2);
+}
+
+.line-past {
+  opacity: 0.6;
+  transform: scale(0.98) translateY(0.1em);
+}
+
+.line-future {
+  opacity: 0.4;
+  transform: scale(0.98) translateY(-0.1em);
+}
+
 .word-highlight {
   display: inline-block;
   padding: 0.1em 0.3em;
@@ -67,14 +89,12 @@
 }
 
 .word-past {
-  opacity: 0.6;
-  transform: scale(0.98);
+  opacity: 0.8;
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .word-future {
-  opacity: 0.4;
-  transform: scale(0.98);
+  opacity: 0.6;
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 

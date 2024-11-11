@@ -17,7 +17,8 @@ interface TeleprompterState {
 export const Teleprompter = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [words, setWords] = useState<string[]>([]);
+  const [lines, setLines] = useState<string[][]>([]);
+  const [currentLineIndex, setCurrentLineIndex] = useState(0);
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
   const [editableScript, setEditableScript] = useState('');
@@ -39,7 +40,10 @@ export const Teleprompter = () => {
       navigate('/');
       return;
     }
-    setWords(script.split(/\s+/).filter(word => word.length > 0));
+    const scriptLines = script.split('\n').map(line => 
+      line.split(/\s+/).filter(word => word.length > 0)
+    );
+    setLines(scriptLines);
     setEditableScript(script);
   }, [script, navigate]);
 
@@ -47,18 +51,25 @@ export const Teleprompter = () => {
     if (isPlaying) {
       const interval = setInterval(() => {
         setCurrentWordIndex(prev => {
-          if (prev >= words.length - 1) {
-            clearInterval(interval);
-            togglePlay();
-            return prev;
+          const currentLine = lines[currentLineIndex];
+          if (!currentLine) return prev;
+          
+          if (prev >= currentLine.length - 1) {
+            if (currentLineIndex >= lines.length - 1) {
+              clearInterval(interval);
+              togglePlay();
+              return prev;
+            }
+            setCurrentLineIndex(curr => curr + 1);
+            return 0;
           }
           return prev + 1;
         });
-      }, 60000 / (speed * 200)); // Adjusted timing for smoother transitions
+      }, 60000 / (speed * 200));
       
       return () => clearInterval(interval);
     }
-  }, [isPlaying, speed, words.length, togglePlay]);
+  }, [isPlaying, speed, lines, currentLineIndex, togglePlay]);
 
   useEffect(() => {
     if (highlightRef.current) {
@@ -70,29 +81,36 @@ export const Teleprompter = () => {
       });
       updateScrollPosition(element);
     }
-  }, [currentWordIndex, updateScrollPosition]);
+  }, [currentWordIndex, currentLineIndex, updateScrollPosition]);
 
   const handleExit = useCallback(() => {
     reset();
     setCurrentWordIndex(0);
+    setCurrentLineIndex(0);
     navigate('/');
   }, [reset, navigate]);
 
   const handleEditToggle = useCallback(() => {
     if (isEditing) {
-      setWords(editableScript.split(/\s+/).filter(word => word.length > 0));
+      const scriptLines = editableScript.split('\n').map(line => 
+        line.split(/\s+/).filter(word => word.length > 0)
+      );
+      setLines(scriptLines);
       setCurrentWordIndex(0);
+      setCurrentLineIndex(0);
     }
     setIsEditing(!isEditing);
   }, [isEditing, editableScript]);
 
-  const handleWordClick = useCallback((index: number) => {
-    setCurrentWordIndex(index);
+  const handleWordClick = useCallback((lineIndex: number, wordIndex: number) => {
+    setCurrentLineIndex(lineIndex);
+    setCurrentWordIndex(wordIndex);
   }, []);
 
   const handleRestart = useCallback(() => {
     reset();
     setCurrentWordIndex(0);
+    setCurrentLineIndex(0);
   }, [reset]);
 
   return (
@@ -152,31 +170,38 @@ export const Teleprompter = () => {
               color: textColor,
             }}
           >
-            {words.map((word, index) => (
-              <span
-                key={index}
-                ref={index === currentWordIndex ? highlightRef : null}
-                onClick={() => handleWordClick(index)}
+            {lines.map((line, lineIndex) => (
+              <div
+                key={lineIndex}
                 className={cn(
-                  "inline-block mx-1 px-1 py-0.5 rounded cursor-pointer",
-                  "transition-all duration-500 ease-out transform",
-                  "hover:bg-teleprompter-highlight/20",
-                  index === currentWordIndex && [
-                    "word-highlight scale-110",
-                    "bg-teleprompter-highlight/10 font-semibold",
-                    "shadow-lg shadow-blue-500/20"
-                  ],
-                  index < currentWordIndex && "word-past",
-                  index > currentWordIndex && "word-future"
+                  "teleprompter-line",
+                  lineIndex === currentLineIndex && "line-active",
+                  lineIndex < currentLineIndex && "line-past",
+                  lineIndex > currentLineIndex && "line-future"
                 )}
-                style={{
-                  color: index === currentWordIndex ? '#3B82F6' : undefined,
-                  transform: index === currentWordIndex ? 'scale(1.1)' : 'scale(1)',
-                  transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)'
-                }}
               >
-                {word}
-              </span>
+                {line.map((word, wordIndex) => (
+                  <span
+                    key={`${lineIndex}-${wordIndex}`}
+                    ref={lineIndex === currentLineIndex && wordIndex === currentWordIndex ? highlightRef : null}
+                    onClick={() => handleWordClick(lineIndex, wordIndex)}
+                    className={cn(
+                      "inline-block mx-1 px-1 py-0.5 rounded cursor-pointer",
+                      "transition-all duration-500 ease-out transform",
+                      "hover:bg-teleprompter-highlight/20",
+                      lineIndex === currentLineIndex && wordIndex === currentWordIndex && [
+                        "word-highlight scale-110",
+                        "bg-teleprompter-highlight/10 font-semibold",
+                        "shadow-lg shadow-blue-500/20"
+                      ],
+                      lineIndex === currentLineIndex && wordIndex < currentWordIndex && "word-past",
+                      (lineIndex === currentLineIndex && wordIndex > currentWordIndex) || lineIndex > currentLineIndex && "word-future"
+                    )}
+                  >
+                    {word}
+                  </span>
+                ))}
+              </div>
             ))}
           </div>
         )}
