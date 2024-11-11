@@ -1,11 +1,20 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 
-export const useTeleprompter = (initialSpeed: number = 2) => {
-  const [isPlaying, setIsPlaying] = useState(false);
+export const useTeleprompter = (initialSpeed: number = 2, autoStart: boolean = false) => {
+  const [isPlaying, setIsPlaying] = useState(autoStart);
   const [speed, setSpeed] = useState(initialSpeed);
   const [scrollPosition, setScrollPosition] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef<number>();
+
+  useEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.scrollTo({
+        top: 0,
+        behavior: 'instant'
+      });
+    }
+  }, []);
 
   const togglePlay = useCallback(() => {
     setIsPlaying(prev => !prev);
@@ -34,10 +43,8 @@ export const useTeleprompter = (initialSpeed: number = 2) => {
     const wordPosition = wordElement.offsetTop;
     const wordHeight = wordElement.offsetHeight;
     
-    // Calculate the target scroll position to center the word
     const targetScroll = wordPosition - (containerHeight / 2) + (wordHeight / 2);
     
-    // Use spring-like easing for smooth scrolling
     const startPosition = container.scrollTop;
     const distance = targetScroll - startPosition;
     const duration = 800; // ms

@@ -123,7 +123,7 @@ const App = () => {
               <Route path="/affirmations" element={
                 <ProtectedRoute>
                   <motion.div 
-                    className="affirmations-background"
+                    className="fixed inset-0 min-h-screen w-full bg-[#FFF8F6] overflow-hidden"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
@@ -133,7 +133,8 @@ const App = () => {
                       initialScript={affirmationsText} 
                       fontSize={44} 
                       fontFamily="cal-sans" 
-                      textColor="#785340" 
+                      textColor="#785340"
+                      autoStart={true}
                     />
                   </motion.div>
                 </ProtectedRoute>
