@@ -7,7 +7,6 @@ export const useTeleprompter = (initialSpeed: number = 2) => {
   const animationFrameRef = useRef<number>();
   const lastTimeRef = useRef<number>(0);
   const [autoScrollEnabled, setAutoScrollEnabled] = useState<boolean>(true);
-  const mountedRef = useRef<boolean>(true);
 
   const togglePlay = useCallback(() => {
     setIsPlaying(prev => !prev);
@@ -46,10 +45,10 @@ export const useTeleprompter = (initialSpeed: number = 2) => {
   }, [autoScrollEnabled]);
 
   useEffect(() => {
-    mountedRef.current = true;
-    
+    let mounted = true;
+
     const animate = (timestamp: number) => {
-      if (!mountedRef.current) return;
+      if (!mounted) return;
       
       if (!lastTimeRef.current) {
         lastTimeRef.current = timestamp;
@@ -58,14 +57,14 @@ export const useTeleprompter = (initialSpeed: number = 2) => {
       const deltaTime = timestamp - lastTimeRef.current;
       
       if (containerRef.current && isPlaying && autoScrollEnabled) {
-        const pixelsPerSecond = speed * 30; // Adjusted for smoother scrolling
+        const pixelsPerSecond = speed * 40; // Reduced speed for smoother scrolling
         const scrollAmount = (pixelsPerSecond * deltaTime) / 1000;
         containerRef.current.scrollTop += scrollAmount;
       }
       
       lastTimeRef.current = timestamp;
       
-      if (mountedRef.current && isPlaying) {
+      if (mounted && isPlaying) {
         animationFrameRef.current = requestAnimationFrame(animate);
       }
     };
@@ -75,9 +74,10 @@ export const useTeleprompter = (initialSpeed: number = 2) => {
     }
 
     return () => {
-      mountedRef.current = false;
+      mounted = false;
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = undefined;
       }
     };
   }, [isPlaying, speed, autoScrollEnabled]);

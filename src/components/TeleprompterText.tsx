@@ -24,7 +24,7 @@ export const TeleprompterText = ({
 }: TeleprompterTextProps) => {
   return (
     <div 
-      className="teleprompter-text px-4 md:px-8"
+      className="teleprompter-text"
       style={{
         fontFamily: fontFamily === 'inter' ? 'Inter' : 
                    fontFamily === 'cal-sans' ? 'Cal Sans' : fontFamily,
@@ -58,7 +58,7 @@ export const TeleprompterText = ({
                   ref={isCurrentWord ? highlightRef : null}
                   onClick={() => handleWordClick(lineIndex, wordIndex)}
                   className={cn(
-                    "inline-block transition-all duration-300 cursor-pointer rounded-sm",
+                    "inline-block transition-all duration-300 cursor-pointer",
                     "hover:bg-teleprompter-highlight/20",
                     isCurrentWord && "word-highlight",
                     isPastWord && "word-past",
