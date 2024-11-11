@@ -18,8 +18,6 @@ const Teleprompter = () => {
   const navigate = useNavigate();
   const [words, setWords] = useState<string[]>([]);
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
-  const [isEditing, setIsEditing] = useState(false);
-  const [editedText, setEditedText] = useState('');
   const { script, fontSize, fontFamily, textColor } = (location.state as TeleprompterState) || {};
   const highlightRef = useRef<HTMLSpanElement>(null);
   
@@ -39,7 +37,6 @@ const Teleprompter = () => {
       return;
     }
     setWords(script.split(/\s+/).filter(word => word.length > 0));
-    setEditedText(script);
   }, [script, navigate]);
 
   useEffect(() => {
@@ -75,31 +72,18 @@ const Teleprompter = () => {
     setCurrentWordIndex(index);
   }, []);
 
-  const handleEditToggle = () => {
-    if (isEditing && editedText.trim()) {
-      setWords(editedText.split(/\s+/).filter(word => word.length > 0));
-      setCurrentWordIndex(0);
-      toast.success('Text updated successfully');
-    }
-    setIsEditing(!isEditing);
-  };
-
-  const handleBack = () => {
-    navigate('/home');
-  };
-
   return (
-    <div className="min-h-screen bg-slate-950 text-white overflow-hidden relative">
+    <div className="min-h-screen bg-gradient-to-b from-slate-950 to-slate-900 overflow-hidden relative">
       <Button
         variant="ghost"
         size="icon"
-        onClick={handleBack}
+        onClick={handleExit}
         className="absolute top-6 left-6 z-50 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all duration-300 hover:scale-105"
       >
         <ArrowLeft className="h-6 w-6" />
       </Button>
 
-      <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/20 pointer-events-none" />
       
       <div
         ref={containerRef}
@@ -119,14 +103,13 @@ const Teleprompter = () => {
               key={index}
               ref={index === currentWordIndex ? highlightRef : null}
               onClick={() => handleWordClick(index)}
-              className={`inline-block mx-1 px-1 py-0.5 rounded cursor-pointer transition-all duration-300
-                ${index === currentWordIndex 
-                  ? 'word-highlight'
-                  : index < currentWordIndex 
-                  ? 'word-past'
-                  : 'word-future'
-                }
-                hover:opacity-100`}
+              className={`inline-block mx-1 px-1 py-0.5 rounded cursor-pointer transition-all duration-300 
+                ${index === currentWordIndex
+                  ? 'bg-gradient-to-r from-wzrd-blue via-wzrd-purple to-wzrd-pink bg-clip-text text-transparent scale-110 animate-gradient-shift'
+                  : index < currentWordIndex
+                  ? 'text-white/60'
+                  : 'text-white/40'
+                } hover:bg-white/5`}
             >
               {word}
             </span>
