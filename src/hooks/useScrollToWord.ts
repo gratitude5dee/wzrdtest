@@ -8,22 +8,20 @@ export const useScrollToWord = () => {
   ) => {
     if (!wordElement || !container) return;
     
-    const containerHeight = container.clientHeight;
-    const wordPosition = wordElement.offsetTop;
-    const wordHeight = wordElement.offsetHeight;
+    const containerRect = container.getBoundingClientRect();
+    const wordRect = wordElement.getBoundingClientRect();
     
-    // Position the word at 40% from the top of the container for better visibility
-    const topOffset = containerHeight * 0.4;
-    const targetScroll = wordPosition - topOffset + (wordHeight / 2);
-
-    if (instant) {
-      container.scrollTo({ top: targetScroll });
-      return;
-    }
+    // Calculate the center position
+    const containerCenter = containerRect.top + (containerRect.height / 2);
+    const wordOffset = wordRect.top + (wordRect.height / 2);
+    const scrollOffset = wordOffset - containerCenter;
+    
+    // Add current scroll position to maintain relative positioning
+    const targetScroll = container.scrollTop + scrollOffset;
 
     container.scrollTo({
       top: targetScroll,
-      behavior: 'smooth'
+      behavior: instant ? 'auto' : 'smooth'
     });
   }, []);
 };

@@ -195,6 +195,7 @@ export const Teleprompter = ({
         highlightRef={highlightRef}
         containerRef={containerRef}
         currentWordIndex={currentWordIndex}
+        isPlaying={isPlaying}
       />
       
       <div className="fixed inset-x-0 top-0 h-40 bg-gradient-to-b from-background via-background/80 to-transparent pointer-events-none z-20" />
