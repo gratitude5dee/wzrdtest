@@ -5,5 +5,5 @@ export interface TeleprompterHookReturn {
   updateSpeed: (newSpeed: number) => void;
   reset: () => void;
   containerRef: React.RefObject<HTMLDivElement>;
-  updateScrollPosition: (element: HTMLElement) => void;
+  updateScrollPosition: (element: HTMLElement, container: HTMLElement) => void;
 }

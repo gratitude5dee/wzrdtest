@@ -19,10 +19,8 @@ export const useTeleprompter = (
     setSpeed(newSpeed);
   }, []);
 
-  const updateScrollPosition = useCallback((element: HTMLElement) => {
-    if (containerRef.current) {
-      scrollToWord(element, containerRef.current);
-    }
+  const updateScrollPosition = useCallback((element: HTMLElement, container: HTMLElement) => {
+    scrollToWord(element, container);
   }, [scrollToWord]);
 
   const reset = useCallback(() => {
