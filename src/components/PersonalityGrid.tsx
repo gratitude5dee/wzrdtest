@@ -33,6 +33,7 @@ export function PersonalityGrid({ hoveredCard, setHoveredCard, navigate }: Perso
         card.style.transform = `perspective(1000px) rotateX(${angleX}deg) rotateY(${angleY}deg) scale3d(1.05, 1.05, 1.05)`;
         card.style.setProperty('--glow-x', `${glowX}%`);
         card.style.setProperty('--glow-y', `${glowY}%`);
+        card.style.transition = 'transform 0.15s cubic-bezier(0.4, 0, 0.2, 1)';
       }
     };
 
@@ -41,7 +42,9 @@ export function PersonalityGrid({ hoveredCard, setHoveredCard, navigate }: Perso
       const card = cardRefs.current[hoveredCard];
       if (card) {
         card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+        card.style.transition = 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
       }
+      setHoveredCard(null);
     };
 
     document.addEventListener('mousemove', handleMouseMove);
@@ -51,7 +54,7 @@ export function PersonalityGrid({ hoveredCard, setHoveredCard, navigate }: Perso
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseleave', handleMouseLeave);
     };
-  }, [hoveredCard]);
+  }, [hoveredCard, setHoveredCard]);
 
   return (
     <div className="grid grid-cols-2 auto-rows-[180px] gap-4">
@@ -78,7 +81,7 @@ export function PersonalityGrid({ hoveredCard, setHoveredCard, navigate }: Perso
           onMouseEnter={() => setHoveredCard(personality.id)}
           onMouseLeave={() => setHoveredCard(null)}
           style={{ 
-            transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+            transition: 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
             willChange: 'transform, box-shadow'
           }}
         >
