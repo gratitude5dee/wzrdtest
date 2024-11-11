@@ -9,7 +9,6 @@ import { ArrowLeft, Edit2 } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { TeleprompterContainer } from './teleprompter/TeleprompterContainer';
 import { TeleprompterWord } from './teleprompter/TeleprompterWord';
-import { useScrollToWord } from '@/hooks/useScrollToWord';
 
 interface TeleprompterProps {
   initialScript?: string;
@@ -48,8 +47,6 @@ export const Teleprompter = ({
   
   const highlightRef = useRef<HTMLSpanElement>(null);
   const firstWordRef = useRef<HTMLSpanElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const scrollToWord = useScrollToWord();
   const scrollIntervalRef = useRef<number>();
   
   const {
@@ -58,6 +55,8 @@ export const Teleprompter = ({
     togglePlay,
     updateSpeed,
     reset,
+    containerRef,
+    updateScrollPosition
   } = useTeleprompter(2, autoStart);
 
   useKeyboardShortcuts(updateSpeed, togglePlay, speed);
@@ -93,10 +92,10 @@ export const Teleprompter = ({
   }, [isPlaying, speed, words.length, togglePlay]);
 
   useEffect(() => {
-    if (highlightRef.current && containerRef.current) {
-      scrollToWord(highlightRef.current, containerRef.current);
+    if (highlightRef.current) {
+      updateScrollPosition(highlightRef.current);
     }
-  }, [currentWordIndex, scrollToWord]);
+  }, [currentWordIndex, updateScrollPosition]);
 
   const handleWordClick = useCallback((index: number) => {
     setCurrentWordIndex(index);
