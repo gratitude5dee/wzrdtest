@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Edit2 } from 'lucide-react';
 import { cn } from "@/lib/utils";
+import { TeleprompterScroll } from '@/components/teleprompter/TeleprompterScroll';
 
 interface TeleprompterState {
   script: string;
@@ -31,7 +32,6 @@ const Teleprompter = () => {
     togglePlay,
     updateSpeed,
     reset,
-    updateScrollPosition
   } = useTeleprompter(2);
 
   useEffect(() => {
@@ -59,12 +59,6 @@ const Teleprompter = () => {
       return () => clearInterval(interval);
     }
   }, [isPlaying, speed, words.length, togglePlay]);
-
-  useEffect(() => {
-    if (highlightRef.current && containerRef.current) {
-      updateScrollPosition(highlightRef.current, containerRef.current);
-    }
-  }, [currentWordIndex, updateScrollPosition]);
 
   const handleExit = useCallback(() => {
     reset();
@@ -168,6 +162,12 @@ const Teleprompter = () => {
           </div>
         )}
       </div>
+
+      <TeleprompterScroll
+        highlightRef={highlightRef}
+        containerRef={containerRef}
+        currentWordIndex={currentWordIndex}
+      />
       
       <div className="fixed inset-x-0 top-0 h-40 bg-gradient-to-b from-background via-background/80 to-transparent pointer-events-none z-20" />
       <div className="fixed inset-x-0 bottom-0 h-40 bg-gradient-to-t from-background via-background/80 to-transparent pointer-events-none z-20" />
