@@ -49,6 +49,7 @@ export const TeleprompterText = ({
             scale: index === currentWordIndex ? 1.03 : 1,
             opacity: index === currentWordIndex ? 1 : 
                      index < currentWordIndex ? 0.6 : 0.4,
+            y: index === currentWordIndex ? -8 : 0,
           }}
           transition={{
             duration: 0.3,
@@ -57,6 +58,11 @@ export const TeleprompterText = ({
               type: "spring",
               stiffness: 300,
               damping: 25
+            },
+            y: {
+              type: "spring",
+              stiffness: 400,
+              damping: 30
             }
           }}
         >

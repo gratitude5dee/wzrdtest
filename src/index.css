@@ -78,6 +78,7 @@
   color: transparent;
   text-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
   animation: gradient-shift 8s ease infinite;
+  transform: translateY(-8px);
 }
 
 .word-highlight::before {
@@ -93,10 +94,12 @@
 
 .word-past {
   opacity: 0.5;
+  transform: translateY(0);
 }
 
 .word-future {
   opacity: 0.3;
+  transform: translateY(0);
 }
 
 @keyframes gradient-shift {
