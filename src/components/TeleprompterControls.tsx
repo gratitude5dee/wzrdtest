@@ -30,6 +30,8 @@ export const TeleprompterControls = ({
   const playButtonRef = useRef<HTMLButtonElement>(null);
   const hideTimeout = useRef<NodeJS.Timeout>();
 
+  useKeyboardShortcuts(onSpeedChange, onTogglePlay, speed);
+
   const handleMouseMove = useCallback((e: MouseEvent) => {
     setMousePosition({ x: e.clientX, y: e.clientY });
     setIsVisible(true);
@@ -62,7 +64,7 @@ export const TeleprompterControls = ({
     }
 
     hideTimeout.current = setTimeout(() => {
-      if (isPlaying) {
+      if (isPlaying && window.innerHeight - e.clientY > 200) {
         setIsVisible(false);
       }
     }, 2000);
@@ -87,23 +89,16 @@ export const TeleprompterControls = ({
   return (
     <AnimatePresence>
       <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ 
-          opacity: isVisible ? 1 : 0, 
-          y: isVisible ? 0 : -20,
-          transition: {
-            opacity: { duration: 0.3, ease: "easeOut" },
-            y: { duration: 0.4, ease: [0.23, 1, 0.32, 1] }
-          }
-        }}
-        exit={{ opacity: 0, y: -20 }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
+        exit={{ opacity: 0, y: 20 }}
         ref={controlsRef}
         className={cn(
-          "fixed top-8 left-1/2 transform -translate-x-1/2 rounded-3xl px-12 py-8",
+          "fixed bottom-8 left-1/2 transform -translate-x-1/2 rounded-3xl px-12 py-8",
           "flex items-center space-x-12 transition-all duration-700 ease-in-out z-50",
           "bg-gradient-to-b from-[#FFF8F0]/95 to-[#FFF4E8]/95 backdrop-blur-xl",
           "border border-[#785340]/10 shadow-[0_8px_32px_-4px_rgba(120,83,64,0.1)]",
-          isVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-8 pointer-events-none"
+          isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8 pointer-events-none"
         )}
       >
         <div className="flex items-center space-x-8">
