@@ -90,8 +90,6 @@ const Teleprompter = () => {
     setCurrentWordIndex(0);
   }, [reset]);
 
-  useKeyboardShortcuts(updateSpeed, togglePlay, speed);
-
   return (
     <div className="min-h-screen bg-background overflow-hidden relative">
       <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent pointer-events-none" />
