@@ -35,7 +35,7 @@
   line-height: 2;
   font-size: 2.75rem;
   text-align: center;
-  color: theme('colors.teleprompter.text');
+  color: theme('colors.white');
   max-width: 1200px;
   margin: 0 auto;
   padding: 100vh 0;
@@ -46,57 +46,101 @@
   transition: transform 50ms linear;
 }
 
-@layer utilities {
-  .animate-spin-slow {
-    animation: spin 3s linear infinite;
+@keyframes word-glow {
+  0% {
+    text-shadow: 0 0 10px rgba(59, 130, 246, 0.5),
+                 0 0 20px rgba(59, 130, 246, 0.3);
+    transform: scale(1);
   }
-  
-  .glow-effect {
-    position: relative;
+  50% {
+    text-shadow: 0 0 20px rgba(59, 130, 246, 0.8),
+                 0 0 30px rgba(59, 130, 246, 0.5),
+                 0 0 40px rgba(59, 130, 246, 0.3);
+    transform: scale(1.05);
   }
-  
-  .glow-effect::before {
-    content: '';
-    position: absolute;
-    inset: -15px;
-    background: radial-gradient(circle, 
-      theme('colors.teleprompter.highlight-strong'),
-      theme('colors.teleprompter.highlight-glow') 30%,
-      transparent 70%
-    );
-    opacity: 0;
-    transition: opacity 0.4s ease-in-out;
-  }
-  
-  .glow-effect:hover::before {
-    opacity: 1;
-    animation: glow 1.5s ease-in-out forwards;
-  }
-
-  .magnetic-button {
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .animate-gradient {
-    animation: gradient 8s linear infinite;
-    background-size: 200%;
-  }
-
-  .gradient-text {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500;
-    animation: gradient-shift 3s ease infinite;
-    background-size: 200% auto;
+  100% {
+    text-shadow: 0 0 10px rgba(59, 130, 246, 0.5),
+                 0 0 20px rgba(59, 130, 246, 0.3);
+    transform: scale(1);
   }
 }
 
-@keyframes gradient {
-  0% {
-    background-position: 0% 50%;
+.word-highlight {
+  animation: word-glow 2s ease-in-out infinite;
+  background: linear-gradient(90deg, #60A5FA, #3B82F6, #2563EB);
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  transition: all 0.3s ease;
+}
+
+.word-past {
+  opacity: 0.6;
+  transition: all 0.3s ease;
+}
+
+.word-future {
+  opacity: 0.4;
+  transition: all 0.3s ease;
+}
+
+.gradient-text {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 animate-gradient-shift;
+  background-size: 200% auto;
+}
+
+.magnetic-button {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.magnetic-button:hover {
+  --mouse-x: 0px;
+  --mouse-y: 0px;
+  animation: magnetic-float 3s ease-in-out infinite;
+}
+
+.glow-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.glow-card::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(90deg, #60A5FA, #3B82F6, #2563EB);
+  background-size: 200% auto;
+  animation: gradient-shift 3s ease infinite;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border-radius: inherit;
+  z-index: -1;
+}
+
+.glow-card:hover::before {
+  opacity: 1;
+}
+
+@layer utilities {
+  .animate-gradient {
+    animation: gradient-shift 8s linear infinite;
+    background-size: 200%;
   }
-  50% {
-    background-position: 100% 50%;
+  
+  .hover-lift {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
-  100% {
-    background-position: 0% 50%;
+  
+  .hover-lift:hover {
+    transform: translateY(-2px);
+  }
+  
+  .hover-scale {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .hover-scale:hover {
+    transform: scale(1.05);
   }
 }

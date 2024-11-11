@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { X, Play, Pause, Settings2, ArrowUp, ArrowDown, Space } from 'lucide-react';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
+import { cn } from '@/lib/utils';
 
 interface TeleprompterControlsProps {
   isPlaying: boolean;
@@ -21,6 +22,7 @@ export const TeleprompterControls = ({
 }: TeleprompterControlsProps) => {
   const [isVisible, setIsVisible] = useState(true);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [lastInteraction, setLastInteraction] = useState(Date.now());
   const controlsRef = useRef<HTMLDivElement>(null);
   const playButtonRef = useRef<HTMLButtonElement>(null);
   const hideTimeout = useRef<NodeJS.Timeout>();
@@ -30,6 +32,7 @@ export const TeleprompterControls = ({
   const handleMouseMove = useCallback((e: MouseEvent) => {
     setMousePosition({ x: e.clientX, y: e.clientY });
     setIsVisible(true);
+    setLastInteraction(Date.now());
 
     if (hideTimeout.current) {
       clearTimeout(hideTimeout.current);
@@ -83,10 +86,13 @@ export const TeleprompterControls = ({
   return (
     <div
       ref={controlsRef}
-      className={`fixed bottom-8 left-1/2 transform -translate-x-1/2 rounded-2xl px-12 py-8 
-        flex items-center space-x-12 transition-all duration-700 ease-in-out z-50
-        ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8 pointer-events-none'}
-        bg-cream-100/95 backdrop-blur-xl border border-cream-200 shadow-xl`}
+      className={cn(
+        "fixed bottom-8 left-1/2 transform -translate-x-1/2 rounded-2xl px-12 py-8",
+        "flex items-center space-x-12 transition-all duration-700 ease-in-out z-50",
+        "bg-gradient-to-b from-slate-900/95 to-slate-950/95 backdrop-blur-xl",
+        "border border-white/10 shadow-2xl",
+        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8 pointer-events-none"
+      )}
     >
       <div className="flex flex-col items-center space-y-4">
         <Button
@@ -95,20 +101,25 @@ export const TeleprompterControls = ({
           variant="ghost"
           size="icon"
           onClick={onTogglePlay}
-          className="w-16 h-16 rounded-2xl bg-cream-200 hover:bg-cream-300 text-cream-600 
-            transition-all duration-300 hover:scale-105 active:scale-95 relative group"
+          className={cn(
+            "w-16 h-16 rounded-2xl transition-all duration-300",
+            "hover:scale-105 active:scale-95 relative group",
+            "bg-gradient-to-b from-white/10 to-white/5",
+            "hover:from-white/15 hover:to-white/10",
+            "border border-white/20 hover:border-white/30",
+            "text-white shadow-lg"
+          )}
         >
-          <div className="absolute inset-0 bg-cream-400/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
           {isPlaying ? <Pause size={32} /> : <Play size={32} />}
         </Button>
-        <div className="flex items-center space-x-2 text-sm text-cream-600/70 font-medium">
+        <div className="flex items-center space-x-2 text-sm text-white/70 font-medium">
           <Space size={14} /> <span>Space</span>
         </div>
       </div>
 
       <div className="flex flex-col space-y-6 min-w-[280px]">
         <div className="flex items-center space-x-6">
-          <Settings2 size={20} className="text-cream-600/70" />
+          <Settings2 size={20} className="text-white/70" />
           <Slider
             value={[speed]}
             min={0.1}
@@ -117,11 +128,11 @@ export const TeleprompterControls = ({
             onValueChange={value => onSpeedChange(value[0])}
             className="cursor-pointer"
           />
-          <span className="text-lg font-semibold text-cream-600 min-w-[56px] text-center">
+          <span className="text-lg font-semibold text-white min-w-[56px] text-center">
             {speed.toFixed(1)}x
           </span>
         </div>
-        <div className="flex items-center justify-center space-x-8 text-sm text-cream-600/70 font-medium">
+        <div className="flex items-center justify-center space-x-8 text-sm text-white/70 font-medium">
           <div className="flex items-center space-x-2">
             <ArrowUp size={14} /> <span>Faster</span>
           </div>
@@ -136,10 +147,15 @@ export const TeleprompterControls = ({
         variant="ghost"
         size="icon"
         onClick={onExit}
-        className="w-16 h-16 rounded-2xl bg-cream-200 hover:bg-red-100 text-cream-600 hover:text-red-500 
-          transition-all duration-300 hover:scale-105 active:scale-95 relative group"
+        className={cn(
+          "w-16 h-16 rounded-2xl transition-all duration-300",
+          "hover:scale-105 active:scale-95",
+          "bg-gradient-to-b from-red-500/10 to-red-600/5",
+          "hover:from-red-500/20 hover:to-red-600/10",
+          "border border-red-500/20 hover:border-red-500/30",
+          "text-white/90 hover:text-red-500"
+        )}
       >
-        <div className="absolute inset-0 bg-red-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         <X size={32} />
       </Button>
     </div>

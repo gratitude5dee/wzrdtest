@@ -2,8 +2,9 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useTeleprompter } from '@/hooks/useTeleprompter';
 import { TeleprompterControls } from '@/components/TeleprompterControls';
 import { useEffect, useState, useRef, useCallback } from 'react';
+import { toast } from 'sonner';
+import { Button } from "@/components/ui/button";
 import { ArrowLeft } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 
 interface TeleprompterState {
   script: string;
@@ -17,7 +18,7 @@ const Teleprompter = () => {
   const navigate = useNavigate();
   const [words, setWords] = useState<string[]>([]);
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
-  const { script, fontSize, fontFamily } = (location.state as TeleprompterState) || {};
+  const { script, fontSize, fontFamily, textColor } = (location.state as TeleprompterState) || {};
   const highlightRef = useRef<HTMLSpanElement>(null);
   
   const {
@@ -72,21 +73,21 @@ const Teleprompter = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-cream-100 overflow-hidden relative">
+    <div className="min-h-screen bg-gradient-to-b from-slate-950 to-slate-900 overflow-hidden relative">
       <Button
         variant="ghost"
         size="icon"
         onClick={handleExit}
-        className="absolute top-6 left-6 z-50 rounded-full bg-cream-200/80 hover:bg-cream-300/80 text-cream-600 transition-all duration-300 hover:scale-105"
+        className="absolute top-6 left-6 z-50 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all duration-300 hover:scale-105"
       >
         <ArrowLeft className="h-6 w-6" />
       </Button>
 
-      <div className="absolute inset-0 bg-gradient-to-b from-cream-200/50 to-transparent pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/20 pointer-events-none" />
       
       <div
         ref={containerRef}
-        className="h-screen overflow-hidden relative z-10 smooth-scroll px-4 md:px-8 lg:px-16"
+        className="h-screen overflow-hidden relative z-10 smooth-scroll"
       >
         <div 
           className="teleprompter-text"
@@ -94,6 +95,7 @@ const Teleprompter = () => {
             fontFamily: fontFamily === 'inter' ? 'Inter' : 
                        fontFamily === 'cal-sans' ? 'Cal Sans' : fontFamily,
             fontSize: `${fontSize / 16}rem`,
+            color: textColor,
           }}
         >
           {words.map((word, index) => (
@@ -101,13 +103,13 @@ const Teleprompter = () => {
               key={index}
               ref={index === currentWordIndex ? highlightRef : null}
               onClick={() => handleWordClick(index)}
-              className={`inline-block mx-1 px-1.5 py-1 rounded-lg transition-all duration-300 cursor-pointer
+              className={`inline-block mx-1 px-1 py-0.5 rounded cursor-pointer transition-all duration-300 
                 ${index === currentWordIndex
-                  ? 'text-cream-600 scale-110 bg-cream-200 font-semibold shadow-lg'
+                  ? 'bg-gradient-to-r from-wzrd-blue via-wzrd-purple to-wzrd-pink bg-clip-text text-transparent scale-110 animate-gradient-shift'
                   : index < currentWordIndex
-                  ? 'text-cream-600/60'
-                  : 'text-cream-600/40'
-                } hover:bg-cream-200/50`}
+                  ? 'text-white/60'
+                  : 'text-white/40'
+                } hover:bg-white/5`}
             >
               {word}
             </span>
@@ -115,8 +117,8 @@ const Teleprompter = () => {
         </div>
       </div>
       
-      <div className="fixed inset-x-0 top-0 h-40 bg-gradient-to-b from-cream-100 via-cream-100/80 to-transparent pointer-events-none z-20" />
-      <div className="fixed inset-x-0 bottom-0 h-40 bg-gradient-to-t from-cream-100 via-cream-100/80 to-transparent pointer-events-none z-20" />
+      <div className="fixed inset-x-0 top-0 h-40 bg-gradient-to-b from-slate-950 via-slate-950/80 to-transparent pointer-events-none z-20" />
+      <div className="fixed inset-x-0 bottom-0 h-40 bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent pointer-events-none z-20" />
       
       <TeleprompterControls
         isPlaying={isPlaying}
