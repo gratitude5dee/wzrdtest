@@ -2,7 +2,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useTeleprompter } from '@/hooks/useTeleprompter';
 import { TeleprompterControls } from '@/components/TeleprompterControls';
 import { useEffect, useState, useRef, useCallback } from 'react';
-import { toast } from 'sonner';
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from 'lucide-react';
 
@@ -73,7 +72,7 @@ const Teleprompter = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-950 to-slate-900 overflow-hidden relative">
+    <div className="min-h-screen bg-teleprompter-bg overflow-hidden relative">
       <Button
         variant="ghost"
         size="icon"
@@ -83,7 +82,7 @@ const Teleprompter = () => {
         <ArrowLeft className="h-6 w-6" />
       </Button>
 
-      <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/20 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent pointer-events-none" />
       
       <div
         ref={containerRef}
@@ -103,13 +102,13 @@ const Teleprompter = () => {
               key={index}
               ref={index === currentWordIndex ? highlightRef : null}
               onClick={() => handleWordClick(index)}
-              className={`inline-block mx-1 px-1 py-0.5 rounded cursor-pointer transition-all duration-300 
-                ${index === currentWordIndex
-                  ? 'bg-gradient-to-r from-wzrd-blue via-wzrd-purple to-wzrd-pink bg-clip-text text-transparent scale-110 animate-gradient-shift'
+              className={`inline-block mx-1 px-1 py-0.5 rounded cursor-pointer hover:bg-teleprompter-highlight/20 ${
+                index === currentWordIndex
+                  ? 'text-teleprompter-highlight scale-110 bg-teleprompter-highlight/10 font-semibold'
                   : index < currentWordIndex
-                  ? 'text-white/60'
-                  : 'text-white/40'
-                } hover:bg-white/5`}
+                  ? 'opacity-60'
+                  : 'opacity-40'
+              }`}
             >
               {word}
             </span>
@@ -117,8 +116,8 @@ const Teleprompter = () => {
         </div>
       </div>
       
-      <div className="fixed inset-x-0 top-0 h-40 bg-gradient-to-b from-slate-950 via-slate-950/80 to-transparent pointer-events-none z-20" />
-      <div className="fixed inset-x-0 bottom-0 h-40 bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent pointer-events-none z-20" />
+      <div className="fixed inset-x-0 top-0 h-40 bg-gradient-to-b from-teleprompter-bg via-teleprompter-bg/80 to-transparent pointer-events-none z-20" />
+      <div className="fixed inset-x-0 bottom-0 h-40 bg-gradient-to-t from-teleprompter-bg via-teleprompter-bg/80 to-transparent pointer-events-none z-20" />
       
       <TeleprompterControls
         isPlaying={isPlaying}
