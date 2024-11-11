@@ -53,24 +53,31 @@
 
 .teleprompter-line {
   display: block;
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   transform-origin: center;
-  padding: 0.5em 0;
+  padding: 0.75em 0;
+  position: relative;
+  z-index: 1;
+  transform: perspective(1000px) translateZ(0);
+  will-change: transform, opacity;
 }
 
 .line-active {
-  transform: translateY(-0.2em) scale(1.02);
+  transform: perspective(1000px) translateY(-0.25em) translateZ(30px) scale(1.02);
   filter: brightness(1.2);
+  text-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
 }
 
 .line-past {
-  opacity: 0.6;
-  transform: scale(0.98) translateY(0.1em);
+  opacity: 0.5;
+  transform: perspective(1000px) translateY(0.5em) translateZ(-20px) scale(0.98);
+  filter: brightness(0.8);
 }
 
 .line-future {
-  opacity: 0.4;
-  transform: scale(0.98) translateY(-0.1em);
+  opacity: 0.3;
+  transform: perspective(1000px) translateY(-0.5em) translateZ(-20px) scale(0.98);
+  filter: brightness(0.7);
 }
 
 .word-highlight {
@@ -86,11 +93,28 @@
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   animation: gradient-shift 3s ease infinite;
   text-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
+  position: relative;
+}
+
+.word-highlight::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.2), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border-radius: inherit;
+  z-index: -1;
+}
+
+.word-highlight:hover::after {
+  opacity: 1;
 }
 
 .word-past {
   opacity: 0.8;
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  text-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
 }
 
 .word-future {
