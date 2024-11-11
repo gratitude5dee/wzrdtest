@@ -84,8 +84,13 @@ const Teleprompter = () => {
     setCurrentWordIndex(index);
   }, []);
 
+  const handleRestart = useCallback(() => {
+    reset();
+    setCurrentWordIndex(0);
+  }, [reset]);
+
   return (
-    <div className="min-h-screen bg-teleprompter-bg overflow-hidden relative">
+    <div className="min-h-screen bg-background overflow-hidden relative">
       <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent pointer-events-none" />
       
       {/* Navigation Controls */}
@@ -111,7 +116,10 @@ const Teleprompter = () => {
       
       <div
         ref={containerRef}
-        className="h-screen overflow-hidden relative z-10 smooth-scroll"
+        className={cn(
+          "h-screen overflow-hidden relative z-10 smooth-scroll",
+          "px-4 md:px-8 lg:px-16"
+        )}
       >
         {isEditing ? (
           <Textarea
@@ -161,8 +169,8 @@ const Teleprompter = () => {
         )}
       </div>
       
-      <div className="fixed inset-x-0 top-0 h-40 bg-gradient-to-b from-teleprompter-bg via-teleprompter-bg/80 to-transparent pointer-events-none z-20" />
-      <div className="fixed inset-x-0 bottom-0 h-40 bg-gradient-to-t from-teleprompter-bg via-teleprompter-bg/80 to-transparent pointer-events-none z-20" />
+      <div className="fixed inset-x-0 top-0 h-40 bg-gradient-to-b from-background via-background/80 to-transparent pointer-events-none z-20" />
+      <div className="fixed inset-x-0 bottom-0 h-40 bg-gradient-to-t from-background via-background/80 to-transparent pointer-events-none z-20" />
       
       <TeleprompterControls
         isPlaying={isPlaying}
@@ -170,6 +178,7 @@ const Teleprompter = () => {
         onTogglePlay={togglePlay}
         onSpeedChange={updateSpeed}
         onExit={handleExit}
+        onRestart={handleRestart}
       />
     </div>
   );
