@@ -45,7 +45,7 @@
 }
 
 .smooth-scroll {
-  transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
   will-change: transform;
   backface-visibility: hidden;
   transform: translateZ(0);
@@ -61,27 +61,64 @@
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  animation: gradient-shift 3s ease infinite;
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: gradient-shift 4s ease infinite, glow-pulse 2s ease-in-out infinite;
   text-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
+  position: relative;
+}
+
+.word-highlight::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: radial-gradient(circle at center, rgba(59, 130, 246, 0.2), transparent 70%);
+  border-radius: inherit;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  animation: glow-ripple 2s ease-in-out infinite;
 }
 
 .word-past {
   opacity: 0.6;
   transform: scale(0.98);
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  filter: blur(0.5px);
 }
 
 .word-future {
   opacity: 0.4;
   transform: scale(0.98);
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  filter: blur(1px);
 }
 
 @keyframes gradient-shift {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { 
+    text-shadow: 0 0 20px rgba(59, 130, 246, 0.3),
+                 0 0 40px rgba(59, 130, 246, 0.2);
+  }
+  50% { 
+    text-shadow: 0 0 30px rgba(59, 130, 246, 0.5),
+                 0 0 60px rgba(59, 130, 246, 0.3);
+  }
+}
+
+@keyframes glow-ripple {
+  0%, 100% { 
+    opacity: 0;
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 1;
+    transform: scale(1.05);
+  }
 }
 
 @layer utilities {
