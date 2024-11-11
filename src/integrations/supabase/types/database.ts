@@ -1,10 +1,10 @@
-export type Json =
-  | string
-  | number
-  | boolean
-  | null
-  | { [key: string]: Json | undefined }
-  | Json[]
+import type { 
+  ProfilesTable,
+  ScriptsTable,
+  ScriptAnalyticsTable,
+  ScriptSharesTable,
+  UserPreferencesTable 
+} from './tables';
 
 export interface Database {
   public: {

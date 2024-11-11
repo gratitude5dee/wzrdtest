@@ -76,18 +76,20 @@ export const ScriptEditor = () => {
       <div className="mt-6 space-y-4">
         <div>
           <Label>Font Size</Label>
-          <Slider
-            defaultValue={[fontSize]}
-            min={16}
-            max={100}
-            step={1}
-            onValueChange={handleFontSizeChange}
-            valueLabelDisplay="on"
-          />
+          <div className="flex items-center gap-4">
+            <Slider
+              defaultValue={[fontSize]}
+              min={16}
+              max={100}
+              step={1}
+              onValueChange={handleFontSizeChange}
+            />
+            <span className="text-sm text-muted-foreground w-12">{fontSize}px</span>
+          </div>
         </div>
         <div>
           <Label>Font Family</Label>
-          <Select onValueChange={handleFontFamilyChange}>
+          <Select onValueChange={handleFontFamilyChange} defaultValue={fontFamily}>
             <SelectTrigger>
               <SelectValue placeholder="Select a font" />
             </SelectTrigger>
@@ -99,7 +101,7 @@ export const ScriptEditor = () => {
         </div>
         <div>
           <Label>Text Color</Label>
-          <Select onValueChange={handleTextColorChange}>
+          <Select onValueChange={handleTextColorChange} defaultValue={textColor}>
             <SelectTrigger>
               <SelectValue placeholder="Select a color" />
             </SelectTrigger>
