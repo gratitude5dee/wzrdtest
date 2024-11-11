@@ -12,42 +12,44 @@ export const useScrollToWord = () => {
     const wordPosition = wordElement.offsetTop;
     const wordHeight = wordElement.offsetHeight;
     
-    // Position the word at 40% from the top of the container
+    // Position the word at 40% from the top of the container for better visibility
     const topOffset = containerHeight * 0.4;
     const targetScroll = wordPosition - topOffset + (wordHeight / 2);
+    
+    const startPosition = container.scrollTop;
+    const distance = targetScroll - startPosition;
     
     if (instant) {
       container.scrollTo({ top: targetScroll });
       return;
     }
 
-    const startPosition = container.scrollTop;
-    const distance = targetScroll - startPosition;
-    const duration = 600; // Slightly longer duration for smoother feel
-    const startTime = performance.now();
-    
-    // Improved easing function for smoother motion
-    const easeOutQuint = (t: number): number => {
-      return 1 - Math.pow(1 - t, 5);
+    // Improved easing function for smoother scroll
+    const easeOutCubic = (t: number): number => {
+      return 1 - Math.pow(1 - t, 3);
     };
 
-    const animateScroll = (currentTime: number) => {
+    let startTime: number | null = null;
+    const duration = 800; // Longer duration for smoother animation
+
+    const animate = (currentTime: number) => {
+      if (startTime === null) startTime = currentTime;
       const elapsed = currentTime - startTime;
       const progress = Math.min(elapsed / duration, 1);
       
-      const eased = easeOutQuint(progress);
+      const eased = easeOutCubic(progress);
       const currentPosition = startPosition + (distance * eased);
       
       container.scrollTo({
         top: currentPosition,
-        behavior: 'auto' // Use auto to prevent conflicts with smooth-scroll
+        behavior: 'auto'
       });
       
       if (progress < 1) {
-        requestAnimationFrame(animateScroll);
+        requestAnimationFrame(animate);
       }
     };
     
-    requestAnimationFrame(animateScroll);
+    requestAnimationFrame(animate);
   }, []);
 };

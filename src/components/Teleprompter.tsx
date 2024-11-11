@@ -91,9 +91,10 @@ export const Teleprompter = ({
     }
   }, [isPlaying, speed, words.length, togglePlay]);
 
+  // Add effect to handle scrolling when currentWordIndex changes
   useEffect(() => {
-    if (highlightRef.current) {
-      updateScrollPosition(highlightRef.current);
+    if (highlightRef.current && containerRef.current) {
+      updateScrollPosition(highlightRef.current, containerRef.current);
     }
   }, [currentWordIndex, updateScrollPosition]);
 

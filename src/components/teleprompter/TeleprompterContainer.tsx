@@ -22,7 +22,7 @@ export const TeleprompterContainer = ({
     if (!initialScrollComplete.current && containerRef.current && firstWordRef?.current) {
       // Add a small delay to ensure proper initial positioning
       setTimeout(() => {
-        scrollToWord(firstWordRef.current, containerRef.current, true);
+        scrollToWord(firstWordRef.current!, containerRef.current!, true);
         initialScrollComplete.current = true;
       }, 100);
     }
@@ -32,7 +32,7 @@ export const TeleprompterContainer = ({
     <div
       ref={containerRef}
       className={cn(
-        "fixed inset-0 overflow-y-auto overflow-x-hidden smooth-scroll",
+        "fixed inset-0 overflow-y-auto overflow-x-hidden",
         "px-4 md:px-8 lg:px-16"
       )}
       style={{ 
