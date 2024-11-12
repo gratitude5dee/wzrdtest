@@ -16,8 +16,9 @@ export const useScrollToWord = () => {
     const wordTop = wordRect.top - containerRect.top;
     const wordCenter = wordRect.height / 2;
     
-    // Calculate the target scroll position with a slight offset during playback
-    const targetScroll = scrollTop + (wordTop - containerCenter + wordCenter);
+    // Add a small vertical offset to improve visibility during playback
+    const playbackOffset = isPlaying ? -50 : 0;
+    const targetScroll = scrollTop + (wordTop - containerCenter + wordCenter + playbackOffset);
     
     container.scrollTo({
       top: targetScroll,

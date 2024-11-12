@@ -27,8 +27,8 @@ export const TeleprompterScroll = ({
       const now = Date.now();
       const timeSinceLastScroll = now - lastScrollTime.current;
       
-      // Shorter delay during playback for smoother scrolling
-      const scrollDelay = isPlaying ? Math.max(0, 50 - timeSinceLastScroll) : 0;
+      // Immediate scroll during playback for better sync
+      const scrollDelay = isPlaying ? 0 : Math.max(0, 100 - timeSinceLastScroll);
       
       scrollTimeoutRef.current = setTimeout(() => {
         scrollToWord(highlightRef.current!, containerRef.current!, isPlaying);
