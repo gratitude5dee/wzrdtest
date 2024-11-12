@@ -38,12 +38,12 @@ export function PersonalityGrid({ hoveredCard, setHoveredCard, navigate }: Perso
     const pullX = (deltaX * MAGNETIC_PULL * pullStrength) / maxDistance;
     const pullY = (deltaY * MAGNETIC_PULL * pullStrength) / maxDistance;
 
-    return { rotationX, rotationY, lift, pullX, pullY, pullStrength };
+    return { rotationX, rotationY, lift, pullX, pullY, pullStrength, distance };
   }, []);
 
   const applyCardTransform = useCallback((
     card: HTMLElement, 
-    dynamics: { rotationX: number; rotationY: number; lift: number; pullX: number; pullY: number; pullStrength: number }
+    dynamics: { rotationX: number; rotationY: number; lift: number; pullX: number; pullY: number; pullStrength: number; distance: number }
   ) => {
     const { rotationX, rotationY, lift, pullX, pullY, pullStrength } = dynamics;
     const cardId = card.getAttribute('data-card-id') || '';
@@ -114,7 +114,6 @@ export function PersonalityGrid({ hoveredCard, setHoveredCard, navigate }: Perso
 
   useEffect(() => {
     document.addEventListener('mousemove', debouncedMouseMove);
-    document.addEventListener('mouseup', () => isPointerDown.current = false);
     document.addEventListener('mouseleave', () => {
       if (hoveredCard) {
         resetCard(hoveredCard);
