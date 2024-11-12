@@ -19,16 +19,12 @@ export const TeleprompterContainer = ({
   const scrollToWord = useScrollToWord();
 
   useEffect(() => {
-    // Ensure initial scroll happens after content is fully rendered
-    const timer = setTimeout(() => {
-      if (!initialScrollComplete.current && containerRef.current && firstWordRef?.current) {
-        scrollToWord(firstWordRef.current, containerRef.current, autoStart);
-        initialScrollComplete.current = true;
-      }
-    }, 100);
-
-    return () => clearTimeout(timer);
-  }, [containerRef, firstWordRef, scrollToWord, autoStart]);
+    if (!initialScrollComplete.current && containerRef.current && firstWordRef?.current) {
+      // Immediate initial scroll for better positioning
+      scrollToWord(firstWordRef.current!, containerRef.current!, false);
+      initialScrollComplete.current = true;
+    }
+  }, [containerRef, firstWordRef, scrollToWord]);
 
   return (
     <div

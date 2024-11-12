@@ -15,20 +15,24 @@ export const TeleprompterScroll = ({
   isPlaying,
 }: TeleprompterScrollProps) => {
   const scrollToWord = useScrollToWord();
+  const lastScrollTime = useRef<number>(0);
   const scrollTimeoutRef = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
     if (highlightRef.current && containerRef.current) {
-      // Clear any existing scroll timeout
       if (scrollTimeoutRef.current) {
         clearTimeout(scrollTimeoutRef.current);
       }
 
-      // Add a small delay for smooth transitions during playback
-      const scrollDelay = isPlaying ? 100 : 0;
+      const now = Date.now();
+      const timeSinceLastScroll = now - lastScrollTime.current;
+      
+      // Immediate scroll during playback for better sync
+      const scrollDelay = isPlaying ? 0 : Math.max(0, 100 - timeSinceLastScroll);
       
       scrollTimeoutRef.current = setTimeout(() => {
         scrollToWord(highlightRef.current!, containerRef.current!, isPlaying);
+        lastScrollTime.current = Date.now();
       }, scrollDelay);
     }
 
