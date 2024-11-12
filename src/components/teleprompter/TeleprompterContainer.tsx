@@ -20,11 +20,10 @@ export const TeleprompterContainer = ({
 
   useEffect(() => {
     if (!initialScrollComplete.current && containerRef.current && firstWordRef?.current) {
-      // Add a small delay to ensure proper initial positioning
       setTimeout(() => {
-        scrollToWord(firstWordRef.current!, containerRef.current!, true);
+        scrollToWord(firstWordRef.current!, containerRef.current!, false);
         initialScrollComplete.current = true;
-      }, 500); // Increased delay for more reliable initial positioning
+      }, 300);
     }
   }, [containerRef, firstWordRef, scrollToWord]);
 
