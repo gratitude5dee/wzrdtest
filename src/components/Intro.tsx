@@ -7,47 +7,23 @@ export function Intro() {
   const navigate = useNavigate();
 
   return (
-    <div className="relative w-full h-screen bg-[#FFF8F6] overflow-hidden">
-      {/* 3D Scene */}
-      <div className="absolute inset-0 w-full h-full">
-        <Spline scene="https://prod.spline.design/vovjzFrBFk08eimK/scene.splinecode" />
-      </div>
+    <div className="relative w-full h-screen overflow-hidden">
+      {/* Full screen Spline scene */}
+      <Spline scene="https://prod.spline.design/vovjzFrBFk08eimK/scene.splinecode" />
       
-      {/* Overlay Content */}
+      {/* Centered Button */}
       <motion.div 
-        className="absolute inset-0 flex flex-col items-center justify-center p-6 bg-black/10 backdrop-blur-sm"
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.5 }}
+        transition={{ delay: 1.2 }}
       >
-        <motion.h1 
-          className="text-4xl md:text-6xl font-bold text-white mb-6 text-center"
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.8 }}
+        <Button 
+          onClick={() => navigate('/login')}
+          className="bg-white text-black hover:bg-white/90 text-lg px-8 py-2 rounded-full shadow-lg"
         >
-          Welcome to wzrd
-        </motion.h1>
-        <motion.p 
-          className="text-lg md:text-xl text-white/90 mb-8 text-center max-w-md"
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 1 }}
-        >
-          Your AI companion for personal growth and reflection
-        </motion.p>
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 1.2 }}
-        >
-          <Button 
-            onClick={() => navigate('/login')}
-            className="bg-white text-black hover:bg-white/90 text-lg px-8 py-6"
-          >
-            Get Started
-          </Button>
-        </motion.div>
+          Get Started
+        </Button>
       </motion.div>
     </div>
   );
