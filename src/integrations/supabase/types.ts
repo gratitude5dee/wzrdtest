@@ -83,7 +83,7 @@ export type Database = {
           created_at: string | null
           id: string
           owner_id: string | null
-          permissions: string | null
+          permissions: Database["public"]["Enums"]["share_permission"] | null
           script_id: string | null
           shared_with_id: string | null
         }
@@ -91,7 +91,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           owner_id?: string | null
-          permissions?: string | null
+          permissions?: Database["public"]["Enums"]["share_permission"] | null
           script_id?: string | null
           shared_with_id?: string | null
         }
@@ -99,7 +99,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           owner_id?: string | null
-          permissions?: string | null
+          permissions?: Database["public"]["Enums"]["share_permission"] | null
           script_id?: string | null
           shared_with_id?: string | null
         }
@@ -220,7 +220,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      share_permission: "read" | "edit"
     }
     CompositeTypes: {
       [_ in never]: never
