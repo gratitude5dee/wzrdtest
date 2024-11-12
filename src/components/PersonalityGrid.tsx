@@ -9,15 +9,16 @@ interface PersonalityGridProps {
   navigate: (path: string) => void;
 }
 
-const SPRING = { tension: 0.1, friction: 0.9 };
-const MAX_ROTATION = 15;
-const MAX_LIFT = 1.08;
-const MAGNETIC_PULL = 0.3;
-const TRANSITION_BASE = "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)";
+// Optimized animation constants
+const SPRING = { tension: 0.15, friction: 0.8 };
+const MAX_ROTATION = 12;
+const MAX_LIFT = 1.05;
+const MAGNETIC_PULL = 0.2;
+const TRANSITION_BASE = "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)";
 
 export function PersonalityGrid({ hoveredCard, setHoveredCard, navigate }: PersonalityGridProps) {
   const cardRefs = useRef<{ [key: string]: HTMLButtonElement | null }>({});
-  const velocities = useRef<{ [key: string]: { x: number; y: number } }>({});
+  const velocities = useRef<{ [key: string]: { x: number; y: number; scale: number } }>({});
   const rafId = useRef<number>();
   const isPointerDown = useRef(false);
 
@@ -32,51 +33,59 @@ export function PersonalityGrid({ hoveredCard, setHoveredCard, navigate }: Perso
     const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
     const maxDistance = Math.max(rect.width, rect.height);
 
-    // Calculate rotation and lift based on distance
-    const rotationX = (deltaY / maxDistance) * MAX_ROTATION;
-    const rotationY = -(deltaX / maxDistance) * MAX_ROTATION;
+    // Improved rotation and lift calculations
+    const rotationX = (deltaY / maxDistance) * MAX_ROTATION * Math.min(1, 1 - distance / maxDistance);
+    const rotationY = -(deltaX / maxDistance) * MAX_ROTATION * Math.min(1, 1 - distance / maxDistance);
     const lift = 1 + ((maxDistance - distance) / maxDistance) * (MAX_LIFT - 1);
 
-    // Add magnetic pull effect
-    const pull = Math.min(distance / maxDistance, 1);
-    const pullX = (deltaX * MAGNETIC_PULL * pull) / maxDistance;
-    const pullY = (deltaY * MAGNETIC_PULL * pull) / maxDistance;
+    // Enhanced magnetic pull with distance falloff
+    const pullStrength = Math.max(0, 1 - (distance / maxDistance));
+    const pullX = (deltaX * MAGNETIC_PULL * pullStrength) / maxDistance;
+    const pullY = (deltaY * MAGNETIC_PULL * pullStrength) / maxDistance;
 
-    return { rotationX, rotationY, lift, pullX, pullY, distance };
+    return { rotationX, rotationY, lift, pullX, pullY, distance, pullStrength };
   }, []);
 
   const applyCardTransform = useCallback((
     card: HTMLElement, 
-    dynamics: { rotationX: number; rotationY: number; lift: number; pullX: number; pullY: number }
+    dynamics: { rotationX: number; rotationY: number; lift: number; pullX: number; pullY: number; pullStrength: number }
   ) => {
-    const { rotationX, rotationY, lift, pullX, pullY } = dynamics;
-    
-    // Apply spring physics
-    const targetX = rotationX + pullX;
-    const targetY = rotationY + pullY;
+    const { rotationX, rotationY, lift, pullX, pullY, pullStrength } = dynamics;
     const cardId = card.getAttribute('data-card-id') || '';
     
     if (!velocities.current[cardId]) {
-      velocities.current[cardId] = { x: 0, y: 0 };
+      velocities.current[cardId] = { x: 0, y: 0, scale: 1 };
     }
 
-    velocities.current[cardId].x += (targetX - velocities.current[cardId].x) * SPRING.tension;
-    velocities.current[cardId].y += (targetY - velocities.current[cardId].y) * SPRING.friction;
+    // Enhanced spring physics with smooth interpolation
+    velocities.current[cardId].x += (rotationX - velocities.current[cardId].x) * SPRING.tension;
+    velocities.current[cardId].y += (rotationY - velocities.current[cardId].y) * SPRING.friction;
+    velocities.current[cardId].scale += (lift - velocities.current[cardId].scale) * SPRING.tension;
+
+    // Apply velocity dampening
+    velocities.current[cardId].x *= 0.95;
+    velocities.current[cardId].y *= 0.95;
 
     const transform = `
       perspective(1000px) 
       rotateX(${velocities.current[cardId].x}deg) 
       rotateY(${velocities.current[cardId].y}deg) 
-      scale3d(${lift}, ${lift}, 1)
-      translate3d(${pullX * 20}px, ${pullY * 20}px, 0)
+      scale3d(${velocities.current[cardId].scale}, ${velocities.current[cardId].scale}, 1)
+      translate3d(${pullX * 15}px, ${pullY * 15}px, 0)
     `;
 
-    card.style.transform = transform;
-    
-    // Parallax effect for card content
-    const content = card.querySelector('.card-content') as HTMLElement;
-    if (content) {
-      content.style.transform = `translate3d(${-pullX * 30}px, ${-pullY * 30}px, 0)`;
+    // Optimized style updates using requestAnimationFrame
+    if (!rafId.current) {
+      rafId.current = requestAnimationFrame(() => {
+        card.style.transform = transform;
+        
+        // Enhanced parallax effect for card content
+        const content = card.querySelector('.card-content') as HTMLElement;
+        if (content) {
+          content.style.transform = `translate3d(${-pullX * 25 * pullStrength}px, ${-pullY * 25 * pullStrength}px, 0)`;
+        }
+        rafId.current = undefined;
+      });
     }
   }, []);
 
@@ -89,9 +98,9 @@ export function PersonalityGrid({ hoveredCard, setHoveredCard, navigate }: Perso
 
     const dynamics = calculateDynamics(e, card, rect);
     
-    if (dynamics.distance < rect.width * 1.5) {
+    if (dynamics.distance < rect.width * 1.2) {
       applyCardTransform(card, dynamics);
-      card.style.transition = 'transform 0.1s cubic-bezier(0.4, 0, 0.2, 1)';
+      card.style.transition = 'transform 0.05s ease-out';
     }
   }, [hoveredCard, calculateDynamics, applyCardTransform]);
 
@@ -99,7 +108,8 @@ export function PersonalityGrid({ hoveredCard, setHoveredCard, navigate }: Perso
     const card = cardRefs.current[cardId];
     if (!card) return;
 
-    velocities.current[cardId] = { x: 0, y: 0 };
+    // Smooth reset animation
+    velocities.current[cardId] = { x: 0, y: 0, scale: 1 };
     
     card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1) translate3d(0, 0, 0)';
     card.style.transition = TRANSITION_BASE;
@@ -111,7 +121,8 @@ export function PersonalityGrid({ hoveredCard, setHoveredCard, navigate }: Perso
     }
   }, []);
 
-  const debouncedMouseMove = debounce(handleMouseMove, 5);
+  // Optimized debounced mouse move handler
+  const debouncedMouseMove = debounce(handleMouseMove, 5, { maxWait: 16 });
 
   useEffect(() => {
     document.addEventListener('mousemove', debouncedMouseMove);
