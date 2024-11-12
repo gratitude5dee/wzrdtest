@@ -20,9 +20,11 @@ export const TeleprompterContainer = ({
 
   useEffect(() => {
     if (!initialScrollComplete.current && containerRef.current && firstWordRef?.current) {
-      // Immediate initial scroll for better positioning
-      scrollToWord(firstWordRef.current!, containerRef.current!, false);
-      initialScrollComplete.current = true;
+      // Set initial scroll position with a small delay to ensure proper rendering
+      requestAnimationFrame(() => {
+        scrollToWord(firstWordRef.current!, containerRef.current!, false);
+        initialScrollComplete.current = true;
+      });
     }
   }, [containerRef, firstWordRef, scrollToWord]);
 
