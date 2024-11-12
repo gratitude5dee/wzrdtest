@@ -36,25 +36,10 @@ export default {
           "0%": { transform: "translateY(0)" },
           "100%": { transform: "translateY(-6px)" },
         },
-        "glow-pulse": {
-          "0%": { 
-            opacity: "0.5",
-            boxShadow: "0 0 15px rgba(59, 130, 246, 0.1), inset 0 0 15px rgba(59, 130, 246, 0.1)"
-          },
-          "50%": {
-            opacity: "0.2",
-            boxShadow: "0 0 20px rgba(59, 130, 246, 0.2), inset 0 0 20px rgba(59, 130, 246, 0.2)"
-          },
-          "100%": { 
-            opacity: "0.5",
-            boxShadow: "0 0 15px rgba(59, 130, 246, 0.1), inset 0 0 15px rgba(59, 130, 246, 0.1)"
-          },
-        },
       },
       animation: {
         "magnetic-float": "magnetic-float 0.2s ease-out forwards",
         "card-hover": "card-hover 0.2s ease-out forwards",
-        "glow-pulse": "glow-pulse 2s ease-in-out infinite",
       },
     },
   },

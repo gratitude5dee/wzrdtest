@@ -9,18 +9,15 @@ interface PersonalityGridProps {
   navigate: (path: string) => void;
 }
 
-// Optimized animation constants
-const SPRING = { tension: 0.15, friction: 0.8 };
-const MAX_ROTATION = 12;
-const MAX_LIFT = 1.05;
-const MAGNETIC_PULL = 0.2;
-const TRANSITION_BASE = "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)";
+const SPRING = { tension: 0.1, friction: 0.9 };
+const MAX_ROTATION = 8;
+const MAX_LIFT = 1.03;
+const MAGNETIC_PULL = 0.15;
 
 export function PersonalityGrid({ hoveredCard, setHoveredCard, navigate }: PersonalityGridProps) {
   const cardRefs = useRef<{ [key: string]: HTMLButtonElement | null }>({});
   const velocities = useRef<{ [key: string]: { x: number; y: number; scale: number } }>({});
   const rafId = useRef<number>();
-  const isPointerDown = useRef(false);
 
   const calculateDynamics = useCallback((e: MouseEvent, card: HTMLElement, rect: DOMRect) => {
     const centerX = rect.left + rect.width / 2;
@@ -33,17 +30,15 @@ export function PersonalityGrid({ hoveredCard, setHoveredCard, navigate }: Perso
     const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
     const maxDistance = Math.max(rect.width, rect.height);
 
-    // Improved rotation and lift calculations
     const rotationX = (deltaY / maxDistance) * MAX_ROTATION * Math.min(1, 1 - distance / maxDistance);
     const rotationY = -(deltaX / maxDistance) * MAX_ROTATION * Math.min(1, 1 - distance / maxDistance);
     const lift = 1 + ((maxDistance - distance) / maxDistance) * (MAX_LIFT - 1);
 
-    // Enhanced magnetic pull with distance falloff
     const pullStrength = Math.max(0, 1 - (distance / maxDistance));
     const pullX = (deltaX * MAGNETIC_PULL * pullStrength) / maxDistance;
     const pullY = (deltaY * MAGNETIC_PULL * pullStrength) / maxDistance;
 
-    return { rotationX, rotationY, lift, pullX, pullY, distance, pullStrength };
+    return { rotationX, rotationY, lift, pullX, pullY, pullStrength };
   }, []);
 
   const applyCardTransform = useCallback((
@@ -57,12 +52,10 @@ export function PersonalityGrid({ hoveredCard, setHoveredCard, navigate }: Perso
       velocities.current[cardId] = { x: 0, y: 0, scale: 1 };
     }
 
-    // Enhanced spring physics with smooth interpolation
     velocities.current[cardId].x += (rotationX - velocities.current[cardId].x) * SPRING.tension;
     velocities.current[cardId].y += (rotationY - velocities.current[cardId].y) * SPRING.friction;
     velocities.current[cardId].scale += (lift - velocities.current[cardId].scale) * SPRING.tension;
 
-    // Apply velocity dampening
     velocities.current[cardId].x *= 0.95;
     velocities.current[cardId].y *= 0.95;
 
@@ -71,18 +64,15 @@ export function PersonalityGrid({ hoveredCard, setHoveredCard, navigate }: Perso
       rotateX(${velocities.current[cardId].x}deg) 
       rotateY(${velocities.current[cardId].y}deg) 
       scale3d(${velocities.current[cardId].scale}, ${velocities.current[cardId].scale}, 1)
-      translate3d(${pullX * 15}px, ${pullY * 15}px, 0)
+      translate3d(${pullX * 10}px, ${pullY * 10}px, 0)
     `;
 
-    // Optimized style updates using requestAnimationFrame
     if (!rafId.current) {
       rafId.current = requestAnimationFrame(() => {
         card.style.transform = transform;
-        
-        // Enhanced parallax effect for card content
         const content = card.querySelector('.card-content') as HTMLElement;
         if (content) {
-          content.style.transform = `translate3d(${-pullX * 25 * pullStrength}px, ${-pullY * 25 * pullStrength}px, 0)`;
+          content.style.transform = `translate3d(${-pullX * 20 * pullStrength}px, ${-pullY * 20 * pullStrength}px, 0)`;
         }
         rafId.current = undefined;
       });
@@ -108,20 +98,18 @@ export function PersonalityGrid({ hoveredCard, setHoveredCard, navigate }: Perso
     const card = cardRefs.current[cardId];
     if (!card) return;
 
-    // Smooth reset animation
     velocities.current[cardId] = { x: 0, y: 0, scale: 1 };
     
     card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1) translate3d(0, 0, 0)';
-    card.style.transition = TRANSITION_BASE;
+    card.style.transition = "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)";
     
     const content = card.querySelector('.card-content') as HTMLElement;
     if (content) {
       content.style.transform = 'translate3d(0, 0, 0)';
-      content.style.transition = TRANSITION_BASE;
+      content.style.transition = "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)";
     }
   }, []);
 
-  // Optimized debounced mouse move handler
   const debouncedMouseMove = debounce(handleMouseMove, 5, { maxWait: 16 });
 
   useEffect(() => {
@@ -157,7 +145,7 @@ export function PersonalityGrid({ hoveredCard, setHoveredCard, navigate }: Perso
             'hover:before:opacity-100 hover:after:opacity-100',
             'group backdrop-blur-lg border border-white/10',
             hoveredCard === personality.id ? 
-              'z-10 shadow-2xl shadow-white/20 animate-glow-pulse' : 
+              'z-10 shadow-2xl shadow-white/20' : 
               'z-0 hover:shadow-xl hover:shadow-white/10'
           )}
           onClick={() => personality.id === "affirmations" ? 
@@ -169,12 +157,11 @@ export function PersonalityGrid({ hoveredCard, setHoveredCard, navigate }: Perso
             resetCard(personality.id);
             setHoveredCard(null);
           }}
-          onMouseDown={() => isPointerDown.current = true}
           style={{ willChange: 'transform, box-shadow' }}
           aria-label={`Select ${personality.title} personality`}
         >
           <div className="card-content relative z-10 space-y-3 transition-transform duration-300">
-            <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center overflow-hidden mb-3 group-hover:animate-card-hover">
+            <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center overflow-hidden mb-3 group-hover:scale-110 transition-transform duration-300">
               <img 
                 src={personality.icon} 
                 alt={personality.title} 

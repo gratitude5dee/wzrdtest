@@ -44,7 +44,7 @@ export function Home() {
     <div className="min-h-screen bg-[#FFF8F6] p-6 pb-32">
       <header className="flex justify-between items-center mb-8">
         <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 animate-float">
+          <div className="w-8 h-8">
             <img src="/wzrd-logo.png" alt="WZRD" className="w-full h-full" />
           </div>
           <span className="text-2xl font-semibold gradient-text">wzrd</span>
@@ -52,7 +52,7 @@ export function Home() {
         <Button 
           variant="ghost" 
           size="icon" 
-          className="rounded-full bg-[#2A2A2A] text-white hover:bg-gray-800 hover-lift"
+          className="rounded-full bg-[#2A2A2A] text-white hover:bg-gray-800 hover:scale-105 transition-all duration-300"
           onClick={() => setSettingsOpen(true)}
         >
           <SettingsIcon className="h-5 w-5" />
