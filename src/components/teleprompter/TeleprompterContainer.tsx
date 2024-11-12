@@ -32,7 +32,7 @@ export const TeleprompterContainer = ({
     <div
       ref={containerRef}
       className={cn(
-        "fixed inset-0 overflow-y-auto overflow-x-hidden",
+        "fixed inset-0 overflow-y-auto overflow-x-hidden scroll-smooth",
         "px-4 md:px-8 lg:px-16"
       )}
       style={{ 
@@ -40,8 +40,8 @@ export const TeleprompterContainer = ({
         transformStyle: 'preserve-3d'
       }}
     >
-      <div className="min-h-[200vh] w-full">
-        <div className="sticky top-[40vh] left-0 right-0 transform-gpu">
+      <div className="min-h-[200vh] w-full flex items-center justify-center">
+        <div className="py-[50vh]">
           {children}
         </div>
       </div>
