@@ -19,26 +19,38 @@ interface ChatHeaderProps {
 
 export function ChatHeader({ personality, onBack, onResetChat, personalityInfo }: ChatHeaderProps) {
   return (
-    <header className="flex items-center justify-between px-6 py-4">
-      <button onClick={onBack} className="p-2 text-gray-600 hover:text-gray-800 transition-colors">
+    <header className="relative flex items-center justify-between px-6 py-4 bg-gradient-to-b from-white/80 to-white/40 backdrop-blur-md border-b border-gray-100/20">
+      <button 
+        onClick={onBack} 
+        className="p-2 text-gray-600 hover:text-gray-800 transition-all duration-300 rounded-full
+                 hover:bg-gray-100/50 active:scale-95"
+      >
         <ArrowLeft className="h-5 w-5" />
       </button>
-      <h1 className="text-xl font-medium">{personality}</h1>
+      
+      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-3">
+        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-50 to-indigo-50 
+                      flex items-center justify-center shadow-lg border border-white/50">
+          <img 
+            src={`/${personality.toLowerCase().replace(" ", "-")}-avatar.png`}
+            alt={personality}
+            className="w-6 h-6 rounded-full"
+          />
+        </div>
+        <h1 className="text-xl font-medium bg-gradient-to-r from-gray-800 to-gray-600 
+                     bg-clip-text text-transparent">{personality}</h1>
+      </div>
+
       <Drawer>
         <DrawerTrigger asChild>
           <button 
             className="relative p-2 text-gray-600 hover:text-gray-800 transition-all duration-300
-                     bg-gradient-to-br from-white to-gray-50
-                     hover:from-gray-50 hover:to-gray-100
+                     bg-gradient-to-br from-white/80 to-gray-50/80
+                     hover:from-gray-50/80 hover:to-gray-100/80
                      rounded-full shadow-lg hover:shadow-xl
                      border border-gray-200/50 hover:border-gray-300/50
                      backdrop-blur-sm
                      group"
-            style={{
-              background: `radial-gradient(circle at 50% 50%,
-                          rgba(255, 255, 255, 0.8),
-                          rgba(240, 240, 240, 0.6))`,
-            }}
           >
             <div className="absolute inset-0 rounded-full bg-blue-400/10 group-hover:bg-blue-400/20 
                           opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
