@@ -11,13 +11,17 @@ export const useScrollToWord = () => {
     const containerRect = container.getBoundingClientRect();
     const wordRect = wordElement.getBoundingClientRect();
     
-    // Calculate the center position, accounting for the word's height
+    // Calculate the scroll position to center the word
+    const scrollTop = container.scrollTop;
     const containerCenter = containerRect.height / 2;
+    const wordTop = wordRect.top - containerRect.top;
     const wordCenter = wordRect.height / 2;
-    const scrollOffset = wordElement.offsetTop - containerCenter + wordCenter;
+    
+    // Calculate the target scroll position
+    const targetScroll = scrollTop + (wordTop - containerCenter + wordCenter);
     
     container.scrollTo({
-      top: scrollOffset,
+      top: targetScroll,
       behavior: instant ? 'auto' : 'smooth'
     });
   }, []);

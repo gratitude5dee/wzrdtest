@@ -20,16 +20,13 @@ export const TeleprompterScroll = ({
 
   useEffect(() => {
     if (highlightRef.current && containerRef.current) {
-      // Clear any existing timeout
       if (scrollTimeoutRef.current) {
         clearTimeout(scrollTimeoutRef.current);
       }
 
       const now = Date.now();
       const timeSinceLastScroll = now - lastScrollTime.current;
-      
-      // Add a small delay for smooth scrolling during playback
-      const scrollDelay = isPlaying ? Math.max(0, 100 - timeSinceLastScroll) : 0;
+      const scrollDelay = isPlaying ? Math.max(0, 150 - timeSinceLastScroll) : 0;
       
       scrollTimeoutRef.current = setTimeout(() => {
         scrollToWord(highlightRef.current!, containerRef.current!, !isPlaying);

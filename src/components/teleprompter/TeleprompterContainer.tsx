@@ -24,7 +24,7 @@ export const TeleprompterContainer = ({
       setTimeout(() => {
         scrollToWord(firstWordRef.current!, containerRef.current!, true);
         initialScrollComplete.current = true;
-      }, 100);
+      }, 500); // Increased delay for more reliable initial positioning
     }
   }, [containerRef, firstWordRef, scrollToWord]);
 
@@ -40,8 +40,8 @@ export const TeleprompterContainer = ({
         transformStyle: 'preserve-3d'
       }}
     >
-      <div className="min-h-[200vh] w-full flex items-center justify-center">
-        <div className="py-[50vh]">
+      <div className="min-h-[200vh] w-full">
+        <div className="py-[50vh] flex items-center justify-center">
           {children}
         </div>
       </div>
