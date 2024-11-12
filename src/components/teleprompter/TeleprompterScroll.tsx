@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useScrollToWord } from '@/hooks/useScrollToWord';
 
 interface TeleprompterScrollProps {
@@ -15,12 +15,32 @@ export const TeleprompterScroll = ({
   isPlaying,
 }: TeleprompterScrollProps) => {
   const scrollToWord = useScrollToWord();
+  const lastScrollTime = useRef<number>(0);
+  const scrollTimeoutRef = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
     if (highlightRef.current && containerRef.current) {
-      // Always scroll immediately when the word changes
-      scrollToWord(highlightRef.current, containerRef.current, isPlaying);
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+
+      const now = Date.now();
+      const timeSinceLastScroll = now - lastScrollTime.current;
+      
+      // Immediate scroll during playback for better sync
+      const scrollDelay = isPlaying ? 0 : Math.max(0, 100 - timeSinceLastScroll);
+      
+      scrollTimeoutRef.current = setTimeout(() => {
+        scrollToWord(highlightRef.current!, containerRef.current!, isPlaying);
+        lastScrollTime.current = Date.now();
+      }, scrollDelay);
     }
+
+    return () => {
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+    };
   }, [currentWordIndex, scrollToWord, isPlaying]);
 
   return null;
