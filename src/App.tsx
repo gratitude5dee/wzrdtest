@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, useParams, Navigate, useLocation } from "
 import { Home } from "./components/Home";
 import { Chat } from "./components/Chat";
 import { Login } from "./components/Login";
+import { Intro } from "./components/Intro";
 import Teleprompter from "./components/Teleprompter";
 import { createContext, useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -99,12 +100,12 @@ const App = () => {
         <TooltipProvider>
           <AnimatePresence mode="wait">
             <Routes location={location} key={location.pathname}>
+              <Route path="/" element={<Intro />} />
               <Route path="/login" element={
                 <PageTransition>
                   <Login />
                 </PageTransition>
               } />
-              <Route path="/" element={<Navigate to="/login" replace />} />
               <Route path="/home" element={
                 <ProtectedRoute>
                   <Home />
