@@ -23,40 +23,39 @@ export function useProfileManager() {
         .from('profiles')
         .select('*, user_preferences(*)')
         .eq('id', user.id)
-        .maybeSingle();
+        .single();
 
       if (profileError) {
         throw new Error("Failed to load profile");
       }
 
-      if (!profile) {
-        const { error: insertError } = await supabase
-          .from('profiles')
-          .insert([{ 
-            id: user.id,
-            email: user.email,
-            first_name: "",
-            last_name: ""
-          }]);
-
-        if (insertError) {
-          throw new Error("Failed to create profile");
-        }
+      if (profile) {
+        setFirstName(profile.first_name || "");
+        setLastName(profile.last_name || "");
+        setEmail(profile.email || "");
         
-        setEmail(user.email || "");
-        return;
-      }
+        if (profile.user_preferences) {
+          setBackgroundColor(profile.user_preferences.background_color || "#FFF8F6");
+          setTextColor(profile.user_preferences.text_color || "#000000");
+          setAppFontFamily(profile.user_preferences.app_font_family || "inter");
+        } else {
+          // Create default preferences if they don't exist
+          const { error: insertError } = await supabase
+            .from('user_preferences')
+            .insert({
+              id: user.id,
+              background_color: backgroundColor,
+              text_color: textColor,
+              app_font_family: appFontFamily
+            });
 
-      setFirstName(profile.first_name || "");
-      setLastName(profile.last_name || "");
-      setEmail(profile.email || "");
-      
-      if (profile.user_preferences) {
-        setBackgroundColor(profile.user_preferences.background_color || "#FFF8F6");
-        setTextColor(profile.user_preferences.text_color || "#000000");
-        setAppFontFamily(profile.user_preferences.app_font_family || "inter");
+          if (insertError) {
+            console.error("Failed to create default preferences:", insertError);
+          }
+        }
       }
     } catch (error) {
+      console.error("Error loading profile:", error);
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "An unexpected error occurred",
@@ -73,7 +72,8 @@ export function useProfileManager() {
         throw new Error("Authentication error");
       }
 
-      const { error: updateProfileError } = await supabase
+      // Update profile
+      const { error: profileError } = await supabase
         .from('profiles')
         .upsert({
           id: user.id,
@@ -82,20 +82,22 @@ export function useProfileManager() {
           email: email,
         });
 
-      if (updateProfileError) {
+      if (profileError) {
         throw new Error("Failed to update profile");
       }
 
-      const { error: updatePreferencesError } = await supabase
+      // Update preferences
+      const { error: preferencesError } = await supabase
         .from('user_preferences')
         .upsert({
           id: user.id,
           background_color: backgroundColor,
           text_color: textColor,
           app_font_family: appFontFamily,
+          updated_at: new Date().toISOString()
         });
 
-      if (updatePreferencesError) {
+      if (preferencesError) {
         throw new Error("Failed to update preferences");
       }
 
@@ -106,9 +108,10 @@ export function useProfileManager() {
       
       return true;
     } catch (error) {
+      console.error("Error saving profile:", error);
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "An unexpected error occurred",
+        description: error instanceof Error ? error.message : "Failed to update preferences",
         variant: "destructive",
       });
       return false;
