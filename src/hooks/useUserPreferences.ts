@@ -24,35 +24,49 @@ export const useUserPreferences = () => {
   const loadPreferences = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      if (!user) {
+        console.error('No user found');
+        return;
+      }
 
-      const { data, error } = await supabase
+      const { data: existingPrefs, error: fetchError } = await supabase
         .from('user_preferences')
         .select('*')
         .eq('id', user.id)
         .single();
 
-      if (error && error.code !== 'PGRST116') {
-        throw error;
+      if (fetchError && fetchError.code !== 'PGRST116') {
+        console.error('Error fetching preferences:', fetchError);
+        throw fetchError;
       }
 
-      if (data) {
-        setPreferences({
-          fontSize: data.font_size || 44,
-          fontFamily: data.font_family || 'inter',
-          textColor: data.text_color || '#F8FAFC'
-        });
+      if (!existingPrefs) {
+        console.log('Creating default preferences for user');
+        const { error: insertError } = await supabase
+          .from('user_preferences')
+          .insert({
+            id: user.id,
+            font_size: preferences.fontSize,
+            font_family: preferences.fontFamily,
+            text_color: preferences.textColor,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          });
+
+        if (insertError) {
+          console.error('Error creating preferences:', insertError);
+          throw insertError;
+        }
       } else {
-        // Create default preferences
-        await supabase.from('user_preferences').insert({
-          id: user.id,
-          font_size: preferences.fontSize,
-          font_family: preferences.fontFamily,
-          text_color: preferences.textColor
+        console.log('Found existing preferences:', existingPrefs);
+        setPreferences({
+          fontSize: existingPrefs.font_size || 44,
+          fontFamily: existingPrefs.font_family || 'inter',
+          textColor: existingPrefs.text_color || '#F8FAFC'
         });
       }
     } catch (error) {
-      console.error('Error loading preferences:', error);
+      console.error('Error in loadPreferences:', error);
       toast.error('Failed to load preferences');
     } finally {
       setLoading(false);
@@ -62,24 +76,43 @@ export const useUserPreferences = () => {
   const updatePreferences = async (newPreferences: Partial<UserPreferences>) => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      if (!user) {
+        console.error('No user found during update');
+        return;
+      }
+
+      console.log('Updating preferences:', newPreferences);
+      
+      const updates: Partial<UserPreferencesTable['Update']> = {
+        updated_at: new Date().toISOString()
+      };
+
+      if (newPreferences.fontSize !== undefined) {
+        updates.font_size = newPreferences.fontSize;
+      }
+      if (newPreferences.fontFamily !== undefined) {
+        updates.font_family = newPreferences.fontFamily;
+      }
+      if (newPreferences.textColor !== undefined) {
+        updates.text_color = newPreferences.textColor;
+      }
 
       const { error } = await supabase
         .from('user_preferences')
-        .update({
-          font_size: newPreferences.fontSize,
-          font_family: newPreferences.fontFamily,
-          text_color: newPreferences.textColor,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', user.id);
+        .upsert({
+          id: user.id,
+          ...updates
+        });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error updating preferences:', error);
+        throw error;
+      }
 
       setPreferences(prev => ({ ...prev, ...newPreferences }));
       toast.success('Preferences updated successfully');
     } catch (error) {
-      console.error('Error updating preferences:', error);
+      console.error('Error in updatePreferences:', error);
       toast.error('Failed to update preferences');
     }
   };
