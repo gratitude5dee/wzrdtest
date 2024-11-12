@@ -26,7 +26,7 @@ export function ChatHeader({ personality, onBack, onResetChat, personalityInfo }
       <h1 className="text-xl font-medium">{personality}</h1>
       <Drawer>
         <DrawerTrigger asChild>
-          <button className="p-2 text-gray-600 rounded-full hover:bg-gray-100">
+          <button className="p-2 text-gray-600 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors">
             <Info className="h-5 w-5" />
           </button>
         </DrawerTrigger>
@@ -68,7 +68,7 @@ export function ChatHeader({ personality, onBack, onResetChat, personalityInfo }
                 <p className="text-gray-600">This will clear the chat history for this character. This action cannot be undone.</p>
                 <Button 
                   onClick={onResetChat}
-                  className="mt-4 w-full py-6 bg-red-500 hover:bg-red-600 text-white rounded-full font-medium"
+                  className="mt-4 w-full py-6 bg-red-500 hover:bg-red-600 text-white rounded-full font-medium transition-colors"
                 >
                   Start Over
                 </Button>

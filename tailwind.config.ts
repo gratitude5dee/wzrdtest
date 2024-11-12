@@ -29,28 +29,28 @@ export default {
       },
       keyframes: {
         "magnetic-float": {
-          "0%, 100%": { transform: "translate(calc(var(--mouse-x, 0) * 0.08px), calc(var(--mouse-y, 0) * 0.08px)) scale(1)" },
-          "50%": { transform: "translate(calc(var(--mouse-x, 0) * 0.12px), calc(var(--mouse-y, 0) * 0.12px)) scale(1.01)" },
+          "0%": { transform: "translate(calc(var(--mouse-x, 0) * 0.08px), calc(var(--mouse-y, 0) * 0.08px))" },
+          "100%": { transform: "translate(calc(var(--mouse-x, 0) * 0.08px), calc(var(--mouse-y, 0) * 0.08px))" },
         },
         "card-hover": {
-          "0%, 100%": { transform: "translateY(0) scale(1)" },
-          "50%": { transform: "translateY(-6px) scale(1.01)" },
+          "0%": { transform: "translateY(0)" },
+          "100%": { transform: "translateY(-6px)" },
         },
         "glow-pulse": {
-          "0%, 100%": { 
+          "0%": { 
             opacity: "1",
             boxShadow: "0 0 15px rgba(255, 255, 255, 0.2), inset 0 0 15px rgba(255, 255, 255, 0.2)"
           },
-          "50%": { 
-            opacity: "0.9",
-            boxShadow: "0 0 30px rgba(255, 255, 255, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.4)"
+          "100%": { 
+            opacity: "1",
+            boxShadow: "0 0 15px rgba(255, 255, 255, 0.2), inset 0 0 15px rgba(255, 255, 255, 0.2)"
           },
         },
       },
       animation: {
-        "magnetic-float": "magnetic-float 3s ease-in-out infinite",
-        "card-hover": "card-hover 2.5s ease-in-out infinite",
-        "glow-pulse": "glow-pulse 2.5s ease-in-out infinite",
+        "magnetic-float": "magnetic-float 0.2s ease-out forwards",
+        "card-hover": "card-hover 0.2s ease-out forwards",
+        "glow-pulse": "glow-pulse 0.2s ease-out forwards",
       },
     },
   },
