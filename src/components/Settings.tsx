@@ -36,7 +36,6 @@ export function Settings({ open, onOpenChange }: { open: boolean; onOpenChange: 
     }
   }, [open, loadUserProfile]);
 
-  // Reset view to main menu when dialog is closed
   useEffect(() => {
     if (!open) {
       setView('main');

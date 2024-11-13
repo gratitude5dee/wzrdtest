@@ -6,19 +6,30 @@ import { Palette, Type, Monitor } from "lucide-react";
 import { useUserPreferences } from "@/hooks/useUserPreferences";
 import { useState } from "react";
 
-export function PreferencesSection() {
-  const { preferences, updatePreferences } = useUserPreferences();
-  const [localPrefs, setLocalPrefs] = useState({
-    backgroundColor: '#FFF8F6',
-    textColor: preferences.textColor,
-    appFontFamily: preferences.fontFamily,
-  });
+interface PreferencesSectionProps {
+  backgroundColor: string;
+  textColor: string;
+  appFontFamily: string;
+  onBackgroundColorChange: (value: string) => void;
+  onTextColorChange: (value: string) => void;
+  onAppFontFamilyChange: (value: string) => void;
+}
+
+export function PreferencesSection({
+  backgroundColor,
+  textColor,
+  appFontFamily,
+  onBackgroundColorChange,
+  onTextColorChange,
+  onAppFontFamilyChange
+}: PreferencesSectionProps) {
+  const { updatePreferences } = useUserPreferences();
 
   const handleSave = async () => {
     try {
       await updatePreferences({
-        textColor: localPrefs.textColor,
-        fontFamily: localPrefs.appFontFamily,
+        textColor,
+        fontFamily: appFontFamily,
       });
     } catch (error) {
       console.error('Failed to save preferences:', error);
@@ -82,12 +93,12 @@ export function PreferencesSection() {
             <div className="flex gap-2 items-center">
               <div 
                 className="w-8 h-8 rounded-md border border-gray-200 shadow-sm"
-                style={{ backgroundColor: localPrefs.textColor }}
+                style={{ backgroundColor: textColor }}
               />
               <input
                 type="color"
-                value={localPrefs.textColor}
-                onChange={(e) => setLocalPrefs(prev => ({ ...prev, textColor: e.target.value }))}
+                value={textColor}
+                onChange={(e) => onTextColorChange(e.target.value)}
                 className="h-8 flex-1 rounded-md border border-gray-200 cursor-pointer"
               />
             </div>
@@ -110,8 +121,8 @@ export function PreferencesSection() {
             Font Family
           </Label>
           <Select 
-            value={localPrefs.appFontFamily} 
-            onValueChange={(value) => setLocalPrefs(prev => ({ ...prev, appFontFamily: value }))}
+            value={appFontFamily} 
+            onValueChange={onAppFontFamilyChange}
           >
             <SelectTrigger className="h-9 text-sm rounded-md border-gray-200">
               <SelectValue placeholder="Select a font" />
