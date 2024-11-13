@@ -24,31 +24,6 @@ export const ActiveCallContext = createContext<{
   setActiveCall: () => {},
 });
 
-const pageVariants = {
-  initial: { opacity: 0, scale: 0.98 },
-  animate: { 
-    opacity: 1, 
-    scale: 1,
-    transition: {
-      duration: 0.9,
-      ease: [0.6, 0.01, -0.05, 0.95],
-      scale: {
-        type: "spring",
-        damping: 20,
-        stiffness: 100
-      }
-    }
-  },
-  exit: { 
-    opacity: 0,
-    scale: 1.02,
-    transition: {
-      duration: 0.7,
-      ease: [0.6, 0.01, -0.05, 0.95]
-    }
-  }
-};
-
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [authenticated, setAuthenticated] = useState(false);
@@ -85,11 +60,10 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
   return (
     <motion.div
-      variants={pageVariants}
-      initial="initial"
-      animate="animate"
-      exit="exit"
-      layoutId="page-transition"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.9, ease: "easeInOut" }}
     >
       {children}
     </motion.div>
@@ -119,16 +93,15 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <ActiveCallContext.Provider value={{ activeCall, setActiveCall }}>
         <TooltipProvider>
-          <AnimatePresence mode="wait" initial={false}>
+          <AnimatePresence mode="wait">
             <Routes location={location} key={location.pathname}>
               <Route path="/" element={<Intro />} />
               <Route path="/login" element={
                 <motion.div
-                  variants={pageVariants}
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                  layoutId="page-transition"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.9, ease: "easeInOut" }}
                 >
                   <Login />
                 </motion.div>
@@ -152,11 +125,10 @@ const App = () => {
                 <ProtectedRoute>
                   <motion.div 
                     className="fixed inset-0 min-h-screen w-full bg-[#FFF8F6] overflow-hidden"
-                    variants={pageVariants}
-                    initial="initial"
-                    animate="animate"
-                    exit="exit"
-                    layoutId="page-transition"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.9, ease: "easeInOut" }}
                   >
                     <Teleprompter 
                       initialScript={affirmationsText} 
