@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import type { UserPreferencesTable } from '@/integrations/supabase/types/tables';
 
 export type UserPreferences = {
   fontSize: number;
@@ -50,7 +49,8 @@ export const useUserPreferences = () => {
           });
 
         if (insertError) {
-          throw insertError;
+          console.error('Error creating preferences:', insertError);
+          throw new Error('Failed to create preferences');
         }
       } else {
         setPreferences({
@@ -61,7 +61,13 @@ export const useUserPreferences = () => {
       }
     } catch (error) {
       console.error('Error in loadPreferences:', error);
-      toast.error('Failed to load preferences');
+      toast.error('Failed to load preferences', {
+        style: {
+          background: "#FFF8F6",
+          border: "1px solid #E2E8F0",
+          color: "#1F2937",
+        },
+      });
     } finally {
       setLoading(false);
     }
@@ -74,37 +80,30 @@ export const useUserPreferences = () => {
         throw new Error('No user found');
       }
 
-      const updates: Partial<UserPreferencesTable['Update']> = {};
-
-      if (newPreferences.fontSize !== undefined) {
-        updates.font_size = newPreferences.fontSize;
-      }
-      if (newPreferences.fontFamily !== undefined) {
-        updates.font_family = newPreferences.fontFamily;
-      }
-      if (newPreferences.textColor !== undefined) {
-        updates.text_color = newPreferences.textColor;
-      }
+      const updates = {
+        font_size: newPreferences.fontSize,
+        font_family: newPreferences.fontFamily,
+        text_color: newPreferences.textColor,
+        updated_at: new Date().toISOString()
+      };
 
       const { error } = await supabase
         .from('user_preferences')
         .upsert({
           id: user.id,
-          ...updates,
-          updated_at: new Date().toISOString()
+          ...updates
         }, {
           onConflict: 'id'
         });
 
       if (error) {
+        console.error('Error updating preferences:', error);
         throw error;
       }
 
       setPreferences(prev => ({ ...prev, ...newPreferences }));
-      toast.success('Preferences updated successfully');
     } catch (error) {
       console.error('Error in updatePreferences:', error);
-      toast.error('Failed to update preferences');
       throw error;
     }
   };

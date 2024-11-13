@@ -4,26 +4,35 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { motion } from "framer-motion";
 import { Palette, Type, Monitor } from "lucide-react";
 import { useUserPreferences } from "@/hooks/useUserPreferences";
-import { useState } from "react";
+import { toast } from "sonner";
 
 export function PreferencesSection() {
-  const { preferences, updatePreferences } = useUserPreferences();
-  const [localPrefs, setLocalPrefs] = useState({
-    backgroundColor: '#FFF8F6',
-    textColor: preferences.textColor,
-    appFontFamily: preferences.fontFamily,
-  });
+  const { preferences, updatePreferences, loading } = useUserPreferences();
 
   const handleSave = async () => {
     try {
-      await updatePreferences({
-        textColor: localPrefs.textColor,
-        fontFamily: localPrefs.appFontFamily,
+      await updatePreferences(preferences);
+      toast.success("Preferences saved successfully", {
+        style: {
+          background: "#FFF8F6",
+          border: "1px solid #E2E8F0",
+          color: "#1F2937",
+        },
       });
     } catch (error) {
-      console.error('Failed to save preferences:', error);
+      toast.error("Failed to save preferences", {
+        style: {
+          background: "#FFF8F6",
+          border: "1px solid #E2E8F0",
+          color: "#1F2937",
+        },
+      });
     }
   };
+
+  if (loading) {
+    return <div>Loading preferences...</div>;
+  }
 
   return (
     <motion.div 
@@ -82,12 +91,12 @@ export function PreferencesSection() {
             <div className="flex gap-2 items-center">
               <div 
                 className="w-8 h-8 rounded-md border border-gray-200 shadow-sm"
-                style={{ backgroundColor: localPrefs.textColor }}
+                style={{ backgroundColor: preferences.textColor }}
               />
               <input
                 type="color"
-                value={localPrefs.textColor}
-                onChange={(e) => setLocalPrefs(prev => ({ ...prev, textColor: e.target.value }))}
+                value={preferences.textColor}
+                onChange={(e) => updatePreferences({ ...preferences, textColor: e.target.value })}
                 className="h-8 flex-1 rounded-md border border-gray-200 cursor-pointer"
               />
             </div>
@@ -110,8 +119,8 @@ export function PreferencesSection() {
             Font Family
           </Label>
           <Select 
-            value={localPrefs.appFontFamily} 
-            onValueChange={(value) => setLocalPrefs(prev => ({ ...prev, appFontFamily: value }))}
+            value={preferences.fontFamily}
+            onValueChange={(value) => updatePreferences({ ...preferences, fontFamily: value })}
           >
             <SelectTrigger className="h-9 text-sm rounded-md border-gray-200">
               <SelectValue placeholder="Select a font" />

@@ -18,14 +18,8 @@ export function Settings({ open, onOpenChange }: { open: boolean; onOpenChange: 
     firstName,
     lastName,
     email,
-    backgroundColor,
-    textColor,
-    appFontFamily,
     setFirstName,
     setLastName,
-    setBackgroundColor,
-    setTextColor,
-    setAppFontFamily,
     loadUserProfile,
     saveProfile
   } = useProfileManager();
@@ -131,24 +125,8 @@ export function Settings({ open, onOpenChange }: { open: boolean; onOpenChange: 
 
             <div className="flex-1 overflow-auto">
               <div className="p-6">
-                <PreferencesSection
-                  backgroundColor={backgroundColor}
-                  textColor={textColor}
-                  appFontFamily={appFontFamily}
-                  onBackgroundColorChange={setBackgroundColor}
-                  onTextColorChange={setTextColor}
-                  onAppFontFamilyChange={setAppFontFamily}
-                />
+                <PreferencesSection />
               </div>
-            </div>
-
-            <div className="p-6 border-t border-gray-100">
-              <Button 
-                className="w-full h-12 rounded-full text-base font-medium bg-black hover:bg-black/90 text-white"
-                onClick={handleSave}
-              >
-                Save changes
-              </Button>
             </div>
           </div>
         );
