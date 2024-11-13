@@ -13,7 +13,10 @@ export function LoadingAnimation({ onComplete, duration = 5000 }: LoadingAnimati
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.9, ease: "easeInOut" }}
+      transition={{ 
+        duration: 0.9,
+        ease: [0.6, 0.01, -0.05, 0.95]
+      }}
       onAnimationComplete={onComplete}
     >
       <Spline scene="https://prod.spline.design/ezcEw0FCO3xW-Mep/scene.splinecode" />
