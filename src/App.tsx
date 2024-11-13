@@ -24,22 +24,6 @@ export const ActiveCallContext = createContext<{
   setActiveCall: () => {},
 });
 
-function PageTransition({ children }: { children: React.ReactNode }) {
-  const location = useLocation();
-
-  return (
-    <motion.div
-      key={location.pathname}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.9, ease: "easeInOut" }}
-    >
-      {children}
-    </motion.div>
-  );
-}
-
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [authenticated, setAuthenticated] = useState(false);
@@ -74,7 +58,16 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
     return <LoadingAnimation onComplete={() => setShowInitialLoading(false)} />;
   }
 
-  return <PageTransition>{children}</PageTransition>;
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.9, ease: "easeInOut" }}
+    >
+      {children}
+    </motion.div>
+  );
 }
 
 function ChatWrapper() {
@@ -104,9 +97,14 @@ const App = () => {
             <Routes location={location} key={location.pathname}>
               <Route path="/" element={<Intro />} />
               <Route path="/login" element={
-                <PageTransition>
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.9, ease: "easeInOut" }}
+                >
                   <Login />
-                </PageTransition>
+                </motion.div>
               } />
               <Route path="/home" element={
                 <ProtectedRoute>
@@ -130,7 +128,7 @@ const App = () => {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: 0.5 }}
+                    transition={{ duration: 0.9, ease: "easeInOut" }}
                   >
                     <Teleprompter 
                       initialScript={affirmationsText} 
