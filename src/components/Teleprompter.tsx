@@ -15,6 +15,7 @@ interface TeleprompterProps {
   fontFamily?: string;
   textColor?: string;
   autoStart?: boolean;
+  onExit?: () => void;
 }
 
 interface TeleprompterState {
@@ -30,6 +31,7 @@ export const Teleprompter = ({
   fontFamily: initialFontFamily,
   textColor: initialTextColor,
   autoStart = false,
+  onExit,
 }: TeleprompterProps = {}) => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -102,8 +104,12 @@ export const Teleprompter = ({
     }
     reset();
     setCurrentWordIndex(0);
-    navigate('/');
-  }, [reset, navigate]);
+    if (onExit) {
+      onExit();
+    } else {
+      navigate('/');
+    }
+  }, [reset, navigate, onExit]);
 
   const handleEditToggle = useCallback(() => {
     if (isEditing) {
