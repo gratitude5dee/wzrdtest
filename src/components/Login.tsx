@@ -4,6 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "./ui/use-toast";
+import { Button } from "./ui/button";
+import { ArrowLeft } from "lucide-react";
 
 export function Login() {
   const navigate = useNavigate();
@@ -38,6 +40,15 @@ export function Login() {
 
   return (
     <div className="min-h-screen bg-[#FFF8F6] flex items-center justify-center p-4">
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => navigate('/')}
+        className="fixed top-8 left-8 w-12 h-12 rounded-full bg-black/40 hover:bg-black/60 text-white transition-all duration-300 hover:scale-105 backdrop-blur-lg border border-white/10"
+      >
+        <ArrowLeft className="h-6 w-6" />
+      </Button>
+      
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
           <div className="flex justify-center mb-4">
