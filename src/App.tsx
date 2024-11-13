@@ -8,6 +8,7 @@ import { Chat } from "./components/Chat";
 import { Login } from "./components/Login";
 import { Intro } from "./components/Intro";
 import Teleprompter from "./components/Teleprompter";
+import { LoadingAnimation } from "./components/LoadingAnimation";
 import { createContext, useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { AnimatePresence, motion } from "framer-motion";
@@ -25,6 +26,19 @@ export const ActiveCallContext = createContext<{
 
 function PageTransition({ children }: { children: React.ReactNode }) {
   const location = useLocation();
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 10000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return <LoadingAnimation onComplete={() => setIsLoading(false)} />;
+  }
+
   return (
     <motion.div
       key={location.pathname}
@@ -41,6 +55,7 @@ function PageTransition({ children }: { children: React.ReactNode }) {
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [authenticated, setAuthenticated] = useState(false);
+  const [showInitialLoading, setShowInitialLoading] = useState(true);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -50,26 +65,25 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setAuthenticated(!!session);
+      if (event === 'SIGNED_IN') {
+        setShowInitialLoading(true);
+        setTimeout(() => setShowInitialLoading(false), 10000);
+      }
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
   if (loading) {
-    return (
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="min-h-screen flex items-center justify-center"
-      >
-        Loading...
-      </motion.div>
-    );
+    return <LoadingAnimation />;
   }
 
   if (!authenticated) {
     return <Navigate to="/login" replace />;
+  }
+
+  if (showInitialLoading) {
+    return <LoadingAnimation onComplete={() => setShowInitialLoading(false)} />;
   }
 
   return <PageTransition>{children}</PageTransition>;
