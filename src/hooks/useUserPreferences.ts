@@ -8,12 +8,14 @@ export type UserPreferences = {
   textColor: string;
 };
 
+const DEFAULT_PREFERENCES = {
+  fontSize: 44,
+  fontFamily: 'inter',
+  textColor: '#F8FAFC'
+};
+
 export const useUserPreferences = () => {
-  const [preferences, setPreferences] = useState<UserPreferences>({
-    fontSize: 44,
-    fontFamily: 'inter',
-    textColor: '#F8FAFC'
-  });
+  const [preferences, setPreferences] = useState<UserPreferences>(DEFAULT_PREFERENCES);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -24,7 +26,8 @@ export const useUserPreferences = () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        throw new Error('No authenticated user found');
+        setLoading(false);
+        return;
       }
 
       const { data: existingPrefs, error: fetchError } = await supabase
@@ -34,23 +37,23 @@ export const useUserPreferences = () => {
         .single();
 
       if (fetchError && fetchError.code !== 'PGRST116') {
-        throw fetchError;
+        console.error('Error fetching preferences:', fetchError);
+        return;
       }
 
       if (!existingPrefs) {
-        // Create default preferences
         const { error: insertError } = await supabase
           .from('user_preferences')
-          .insert([{
+          .upsert({
             id: user.id,
-            font_size: preferences.fontSize,
-            font_family: preferences.fontFamily,
-            text_color: preferences.textColor,
-          }]);
+            font_size: DEFAULT_PREFERENCES.fontSize,
+            font_family: DEFAULT_PREFERENCES.fontFamily,
+            text_color: DEFAULT_PREFERENCES.textColor,
+          });
 
         if (insertError) {
           console.error('Error creating preferences:', insertError);
-          throw new Error('Failed to create initial preferences');
+          return;
         }
       } else {
         setPreferences({
@@ -61,13 +64,6 @@ export const useUserPreferences = () => {
       }
     } catch (error) {
       console.error('Error in loadPreferences:', error);
-      toast.error('Failed to load preferences', {
-        style: {
-          background: "#FFF8F6",
-          border: "1px solid #E2E8F0",
-          color: "#1F2937",
-        },
-      });
     } finally {
       setLoading(false);
     }
@@ -77,10 +73,12 @@ export const useUserPreferences = () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        throw new Error('No authenticated user found');
+        toast.error("Please sign in to save preferences");
+        return false;
       }
 
       const updates = {
+        id: user.id,
         font_size: newPreferences.fontSize ?? preferences.fontSize,
         font_family: newPreferences.fontFamily ?? preferences.fontFamily,
         text_color: newPreferences.textColor ?? preferences.textColor,
@@ -89,21 +87,20 @@ export const useUserPreferences = () => {
 
       const { error } = await supabase
         .from('user_preferences')
-        .upsert({
-          id: user.id,
-          ...updates
-        });
+        .upsert(updates);
 
       if (error) {
         console.error('Error updating preferences:', error);
-        throw error;
+        toast.error("Failed to save preferences");
+        return false;
       }
 
       setPreferences(prev => ({ ...prev, ...newPreferences }));
       return true;
     } catch (error) {
       console.error('Error in updatePreferences:', error);
-      throw error;
+      toast.error("Failed to save preferences");
+      return false;
     }
   };
 
