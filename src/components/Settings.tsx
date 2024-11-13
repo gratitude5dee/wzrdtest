@@ -36,6 +36,7 @@ export function Settings({ open, onOpenChange }: { open: boolean; onOpenChange: 
     }
   }, [open, loadUserProfile]);
 
+  // Reset view to main menu when dialog is closed
   useEffect(() => {
     if (!open) {
       setView('main');
@@ -130,7 +131,14 @@ export function Settings({ open, onOpenChange }: { open: boolean; onOpenChange: 
 
             <div className="flex-1 overflow-auto">
               <div className="p-6">
-                <PreferencesSection />
+                <PreferencesSection
+                  backgroundColor={backgroundColor}
+                  textColor={textColor}
+                  appFontFamily={appFontFamily}
+                  onBackgroundColorChange={setBackgroundColor}
+                  onTextColorChange={setTextColor}
+                  onAppFontFamilyChange={setAppFontFamily}
+                />
               </div>
             </div>
 
