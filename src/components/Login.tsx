@@ -56,7 +56,7 @@ export function Login() {
               <img src="/hume-logo.png" alt="Hume" className="w-full h-full" />
             </div>
           </div>
-          <h2 className="text-3xl font-bold">Welcome to WZRD</h2>
+          <h2 className="text-3xl font-bold">Welcome to WZRD.tech</h2>
           <p className="mt-2 text-gray-600">Sign in or create an account to continue</p>
           <p className="mt-2 text-sm text-red-600">Note: During development, you need to use an authorized email domain.</p>
           <p className="mt-2 text-sm text-gray-600">© 2024 wzrd.tech</p>

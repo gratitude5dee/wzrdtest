@@ -40,11 +40,9 @@ export function Settings({ open, onOpenChange }: { open: boolean; onOpenChange: 
 
   const handleLogout = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-      
+      await supabase.auth.signOut();
       onOpenChange(false);
-      navigate('/login');
+      navigate('/login', { replace: true });
       
       toast({
         title: "Success",
