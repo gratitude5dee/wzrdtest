@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useParams, Navigate, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { Home } from "./components/Home";
 import { Chat } from "./components/Chat";
 import { Login } from "./components/Login";
@@ -70,20 +70,6 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   );
 }
 
-function ChatWrapper() {
-  const { personalityId } = useParams();
-  const personalities = {
-    "quick-answers": "Quick Answers",
-    "emotional-reflection": "Emotional Reflection",
-    "life-advice": "Life Advice",
-    "storytelling": "Storytelling",
-    "deeper-questions": "Deeper Questions",
-    "spirituality": "Spirituality"
-  };
-  
-  return <Chat personality={personalities[personalityId as keyof typeof personalities] || "Assistant"} />;
-}
-
 const App = () => {
   const [activeCall, setActiveCall] = useState<string | null>(null);
   const affirmationsText = "I am worthy of love and respect. Every day I grow stronger and more confident. I trust in my abilities and embrace new challenges. My potential is limitless. I radiate positivity and attract success. I am grateful for all that I have. I choose to be happy and spread joy to others. I am exactly where I need to be. My future is bright and full of possibilities. I deserve all the good things life has to offer.";
@@ -95,7 +81,16 @@ const App = () => {
         <TooltipProvider>
           <AnimatePresence mode="wait">
             <Routes location={location} key={location.pathname}>
-              <Route path="/" element={<Intro />} />
+              <Route path="/" element={
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.9, ease: "easeInOut" }}
+                >
+                  <Intro />
+                </motion.div>
+              } />
               <Route path="/login" element={
                 <motion.div
                   initial={{ opacity: 0 }}
@@ -111,9 +106,9 @@ const App = () => {
                   <Home />
                 </ProtectedRoute>
               } />
-              <Route path="/chat/:personalityId" element={
+              <Route path="/chat/:personality" element={
                 <ProtectedRoute>
-                  <ChatWrapper />
+                  <Chat />
                 </ProtectedRoute>
               } />
               <Route path="/teleprompter" element={
