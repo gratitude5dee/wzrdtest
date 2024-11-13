@@ -41,13 +41,13 @@ export function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FFF8F6] p-6 pb-32">
+    <div className="min-h-screen bg-[#FFF8F6] p-6 pb-32 overflow-auto [--scrollbar-thumb:rgba(0,0,0,0.2)] hover:[--scrollbar-thumb:rgba(0,0,0,0.3)] [--scrollbar-track:transparent] [scrollbar-gutter:stable] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-[var(--scrollbar-track)] [&::-webkit-scrollbar-thumb]:bg-[var(--scrollbar-thumb)] [&::-webkit-scrollbar-thumb]:rounded-full transition-colors duration-300">
       <header className="flex justify-between items-center mb-8">
         <div className="flex items-center space-x-3">
           <div className="w-8 h-8">
             <img src="/wzrd-logo.png" alt="WZRD" className="w-full h-full" />
           </div>
-          <span className="text-2xl font-semibold gradient-text">wzrd</span>
+          <span className="text-2xl font-semibold gradient-text">WZRD.tech</span>
         </div>
         <Button 
           variant="ghost" 
