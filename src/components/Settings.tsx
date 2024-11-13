@@ -130,14 +130,7 @@ export function Settings({ open, onOpenChange }: { open: boolean; onOpenChange: 
 
             <div className="flex-1 overflow-auto">
               <div className="p-6">
-                <PreferencesSection
-                  backgroundColor={backgroundColor}
-                  textColor={textColor}
-                  appFontFamily={appFontFamily}
-                  onBackgroundColorChange={setBackgroundColor}
-                  onTextColorChange={setTextColor}
-                  onAppFontFamilyChange={setAppFontFamily}
-                />
+                <PreferencesSection />
               </div>
             </div>
 
