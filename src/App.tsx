@@ -75,7 +75,6 @@ const pageTransition = {
 const App = () => {
   const [activeCall, setActiveCall] = useState<string | null>(null);
   const location = useLocation();
-  const affirmationsText = "I am worthy of love and respect. Every day I grow stronger and more confident. I trust in my abilities and embrace new challenges. My potential is limitless. I radiate positivity and attract success. I am grateful for all that I have. I choose to be happy and spread joy to others. I am exactly where I need to be. My future is bright and full of possibilities. I deserve all the good things life has to offer.";
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -118,9 +117,12 @@ const App = () => {
                   </motion.div>
                 </ProtectedRoute>
               } />
-              <Route path="/chat" element={<Chat />} />
+              <Route path="/chat/:personality" element={
+                <ProtectedRoute>
+                  <ChatWrapper />
+                </ProtectedRoute>
+              } />
               <Route path="/teleprompter" element={<Teleprompter />} />
-              {/* Add more routes here if needed */}
             </Routes>
           </AnimatePresence>
           <Toaster />
@@ -129,6 +131,17 @@ const App = () => {
       </ActiveCallContext.Provider>
     </QueryClientProvider>
   );
+};
+
+// Add a wrapper component to handle the personality parameter
+const ChatWrapper = () => {
+  const { personality } = useParams<{ personality: string }>();
+  
+  if (!personality) {
+    return <Navigate to="/home" replace />;
+  }
+
+  return <Chat personality={personality} />;
 };
 
 export default App;
