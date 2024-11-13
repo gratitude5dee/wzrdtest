@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import type { UserPreferencesTable } from '@/integrations/supabase/types/tables';
@@ -25,8 +25,7 @@ export const useUserPreferences = () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        console.error('No user found');
-        return;
+        throw new Error('No user found');
       }
 
       const { data: existingPrefs, error: fetchError } = await supabase
@@ -36,12 +35,11 @@ export const useUserPreferences = () => {
         .single();
 
       if (fetchError && fetchError.code !== 'PGRST116') {
-        console.error('Error fetching preferences:', fetchError);
         throw fetchError;
       }
 
       if (!existingPrefs) {
-        console.log('Creating default preferences for user');
+        // Create default preferences
         const { error: insertError } = await supabase
           .from('user_preferences')
           .insert({
@@ -49,16 +47,12 @@ export const useUserPreferences = () => {
             font_size: preferences.fontSize,
             font_family: preferences.fontFamily,
             text_color: preferences.textColor,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
           });
 
         if (insertError) {
-          console.error('Error creating preferences:', insertError);
           throw insertError;
         }
       } else {
-        console.log('Found existing preferences:', existingPrefs);
         setPreferences({
           fontSize: existingPrefs.font_size || 44,
           fontFamily: existingPrefs.font_family || 'inter',
@@ -77,15 +71,10 @@ export const useUserPreferences = () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        console.error('No user found during update');
-        return;
+        throw new Error('No user found');
       }
 
-      console.log('Updating preferences:', newPreferences);
-      
-      const updates: Partial<UserPreferencesTable['Update']> = {
-        updated_at: new Date().toISOString()
-      };
+      const updates: Partial<UserPreferencesTable['Update']> = {};
 
       if (newPreferences.fontSize !== undefined) {
         updates.font_size = newPreferences.fontSize;
@@ -101,11 +90,13 @@ export const useUserPreferences = () => {
         .from('user_preferences')
         .upsert({
           id: user.id,
-          ...updates
+          ...updates,
+          updated_at: new Date().toISOString()
+        }, {
+          onConflict: 'id'
         });
 
       if (error) {
-        console.error('Error updating preferences:', error);
         throw error;
       }
 
@@ -114,6 +105,7 @@ export const useUserPreferences = () => {
     } catch (error) {
       console.error('Error in updatePreferences:', error);
       toast.error('Failed to update preferences');
+      throw error;
     }
   };
 

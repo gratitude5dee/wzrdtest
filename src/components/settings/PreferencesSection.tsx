@@ -3,24 +3,28 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { motion } from "framer-motion";
 import { Palette, Type, Monitor } from "lucide-react";
+import { useUserPreferences } from "@/hooks/useUserPreferences";
+import { useState } from "react";
 
-interface PreferencesSectionProps {
-  backgroundColor: string;
-  textColor: string;
-  appFontFamily: string;
-  onBackgroundColorChange: (value: string) => void;
-  onTextColorChange: (value: string) => void;
-  onAppFontFamilyChange: (value: string) => void;
-}
+export function PreferencesSection() {
+  const { preferences, updatePreferences } = useUserPreferences();
+  const [localPrefs, setLocalPrefs] = useState({
+    backgroundColor: '#FFF8F6',
+    textColor: preferences.textColor,
+    appFontFamily: preferences.fontFamily,
+  });
 
-export function PreferencesSection({
-  backgroundColor,
-  textColor,
-  appFontFamily,
-  onBackgroundColorChange,
-  onTextColorChange,
-  onAppFontFamilyChange,
-}: PreferencesSectionProps) {
+  const handleSave = async () => {
+    try {
+      await updatePreferences({
+        textColor: localPrefs.textColor,
+        fontFamily: localPrefs.appFontFamily,
+      });
+    } catch (error) {
+      console.error('Failed to save preferences:', error);
+    }
+  };
+
   return (
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
@@ -73,35 +77,17 @@ export function PreferencesSection({
         <div className="space-y-4">
           <div className="space-y-1.5">
             <Label className="text-xs font-medium text-gray-700">
-              Page Color
-            </Label>
-            <div className="flex gap-2 items-center">
-              <div 
-                className="w-8 h-8 rounded-md border border-gray-200 shadow-sm"
-                style={{ backgroundColor }}
-              />
-              <input
-                type="color"
-                value={backgroundColor}
-                onChange={(e) => onBackgroundColorChange(e.target.value)}
-                className="h-8 flex-1 rounded-md border border-gray-200 cursor-pointer"
-              />
-            </div>
-          </div>
-
-          <div className="space-y-1.5">
-            <Label className="text-xs font-medium text-gray-700">
               Text Color
             </Label>
             <div className="flex gap-2 items-center">
               <div 
                 className="w-8 h-8 rounded-md border border-gray-200 shadow-sm"
-                style={{ backgroundColor: textColor }}
+                style={{ backgroundColor: localPrefs.textColor }}
               />
               <input
                 type="color"
-                value={textColor}
-                onChange={(e) => onTextColorChange(e.target.value)}
+                value={localPrefs.textColor}
+                onChange={(e) => setLocalPrefs(prev => ({ ...prev, textColor: e.target.value }))}
                 className="h-8 flex-1 rounded-md border border-gray-200 cursor-pointer"
               />
             </div>
@@ -123,7 +109,10 @@ export function PreferencesSection({
           <Label className="text-xs font-medium text-gray-700">
             Font Family
           </Label>
-          <Select value={appFontFamily} onValueChange={onAppFontFamilyChange}>
+          <Select 
+            value={localPrefs.appFontFamily} 
+            onValueChange={(value) => setLocalPrefs(prev => ({ ...prev, appFontFamily: value }))}
+          >
             <SelectTrigger className="h-9 text-sm rounded-md border-gray-200">
               <SelectValue placeholder="Select a font" />
             </SelectTrigger>
@@ -133,6 +122,15 @@ export function PreferencesSection({
             </SelectContent>
           </Select>
         </div>
+      </div>
+
+      <div className="pt-4">
+        <Button 
+          className="w-full"
+          onClick={handleSave}
+        >
+          Save Changes
+        </Button>
       </div>
     </motion.div>
   );
