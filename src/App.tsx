@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useLocation, Navigate, useParams } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useParams, Navigate, useLocation } from "react-router-dom";
 import { Home } from "./components/Home";
 import { Chat } from "./components/Chat";
 import { Login } from "./components/Login";
@@ -12,6 +12,7 @@ import { LoadingAnimation } from "./components/LoadingAnimation";
 import { createContext, useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { AnimatePresence, motion } from "framer-motion";
+import "./styles/animations.css";
 
 const queryClient = new QueryClient();
 
@@ -57,23 +58,35 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
     return <LoadingAnimation onComplete={() => setShowInitialLoading(false)} />;
   }
 
-  return children;
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.9, ease: "easeInOut" }}
+    >
+      {children}
+    </motion.div>
+  );
 }
 
-const pageVariants = {
-  initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -20 }
-};
-
-const pageTransition = {
-  type: "tween",
-  ease: "anticipate",
-  duration: 0.5
-};
+function ChatWrapper() {
+  const { personalityId } = useParams();
+  const personalities = {
+    "quick-answers": "Quick Answers",
+    "emotional-reflection": "Emotional Reflection",
+    "life-advice": "Life Advice",
+    "storytelling": "Storytelling",
+    "deeper-questions": "Deeper Questions",
+    "spirituality": "Spirituality"
+  };
+  
+  return <Chat personality={personalities[personalityId as keyof typeof personalities] || "Assistant"} />;
+}
 
 const App = () => {
   const [activeCall, setActiveCall] = useState<string | null>(null);
+  const affirmationsText = "I am worthy of love and respect. Every day I grow stronger and more confident. I trust in my abilities and embrace new challenges. My potential is limitless. I radiate positivity and attract success. I am grateful for all that I have. I choose to be happy and spread joy to others. I am exactly where I need to be. My future is bright and full of possibilities. I deserve all the good things life has to offer.";
   const location = useLocation();
 
   return (
@@ -82,47 +95,51 @@ const App = () => {
         <TooltipProvider>
           <AnimatePresence mode="wait">
             <Routes location={location} key={location.pathname}>
-              <Route path="/" element={
-                <motion.div
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                  variants={pageVariants}
-                  transition={pageTransition}
-                >
-                  <Intro />
-                </motion.div>
-              } />
+              <Route path="/" element={<Intro />} />
               <Route path="/login" element={
                 <motion.div
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                  variants={pageVariants}
-                  transition={pageTransition}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.9, ease: "easeInOut" }}
                 >
                   <Login />
                 </motion.div>
               } />
               <Route path="/home" element={
                 <ProtectedRoute>
-                  <motion.div
-                    initial="initial"
-                    animate="animate"
-                    exit="exit"
-                    variants={pageVariants}
-                    transition={pageTransition}
-                  >
-                    <Home />
-                  </motion.div>
+                  <Home />
                 </ProtectedRoute>
               } />
-              <Route path="/chat/:personality" element={
+              <Route path="/chat/:personalityId" element={
                 <ProtectedRoute>
                   <ChatWrapper />
                 </ProtectedRoute>
               } />
-              <Route path="/teleprompter" element={<Teleprompter />} />
+              <Route path="/teleprompter" element={
+                <ProtectedRoute>
+                  <Teleprompter />
+                </ProtectedRoute>
+              } />
+              <Route path="/affirmations" element={
+                <ProtectedRoute>
+                  <motion.div 
+                    className="fixed inset-0 min-h-screen w-full bg-[#FFF8F6] overflow-hidden"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.9, ease: "easeInOut" }}
+                  >
+                    <Teleprompter 
+                      initialScript={affirmationsText} 
+                      fontSize={44} 
+                      fontFamily="cal-sans" 
+                      textColor="#785340"
+                      autoStart={true}
+                    />
+                  </motion.div>
+                </ProtectedRoute>
+              } />
             </Routes>
           </AnimatePresence>
           <Toaster />
@@ -131,17 +148,6 @@ const App = () => {
       </ActiveCallContext.Provider>
     </QueryClientProvider>
   );
-};
-
-// Add a wrapper component to handle the personality parameter
-const ChatWrapper = () => {
-  const { personality } = useParams<{ personality: string }>();
-  
-  if (!personality) {
-    return <Navigate to="/home" replace />;
-  }
-
-  return <Chat personality={personality} />;
 };
 
 export default App;
