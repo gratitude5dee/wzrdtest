@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useLocation, Navigate, useParams } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation, Navigate, useParams, useNavigate } from "react-router-dom";
 import { Home } from "./components/Home";
 import { Chat } from "./components/Chat";
 import { Login } from "./components/Login";
@@ -75,9 +75,34 @@ function ChatWrapper() {
   return <Chat personality={personality || "Assistant"} />;
 }
 
+function AffirmationsWrapper() {
+  const navigate = useNavigate();
+  const affirmationsText = "I am worthy of love and respect. Every day I grow stronger and more confident. I trust in my abilities and embrace new challenges. My potential is limitless. I radiate positivity and attract success. I am grateful for all that I have. I choose to be happy and spread joy to others. I am exactly where I need to be. My future is bright and full of possibilities. I deserve all the good things life has to offer.";
+
+  return (
+    <ProtectedRoute>
+      <motion.div 
+        className="fixed inset-0 min-h-screen w-full bg-[#FFF8F6] overflow-hidden"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.9, ease: "easeInOut" }}
+      >
+        <Teleprompter 
+          initialScript={affirmationsText} 
+          fontSize={44} 
+          fontFamily="cal-sans" 
+          textColor="#785340"
+          autoStart={true}
+          onExit={() => navigate('/home')}
+        />
+      </motion.div>
+    </ProtectedRoute>
+  );
+}
+
 const App = () => {
   const [activeCall, setActiveCall] = useState<string | null>(null);
-  const affirmationsText = "I am worthy of love and respect. Every day I grow stronger and more confident. I trust in my abilities and embrace new challenges. My potential is limitless. I radiate positivity and attract success. I am grateful for all that I have. I choose to be happy and spread joy to others. I am exactly where I need to be. My future is bright and full of possibilities. I deserve all the good things life has to offer.";
   const location = useLocation();
 
   return (
@@ -121,25 +146,7 @@ const App = () => {
                   <Teleprompter />
                 </ProtectedRoute>
               } />
-              <Route path="/affirmations" element={
-                <ProtectedRoute>
-                  <motion.div 
-                    className="fixed inset-0 min-h-screen w-full bg-[#FFF8F6] overflow-hidden"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.9, ease: "easeInOut" }}
-                  >
-                    <Teleprompter 
-                      initialScript={affirmationsText} 
-                      fontSize={44} 
-                      fontFamily="cal-sans" 
-                      textColor="#785340"
-                      autoStart={true}
-                    />
-                  </motion.div>
-                </ProtectedRoute>
-              } />
+              <Route path="/affirmations" element={<AffirmationsWrapper />} />
             </Routes>
           </AnimatePresence>
           <Toaster />
