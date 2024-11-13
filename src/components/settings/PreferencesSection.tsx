@@ -20,6 +20,7 @@ export function PreferencesSection() {
         },
       });
     } catch (error) {
+      console.error('Error saving preferences:', error);
       toast.error("Failed to save preferences", {
         style: {
           background: "#FFF8F6",
@@ -31,7 +32,7 @@ export function PreferencesSection() {
   };
 
   if (loading) {
-    return <div>Loading preferences...</div>;
+    return <div className="p-4 text-center">Loading preferences...</div>;
   }
 
   return (
@@ -135,7 +136,7 @@ export function PreferencesSection() {
 
       <div className="pt-4">
         <Button 
-          className="w-full"
+          className="w-full bg-gray-900 hover:bg-gray-800 text-white"
           onClick={handleSave}
         >
           Save Changes

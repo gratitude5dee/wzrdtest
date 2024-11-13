@@ -24,7 +24,7 @@ export const useUserPreferences = () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        throw new Error('No user found');
+        throw new Error('No authenticated user found');
       }
 
       const { data: existingPrefs, error: fetchError } = await supabase
@@ -41,22 +41,22 @@ export const useUserPreferences = () => {
         // Create default preferences
         const { error: insertError } = await supabase
           .from('user_preferences')
-          .insert({
+          .insert([{
             id: user.id,
             font_size: preferences.fontSize,
             font_family: preferences.fontFamily,
             text_color: preferences.textColor,
-          });
+          }]);
 
         if (insertError) {
           console.error('Error creating preferences:', insertError);
-          throw new Error('Failed to create preferences');
+          throw new Error('Failed to create initial preferences');
         }
       } else {
         setPreferences({
-          fontSize: existingPrefs.font_size || 44,
-          fontFamily: existingPrefs.font_family || 'inter',
-          textColor: existingPrefs.text_color || '#F8FAFC'
+          fontSize: existingPrefs.font_size,
+          fontFamily: existingPrefs.font_family,
+          textColor: existingPrefs.text_color
         });
       }
     } catch (error) {
@@ -77,13 +77,13 @@ export const useUserPreferences = () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        throw new Error('No user found');
+        throw new Error('No authenticated user found');
       }
 
       const updates = {
-        font_size: newPreferences.fontSize,
-        font_family: newPreferences.fontFamily,
-        text_color: newPreferences.textColor,
+        font_size: newPreferences.fontSize ?? preferences.fontSize,
+        font_family: newPreferences.fontFamily ?? preferences.fontFamily,
+        text_color: newPreferences.textColor ?? preferences.textColor,
         updated_at: new Date().toISOString()
       };
 
@@ -92,8 +92,6 @@ export const useUserPreferences = () => {
         .upsert({
           id: user.id,
           ...updates
-        }, {
-          onConflict: 'id'
         });
 
       if (error) {
@@ -102,6 +100,7 @@ export const useUserPreferences = () => {
       }
 
       setPreferences(prev => ({ ...prev, ...newPreferences }));
+      return true;
     } catch (error) {
       console.error('Error in updatePreferences:', error);
       throw error;
