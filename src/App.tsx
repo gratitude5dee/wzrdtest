@@ -31,7 +31,7 @@ function PageTransition({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 10000);
+    }, 5000);
     return () => clearTimeout(timer);
   }, []);
 
@@ -45,7 +45,7 @@ function PageTransition({ children }: { children: React.ReactNode }) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      transition={{ duration: 0.4, ease: "easeInOut" }}
+      transition={{ duration: 0.6, ease: [0.645, 0.045, 0.355, 1.000] }}
     >
       {children}
     </motion.div>
@@ -67,7 +67,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
       setAuthenticated(!!session);
       if (event === 'SIGNED_IN') {
         setShowInitialLoading(true);
-        setTimeout(() => setShowInitialLoading(false), 10000);
+        setTimeout(() => setShowInitialLoading(false), 5000);
       }
     });
 
