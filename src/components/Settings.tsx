@@ -10,10 +10,12 @@ import { DataManagement } from "./settings/DataManagement";
 import { PreferencesSection } from "./settings/PreferencesSection";
 import { useProfileManager } from "./settings/ProfileManager";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 export function Settings({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
   const [view, setView] = useState<'main' | 'profile' | 'preferences'>('main');
   const { toast } = useToast();
+  const navigate = useNavigate();
   const {
     firstName,
     lastName,
@@ -30,7 +32,6 @@ export function Settings({ open, onOpenChange }: { open: boolean; onOpenChange: 
     }
   }, [open, loadUserProfile]);
 
-  // Reset view to main menu when dialog is closed
   useEffect(() => {
     if (!open) {
       setView('main');
@@ -38,15 +39,25 @@ export function Settings({ open, onOpenChange }: { open: boolean; onOpenChange: 
   }, [open]);
 
   const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      
+      onOpenChange(false);
+      navigate('/login');
+      
+      toast({
+        title: "Success",
+        description: "You have been logged out successfully",
+      });
+    } catch (error) {
+      console.error('Logout error:', error);
       toast({
         title: "Error",
-        description: "Failed to log out",
+        description: "Failed to log out. Please try again.",
         variant: "destructive",
       });
     }
-    onOpenChange(false);
   };
 
   const handleClearLocalData = () => {
