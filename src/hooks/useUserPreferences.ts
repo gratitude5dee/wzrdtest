@@ -44,7 +44,7 @@ export const useUserPreferences = () => {
       if (!existingPrefs) {
         const { error: insertError } = await supabase
           .from('user_preferences')
-          .upsert({
+          .insert({
             id: user.id,
             font_size: DEFAULT_PREFERENCES.fontSize,
             font_family: DEFAULT_PREFERENCES.fontFamily,

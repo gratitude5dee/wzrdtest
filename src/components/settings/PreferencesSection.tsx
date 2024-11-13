@@ -10,18 +10,9 @@ export function PreferencesSection() {
   const { preferences, updatePreferences, loading } = useUserPreferences();
 
   const handleSave = async () => {
-    try {
-      await updatePreferences(preferences);
+    const success = await updatePreferences(preferences);
+    if (success) {
       toast.success("Preferences saved successfully", {
-        style: {
-          background: "#FFF8F6",
-          border: "1px solid #E2E8F0",
-          color: "#1F2937",
-        },
-      });
-    } catch (error) {
-      console.error('Error saving preferences:', error);
-      toast.error("Failed to save preferences", {
         style: {
           background: "#FFF8F6",
           border: "1px solid #E2E8F0",
@@ -97,7 +88,7 @@ export function PreferencesSection() {
               <input
                 type="color"
                 value={preferences.textColor}
-                onChange={(e) => updatePreferences({ ...preferences, textColor: e.target.value })}
+                onChange={(e) => updatePreferences({ textColor: e.target.value })}
                 className="h-8 flex-1 rounded-md border border-gray-200 cursor-pointer"
               />
             </div>
@@ -121,7 +112,7 @@ export function PreferencesSection() {
           </Label>
           <Select 
             value={preferences.fontFamily}
-            onValueChange={(value) => updatePreferences({ ...preferences, fontFamily: value })}
+            onValueChange={(value) => updatePreferences({ fontFamily: value })}
           >
             <SelectTrigger className="h-9 text-sm rounded-md border-gray-200">
               <SelectValue placeholder="Select a font" />
