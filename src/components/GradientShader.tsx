@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import * as THREE from 'three';
 
 const vertexShader = `
   varying vec2 vUv;
@@ -39,7 +40,6 @@ export function GradientShader() {
   useEffect(() => {
     if (!canvasRef.current) return;
 
-    const THREE = require('three');
     const canvas = canvasRef.current;
     const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
     rendererRef.current = renderer;
