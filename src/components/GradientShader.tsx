@@ -13,63 +13,70 @@ const fragmentShader = `
   uniform float uTime;
   varying vec2 vUv;
 
-  // Noise function
+  // Noise functions
   vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
   vec2 mod289(vec2 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
   vec3 permute(vec3 x) { return mod289(((x*34.0)+1.0)*x); }
 
   float snoise(vec2 v) {
-    const vec4 C = vec4(0.211324865405187,  // (3.0-sqrt(3.0))/6.0
-                      0.366025403784439,  // 0.5*(sqrt(3.0)-1.0)
-                      -0.577350269189626,  // -1.0 + 2.0 * C.x
-                      0.024390243902439); // 1.0 / 41.0
-    vec2 i  = floor(v + dot(v, C.yy) );
-    vec2 x0 = v -   i + dot(i, C.xx);
-    vec2 i1;
-    i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+    const vec4 C = vec4(0.211324865405187, 0.366025403784439,
+                       -0.577350269189626, 0.024390243902439);
+    vec2 i  = floor(v + dot(v, C.yy));
+    vec2 x0 = v - i + dot(i, C.xx);
+    vec2 i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
     vec4 x12 = x0.xyxy + C.xxzz;
     x12.xy -= i1;
     i = mod289(i);
-    vec3 p = permute( permute( i.y + vec3(0.0, i1.y, 1.0 ))
-      + i.x + vec3(0.0, i1.x, 1.0 ));
+    vec3 p = permute(permute(i.y + vec3(0.0, i1.y, 1.0)) + i.x + vec3(0.0, i1.x, 1.0));
     vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);
-    m = m*m ;
-    m = m*m ;
+    m = m * m * m * m;
     vec3 x = 2.0 * fract(p * C.www) - 1.0;
     vec3 h = abs(x) - 0.5;
     vec3 ox = floor(x + 0.5);
     vec3 a0 = x - ox;
-    m *= 1.79284291400159 - 0.85373472095314 * ( a0*a0 + h*h );
+    m *= 1.79284291400159 - 0.85373472095314 * (a0 * a0 + h * h);
     vec3 g;
-    g.x  = a0.x  * x0.x  + h.x  * x0.y;
+    g.x = a0.x * x0.x + h.x * x0.y;
     g.yz = a0.yz * x12.xz + h.yz * x12.yw;
     return 130.0 * dot(m, g);
+  }
+
+  vec3 hsv2rgb(vec3 c) {
+    vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+    vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
+    return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
   }
 
   void main() {
     vec2 uv = vUv;
     
-    // Soft pastel colors
-    vec3 color1 = vec3(0.98, 0.85, 0.9); // Soft pink
-    vec3 color2 = vec3(0.85, 0.95, 1.0); // Light blue
-    vec3 color3 = vec3(0.9, 0.85, 0.98); // Soft purple
-    vec3 color4 = vec3(1.0, 0.9, 0.85); // Soft peach
-    
-    // Create flowing noise pattern
-    float noise1 = snoise(uv * 3.0 + uTime * 0.2);
-    float noise2 = snoise(uv * 2.0 - uTime * 0.1);
-    
-    // Smooth color transitions
+    // Dynamic color palette
+    vec3 color1 = hsv2rgb(vec3(0.6 + sin(uTime * 0.1) * 0.1, 0.7, 0.95)); // Vibrant blue
+    vec3 color2 = hsv2rgb(vec3(0.9 + cos(uTime * 0.15) * 0.1, 0.8, 0.95)); // Dynamic pink
+    vec3 color3 = hsv2rgb(vec3(0.3 + sin(uTime * 0.2) * 0.1, 0.7, 0.95)); // Shifting cyan
+    vec3 color4 = hsv2rgb(vec3(0.1 + cos(uTime * 0.25) * 0.1, 0.8, 0.95)); // Warm orange
+
+    // Create complex flowing patterns
+    float noise1 = snoise(uv * 2.0 + uTime * 0.2);
+    float noise2 = snoise(uv * 3.0 - uTime * 0.3);
+    float noise3 = snoise(uv * 4.0 + uTime * 0.1);
+
+    // Smooth color transitions with multiple layers
     vec3 baseColor = mix(
-      mix(color1, color2, sin(noise1 * 2.0 + uTime * 0.3) * 0.5 + 0.5),
-      mix(color3, color4, sin(noise2 * 3.0 - uTime * 0.2) * 0.5 + 0.5),
-      sin(uTime * 0.1) * 0.5 + 0.5
+      mix(color1, color2, sin(noise1 * 3.0 + uTime * 0.2) * 0.5 + 0.5),
+      mix(color3, color4, cos(noise2 * 2.0 - uTime * 0.3) * 0.5 + 0.5),
+      sin(noise3 + uTime * 0.1) * 0.5 + 0.5
     );
+
+    // Add dynamic glow and vignette effects
+    float glow = smoothstep(0.2, 0.8, noise1 * noise2 * noise3);
+    float vignette = smoothstep(0.0, 0.7, length(uv - 0.5));
+    baseColor += glow * 0.3 * (1.0 - vignette);
     
-    // Add subtle glow effect
-    float glow = smoothstep(0.4, 0.6, noise1 * noise2);
-    baseColor += glow * 0.2;
-    
+    // Add subtle sparkles
+    float sparkle = pow(max(sin(noise1 * 20.0 + uTime), 0.0), 20.0);
+    baseColor += sparkle * 0.2;
+
     gl_FragColor = vec4(baseColor, 1.0);
   }
 `;
@@ -86,7 +93,8 @@ export function GradientShader() {
     const renderer = new THREE.WebGLRenderer({ 
       canvas, 
       alpha: true,
-      antialias: true 
+      antialias: true,
+      powerPreference: "high-performance"
     });
     rendererRef.current = renderer;
 
@@ -109,7 +117,7 @@ export function GradientShader() {
     const animate = () => {
       if (!renderer) return;
       
-      timeRef.current += 0.003;
+      timeRef.current += 0.002;
       material.uniforms.uTime.value = timeRef.current;
       
       renderer.render(scene, camera);
