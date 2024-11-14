@@ -21,7 +21,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       if (user) {
         const { data: preferences } = await supabase
           .from('user_preferences')
-          .select('*')
+          .select('theme')
           .eq('id', user.id)
           .single();
         

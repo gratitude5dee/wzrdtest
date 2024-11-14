@@ -22,7 +22,7 @@ export interface Database {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      share_permission: "read" | "edit"
     }
   }
 }
