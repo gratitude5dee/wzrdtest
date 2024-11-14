@@ -180,6 +180,7 @@ export type Database = {
           font_size: number | null
           id: string
           text_color: string | null
+          theme: string | null
           updated_at: string | null
         }
         Insert: {
@@ -190,6 +191,7 @@ export type Database = {
           font_size?: number | null
           id: string
           text_color?: string | null
+          theme?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -200,6 +202,7 @@ export type Database = {
           font_size?: number | null
           id?: string
           text_color?: string | null
+          theme?: string | null
           updated_at?: string | null
         }
         Relationships: [

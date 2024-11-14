@@ -15,19 +15,19 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>('light');
 
   useEffect(() => {
-    // Load theme from user preferences
     const loadTheme = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        const { data: preferences } = await supabase
+        const { data: preferences, error } = await supabase
           .from('user_preferences')
           .select('theme')
           .eq('id', user.id)
           .single();
         
-        if (preferences?.theme) {
-          setTheme(preferences.theme as Theme);
-          document.documentElement.classList.toggle('dark', preferences.theme === 'dark');
+        if (!error && preferences?.theme) {
+          const userTheme = preferences.theme as Theme;
+          setTheme(userTheme);
+          document.documentElement.classList.toggle('dark', userTheme === 'dark');
         }
       }
     };
