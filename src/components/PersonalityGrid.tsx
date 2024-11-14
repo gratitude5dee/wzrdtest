@@ -43,7 +43,7 @@ export function PersonalityGrid({ hoveredCard, setHoveredCard, navigate }: Perso
 
   const applyCardTransform = useCallback((
     card: HTMLElement, 
-    dynamics: { rotationX: number; rotationY: number; lift: number; pullX: number; pullY: number; pullStrength: number; distance }
+    dynamics: { rotationX: number; rotationY: number; lift: number; pullX: number; pullY: number; pullStrength: number; distance: number }
   ) => {
     const { rotationX, rotationY, lift, pullX, pullY, pullStrength } = dynamics;
     const cardId = card.getAttribute('data-card-id') || '';
@@ -146,16 +146,15 @@ export function PersonalityGrid({ hoveredCard, setHoveredCard, navigate }: Perso
             'bg-clip-padding backdrop-filter',
             'shadow-[inset_0_1px_2px_rgba(255,255,255,0.4)]',
             'noise-texture card-hover-effect',
-            personality.id === "quick-answers" && "pulsating-card",
             hoveredCard === personality.id ? 
               'z-10 shadow-2xl shadow-white/30' : 
               'z-0 hover:shadow-xl hover:shadow-white/20'
           )}
           onClick={() => {
-            if (personality.id === "quick-answers") {
-              navigate("/quick-answers");
-            } else if (personality.id === "affirmations") {
+            if (personality.id === "affirmations") {
               navigate("/affirmations");
+            } else if (personality.id === "quick-answers") {
+              navigate("/quick-answers");
             } else {
               navigate(`/chat/${personality.id}`);
             }
@@ -168,10 +167,7 @@ export function PersonalityGrid({ hoveredCard, setHoveredCard, navigate }: Perso
           style={{ willChange: 'transform, box-shadow' }}
           aria-label={`Select ${personality.title} personality`}
         >
-          <div className={cn(
-            "card-content relative z-10 space-y-3 transition-transform duration-300",
-            personality.id === "quick-answers" && "pulsating-text"
-          )}>
+          <div className="card-content relative z-10 space-y-3 transition-transform duration-300">
             <div className="w-12 h-12 rounded-full bg-white/95 flex items-center justify-center overflow-hidden mb-3 group-hover:scale-110 transition-transform duration-300 backdrop-blur-xl border border-white/50 shadow-lg">
               <img 
                 src={personality.icon} 
@@ -181,8 +177,8 @@ export function PersonalityGrid({ hoveredCard, setHoveredCard, navigate }: Perso
             </div>
             <div className="space-y-1">
               <h3 className={cn(
-                "text-xl font-semibold text-[#2A2A2A] group-hover:text-black transition-colors",
-                personality.id === "quick-answers" && "text-glow-strong pulsating-text"
+                "text-xl font-semibold text-[#2A2A2A] group-hover:text-black transition-colors pulsating-text",
+                personality.id === "quick-answers" && "text-glow-strong"
               )}>
                 {personality.title}
               </h3>
