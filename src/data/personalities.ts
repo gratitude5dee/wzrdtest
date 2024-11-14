@@ -9,15 +9,15 @@ export const personalities = [
   },
   {
     id: "life-advice",
-    title: "Life Advice",
-    description: "Advice given with a balance of empathy and assertiveness",
+    title: "Empathic Voice Therapy",
+    description: "(COMING SOON)",
     gradient: "bg-gradient-to-br from-green-100 via-green-50 to-green-200",
     icon: "/life-advice-avatar.png"
   },
   {
     id: "storytelling",
-    title: "Storytelling",
-    description: "Fantastical storytelling",
+    title: "Dream in Color",
+    description: "(COMING SOON)",
     gradient: "bg-gradient-to-br from-pink-100 via-pink-50 to-pink-200",
     icon: "/storytelling-avatar.png"
   },

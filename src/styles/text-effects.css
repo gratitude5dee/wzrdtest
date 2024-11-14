@@ -69,7 +69,7 @@
 }
 
 .pulsating-text {
-  animation: textPulse 3s ease-in-out infinite;
+  animation: textPulse 6s ease-in-out infinite;
 }
 
 .hovering-card {
