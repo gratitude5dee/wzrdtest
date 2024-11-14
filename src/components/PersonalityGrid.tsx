@@ -43,7 +43,7 @@ export function PersonalityGrid({ hoveredCard, setHoveredCard, navigate }: Perso
 
   const applyCardTransform = useCallback((
     card: HTMLElement, 
-    dynamics: { rotationX: number; rotationY: number; lift: number; pullX: number; pullY: number; pullStrength: number; distance: number }
+    dynamics: { rotationX: number; rotationY: number; lift: number; pullX: number; pullY: number; pullStrength: number; distance }
   ) => {
     const { rotationX, rotationY, lift, pullX, pullY, pullStrength } = dynamics;
     const cardId = card.getAttribute('data-card-id') || '';
@@ -168,7 +168,10 @@ export function PersonalityGrid({ hoveredCard, setHoveredCard, navigate }: Perso
           style={{ willChange: 'transform, box-shadow' }}
           aria-label={`Select ${personality.title} personality`}
         >
-          <div className="card-content relative z-10 space-y-3 transition-transform duration-300">
+          <div className={cn(
+            "card-content relative z-10 space-y-3 transition-transform duration-300",
+            personality.id === "quick-answers" && "pulsating-text"
+          )}>
             <div className="w-12 h-12 rounded-full bg-white/95 flex items-center justify-center overflow-hidden mb-3 group-hover:scale-110 transition-transform duration-300 backdrop-blur-xl border border-white/50 shadow-lg">
               <img 
                 src={personality.icon} 

@@ -39,7 +39,7 @@
                  0 0 16px rgba(155, 135, 245, 0.5),
                  0 0 24px rgba(155, 135, 245, 0.5),
                  0 0 32px rgba(155, 135, 245, 0.3);
-    transform: scale(1.02);
+    transform: scale(1.01);
   }
   100% {
     text-shadow: 0 0 4px rgba(155, 135, 245, 0.3),
@@ -72,10 +72,6 @@
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.hover-lift:hover {
-  transform: translateY(-2px);
-}
-
 .text-glow-strong {
   text-shadow: 
     0 0 7px rgba(155, 135, 245, 0.3),
@@ -85,75 +81,9 @@
 }
 
 .pulsating-text {
-  animation: textPulse 3s ease-in-out infinite;
+  animation: textPulse 6s ease-in-out infinite;
 }
 
 .pulsating-card {
-  animation: cardPulse 3s ease-in-out infinite;
-}
-
-.glassmorphism {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 
-    0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06);
-}
-
-.noise-texture {
-  position: relative;
-  overflow: hidden;
-}
-
-.noise-texture::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  opacity: 0.5;
-  background: 
-    linear-gradient(to right, rgba(255,255,255,0.15), transparent),
-    url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"),
-    linear-gradient(120deg, rgba(255,255,255,0.1) 0%, transparent 100%);
-  background-blend-mode: overlay;
-  mix-blend-mode: overlay;
-  pointer-events: none;
-  mask-image: radial-gradient(circle at center, black 30%, transparent 80%);
-  transition: all 0.4s ease;
-  animation: noise 8s infinite linear;
-}
-
-.noise-texture:hover::before {
-  opacity: 0.7;
-  background-size: 200% 200%, 100% 100%, 200% 200%;
-}
-
-.card-hover-effect {
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-}
-
-.card-hover-effect::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
-    rgba(255,255,255,0.15) 0%, 
-    transparent 60%
-  );
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  pointer-events: none;
-}
-
-.card-hover-effect:hover {
-  transform: translateY(-3px) scale(1.02);
-  box-shadow: 
-    0 20px 25px -5px rgba(0, 0, 0, 0.15),
-    0 10px 10px -5px rgba(0, 0, 0, 0.08),
-    inset 0 1px 2px rgba(255, 255, 255, 0.5);
-}
-
-.card-hover-effect:hover::after {
-  opacity: 1;
+  animation: cardPulse 6s ease-in-out infinite;
 }
