@@ -62,7 +62,7 @@ export function Login() {
           variant="ghost"
           size="icon"
           onClick={() => navigate('/')}
-          className="w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all duration-300 hover:scale-105 backdrop-blur-lg border border-white/20"
+          className="w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all duration-300 hover:scale-105 backdrop-blur-lg border border-white/20 blur-glow"
         >
           <ArrowLeft className="h-6 w-6" />
         </Button>
@@ -81,12 +81,12 @@ export function Login() {
             animate={{ scale: 1 }}
             transition={{ duration: 0.5, delay: 0.3 }}
           >
-            <div className="w-16 h-16 p-2 rounded-2xl bg-white/20 backdrop-blur-lg border border-white/20 hover-lift">
+            <div className="w-16 h-16 p-2 rounded-2xl bg-white/20 backdrop-blur-lg border border-white/20 hover-lift blur-glow">
               <img src="/wzrd-logo.png" alt="WZRD" className="w-full h-full" />
             </div>
           </motion.div>
           <motion.h2 
-            className="text-4xl font-bold noise-text glow-text animated-gradient-text"
+            className="text-4xl font-bold noise-text glow-text animated-gradient-text text-glow-strong"
             data-text="Welcome to WZRD.tech"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -113,7 +113,7 @@ export function Login() {
         </div>
 
         <motion.div 
-          className="backdrop-blur-xl bg-white/10 p-8 rounded-2xl border border-white/20 shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover-lift"
+          className="glassmorphism p-8 rounded-2xl border border-white/20 shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover-lift blur-glow"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.7 }}
@@ -136,11 +136,11 @@ export function Login() {
               className: {
                 message: 'text-red-300/90 text-sm',
                 label: 'text-white/90 font-medium glow-text',
-                button: 'bg-white/20 hover:bg-white/30 backdrop-blur-lg border border-white/20 transition-all duration-300 hover-lift',
+                button: 'bg-white/20 hover:bg-white/30 backdrop-blur-lg border border-white/20 transition-all duration-300 hover-lift blur-glow',
                 container: 'space-y-4',
                 anchor: 'text-white/80 hover:text-white transition-colors duration-300 glow-text',
                 divider: 'bg-white/20',
-                input: 'bg-white/10 border-white/20 text-white placeholder-white/50 backdrop-blur-lg hover-lift',
+                input: 'bg-white/10 border-white/20 text-white placeholder-white/50 backdrop-blur-lg hover-lift blur-glow',
               },
             }}
             theme="dark"
