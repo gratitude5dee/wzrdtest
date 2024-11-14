@@ -72,7 +72,7 @@ export function Home() {
             <div className="w-8 h-8">
               <img src="/wzrd-logo.png" alt="WZRD" className="w-full h-full" />
             </div>
-            <span className="text-2xl font-semibold text-white">WZRD.tech</span>
+            <span className="text-2xl font-semibold text-white text-glow-strong">WZRD.tech</span>
           </div>
           <Button 
             variant="ghost" 
