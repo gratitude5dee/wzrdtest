@@ -11,38 +11,48 @@
   }
 }
 
+@keyframes card-pulse {
+  0% {
+    box-shadow: 
+      0 0 15px rgba(155, 135, 245, 0.2),
+      0 0 30px rgba(155, 135, 245, 0.1);
+  }
+  50% {
+    box-shadow: 
+      0 0 25px rgba(155, 135, 245, 0.4),
+      0 0 50px rgba(155, 135, 245, 0.2),
+      0 0 75px rgba(155, 135, 245, 0.1);
+  }
+  100% {
+    box-shadow: 
+      0 0 15px rgba(155, 135, 245, 0.2),
+      0 0 30px rgba(155, 135, 245, 0.1);
+  }
+}
+
 .text-glow-strong {
   text-shadow: 
-    0 0 10px rgba(155, 135, 245, 0.6),
-    0 0 20px rgba(155, 135, 245, 0.4),
+    0 0 10px rgba(155, 135, 245, 0.8),
+    0 0 20px rgba(155, 135, 245, 0.6),
     0 0 30px rgba(155, 135, 245, 0.6),
     0 0 40px rgba(155, 135, 245, 0.4),
-    0 0 50px rgba(155, 135, 245, 0.2);
+    0 0 50px rgba(155, 135, 245, 0.3);
   letter-spacing: 0.1em;
   transition: text-shadow 0.3s ease;
 }
 
 .text-glow-strong:hover {
   text-shadow: 
-    0 0 15px rgba(155, 135, 245, 0.8),
-    0 0 25px rgba(155, 135, 245, 0.6),
+    0 0 15px rgba(155, 135, 245, 1),
+    0 0 25px rgba(155, 135, 245, 0.8),
     0 0 35px rgba(155, 135, 245, 0.6),
     0 0 45px rgba(155, 135, 245, 0.4),
     0 0 55px rgba(155, 135, 245, 0.3);
 }
 
-.card-glow {
-  box-shadow: 
-    0 0 15px rgba(155, 135, 245, 0.2),
-    0 0 30px rgba(155, 135, 245, 0.1);
-  transition: box-shadow 0.3s ease;
-}
-
-.card-glow:hover {
-  box-shadow: 
-    0 0 20px rgba(155, 135, 245, 0.3),
-    0 0 40px rgba(155, 135, 245, 0.2),
-    0 0 60px rgba(155, 135, 245, 0.1);
+.hovering-card {
+  animation: card-pulse 3s ease-in-out infinite;
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .hover-lift {
@@ -59,8 +69,4 @@
 
 .hover-scale:hover {
   transform: scale(1.05);
-}
-
-.hovering-card {
-  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
