@@ -13,6 +13,7 @@ import { LoadingAnimation } from "./components/LoadingAnimation";
 import { createContext, useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { AnimatePresence, motion } from "framer-motion";
+import { ThemeProvider } from "@/hooks/useTheme";
 import "./styles/animations.css";
 
 const queryClient = new QueryClient();
@@ -108,64 +109,66 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ActiveCallContext.Provider value={{ activeCall, setActiveCall }}>
-        <TooltipProvider>
-          <AnimatePresence mode="wait">
-            <Routes location={location} key={location.pathname}>
-              <Route path="/" element={
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.9, ease: "easeInOut" }}
-                >
-                  <Intro />
-                </motion.div>
-              } />
-              <Route path="/login" element={
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.9, ease: "easeInOut" }}
-                >
-                  <Login />
-                </motion.div>
-              } />
-              <Route path="/home" element={
-                <ProtectedRoute>
+      <ThemeProvider>
+        <ActiveCallContext.Provider value={{ activeCall, setActiveCall }}>
+          <TooltipProvider>
+            <AnimatePresence mode="wait">
+              <Routes location={location} key={location.pathname}>
+                <Route path="/" element={
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.9, ease: "easeInOut" }}
                   >
-                    <Home />
+                    <Intro />
                   </motion.div>
-                </ProtectedRoute>
-              } />
-              <Route path="/quick-answers" element={
-                <ProtectedRoute>
-                  <QuickAnswers />
-                </ProtectedRoute>
-              } />
-              <Route path="/chat/:personality" element={
-                <ProtectedRoute>
-                  <ChatWrapper />
-                </ProtectedRoute>
-              } />
-              <Route path="/teleprompter" element={
-                <ProtectedRoute>
-                  <Teleprompter />
-                </ProtectedRoute>
-              } />
-              <Route path="/affirmations" element={<AffirmationsWrapper />} />
-            </Routes>
-          </AnimatePresence>
-          <Toaster />
-          <Sonner />
-        </TooltipProvider>
-      </ActiveCallContext.Provider>
+                } />
+                <Route path="/login" element={
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.9, ease: "easeInOut" }}
+                  >
+                    <Login />
+                  </motion.div>
+                } />
+                <Route path="/home" element={
+                  <ProtectedRoute>
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.9, ease: "easeInOut" }}
+                    >
+                      <Home />
+                    </motion.div>
+                  </ProtectedRoute>
+                } />
+                <Route path="/quick-answers" element={
+                  <ProtectedRoute>
+                    <QuickAnswers />
+                  </ProtectedRoute>
+                } />
+                <Route path="/chat/:personality" element={
+                  <ProtectedRoute>
+                    <ChatWrapper />
+                  </ProtectedRoute>
+                } />
+                <Route path="/teleprompter" element={
+                  <ProtectedRoute>
+                    <Teleprompter />
+                  </ProtectedRoute>
+                } />
+                <Route path="/affirmations" element={<AffirmationsWrapper />} />
+              </Routes>
+            </AnimatePresence>
+            <Toaster />
+            <Sonner />
+          </TooltipProvider>
+        </ActiveCallContext.Provider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }

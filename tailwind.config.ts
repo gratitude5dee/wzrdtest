@@ -26,6 +26,15 @@ export default {
           "highlight-strong": "rgba(59, 130, 246, 0.5)",
           "highlight-glow": "rgba(59, 130, 246, 0.1)",
         },
+        dark: {
+          card: "#1a1625",
+          background: "#13111C",
+          purple: {
+            light: "#2D2B55",
+            DEFAULT: "#1E1E3F",
+            dark: "#2D2B55"
+          }
+        }
       },
       keyframes: {
         "magnetic-float": {
