@@ -7,7 +7,6 @@ import { Home } from "./components/Home";
 import { Chat } from "./components/Chat";
 import { Login } from "./components/Login";
 import { Intro } from "./components/Intro";
-import { QuickAnswersSpline } from "./components/QuickAnswersSpline";
 import Teleprompter from "./components/Teleprompter";
 import { LoadingAnimation } from "./components/LoadingAnimation";
 import { createContext, useState, useEffect } from "react";
@@ -142,11 +141,6 @@ function App() {
                   >
                     <Home />
                   </motion.div>
-                </ProtectedRoute>
-              } />
-              <Route path="/quick-answers" element={
-                <ProtectedRoute>
-                  <QuickAnswersSpline />
                 </ProtectedRoute>
               } />
               <Route path="/chat/:personality" element={
