@@ -1,24 +1,8 @@
-# Welcome to your GPT Engineer project
+# Welcome to WZRD.tech (Open Source Personalized AI Therapy)
 
-## Project info
+## Project Info
 
-**URL**: https://run.gptengineer.app/projects/4f174763-2c00-4792-8805-56ef920e6cc3/improve
-
-## How can I edit this code?
-
-There are several ways of editing your application.
-
-**Use GPT Engineer**
-
-Simply visit the GPT Engineer project at [GPT Engineer](https://gptengineer.app/projects/4f174763-2c00-4792-8805-56ef920e6cc3/improve) and start prompting.
-
-Changes made via gptengineer.app will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in the GPT Engineer UI.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+Open Source Personalized AI Therapy 
 
 Follow these steps:
 
@@ -60,12 +44,15 @@ This project is built with .
 - shadcn-ui
 - Tailwind CSS
 
-## How can I deploy this project?
+## Project URLs ;
 
-All GPT Engineer projects can be deployed directly via the GPT Engineer app.
 
-Simply visit your project at [GPT Engineer](https://gptengineer.app/projects/4f174763-2c00-4792-8805-56ef920e6cc3/improve) and click on Share -> Publish.
+**URL**: https://run.gptengineer.app/projects/4f174763-2c00-4792-8805-56ef920e6cc3/improve
 
-## I want to use a custom domain - is that possible?
+**Use GPT Engineer**
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.gptengineer.app/tips-tricks/custom-domain/)
+Simply visit the GPT Engineer project at [GPT Engineer](https://gptengineer.app/projects/4f174763-2c00-4792-8805-56ef920e6cc3/improve) and start prompting.
+
+Changes made via gptengineer.app will be committed automatically to this repo.
+
+Powered by 5-Dee Studios
