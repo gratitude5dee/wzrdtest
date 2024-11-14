@@ -41,18 +41,6 @@ export default {
         "magnetic-float": "magnetic-float 0.2s ease-out forwards",
         "card-hover": "card-hover 0.2s ease-out forwards",
       },
-      backgroundColor: {
-        'dark': {
-          DEFAULT: '#0F172A',
-          secondary: '#1E293B'
-        }
-      },
-      textColor: {
-        'dark': {
-          DEFAULT: '#F8FAFC',
-          secondary: '#94A3B8'
-        }
-      }
     },
   },
   plugins: [require("tailwindcss-animate")],

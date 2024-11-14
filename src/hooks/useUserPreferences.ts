@@ -6,14 +6,12 @@ export type UserPreferences = {
   fontSize: number;
   fontFamily: string;
   textColor: string;
-  backgroundColor: string;
 };
 
 const DEFAULT_PREFERENCES = {
   fontSize: 44,
   fontFamily: 'inter',
-  textColor: '#1F2937',
-  backgroundColor: '#FFF8F6'
+  textColor: '#F8FAFC'
 };
 
 export const useUserPreferences = () => {
@@ -43,12 +41,25 @@ export const useUserPreferences = () => {
         return;
       }
 
-      if (existingPrefs) {
+      if (!existingPrefs) {
+        const { error: insertError } = await supabase
+          .from('user_preferences')
+          .insert({
+            id: user.id,
+            font_size: DEFAULT_PREFERENCES.fontSize,
+            font_family: DEFAULT_PREFERENCES.fontFamily,
+            text_color: DEFAULT_PREFERENCES.textColor,
+          });
+
+        if (insertError) {
+          console.error('Error creating preferences:', insertError);
+          return;
+        }
+      } else {
         setPreferences({
           fontSize: existingPrefs.font_size,
           fontFamily: existingPrefs.font_family,
-          textColor: existingPrefs.text_color,
-          backgroundColor: existingPrefs.background_color
+          textColor: existingPrefs.text_color
         });
       }
     } catch (error) {
@@ -71,7 +82,6 @@ export const useUserPreferences = () => {
         font_size: newPreferences.fontSize ?? preferences.fontSize,
         font_family: newPreferences.fontFamily ?? preferences.fontFamily,
         text_color: newPreferences.textColor ?? preferences.textColor,
-        background_color: newPreferences.backgroundColor ?? preferences.backgroundColor,
         updated_at: new Date().toISOString()
       };
 
@@ -81,6 +91,7 @@ export const useUserPreferences = () => {
 
       if (error) {
         console.error('Error updating preferences:', error);
+        toast.error("Failed to save preferences");
         return false;
       }
 
@@ -88,6 +99,7 @@ export const useUserPreferences = () => {
       return true;
     } catch (error) {
       console.error('Error in updatePreferences:', error);
+      toast.error("Failed to save preferences");
       return false;
     }
   };
