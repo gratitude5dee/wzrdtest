@@ -41,7 +41,7 @@ export function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FFF8F6] p-6 pb-32 overflow-auto [--scrollbar-thumb:rgba(0,0,0,0.2)] hover:[--scrollbar-thumb:rgba(0,0,0,0.3)] [--scrollbar-track:transparent] [scrollbar-gutter:stable] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-[var(--scrollbar-track)] [&::-webkit-scrollbar-thumb]:bg-[var(--scrollbar-thumb)] [&::-webkit-scrollbar-thumb]:rounded-full transition-colors duration-300">
+    <div className="min-h-screen bg-[#FFF8F6] p-6 pb-32 overflow-auto">
       <header className="flex justify-between items-center mb-8">
         <div className="flex items-center space-x-3">
           <div className="w-8 h-8">
