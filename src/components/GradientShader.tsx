@@ -41,6 +41,18 @@ const fragmentShader = `
     return 130.0 * dot(m, g);
   }
 
+  // Curl noise for fluid-like motion
+  vec2 curl(float x, float y) {
+    float eps = 0.01;
+    float n1 = snoise(vec2(x + eps, y));
+    float n2 = snoise(vec2(x - eps, y));
+    float n3 = snoise(vec2(x, y + eps));
+    float n4 = snoise(vec2(x, y - eps));
+    float dx = (n1 - n2) / (2.0 * eps);
+    float dy = (n3 - n4) / (2.0 * eps);
+    return vec2(dy, -dx);
+  }
+
   vec3 hsv2rgb(vec3 c) {
     vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
     vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
@@ -49,23 +61,29 @@ const fragmentShader = `
 
   void main() {
     vec2 uv = vUv;
+    float time = uTime * 0.5;
     
-    // Dynamic color palette
-    vec3 color1 = hsv2rgb(vec3(0.6 + sin(uTime * 0.1) * 0.1, 0.7, 0.95)); // Vibrant blue
-    vec3 color2 = hsv2rgb(vec3(0.9 + cos(uTime * 0.15) * 0.1, 0.8, 0.95)); // Dynamic pink
-    vec3 color3 = hsv2rgb(vec3(0.3 + sin(uTime * 0.2) * 0.1, 0.7, 0.95)); // Shifting cyan
-    vec3 color4 = hsv2rgb(vec3(0.1 + cos(uTime * 0.25) * 0.1, 0.8, 0.95)); // Warm orange
+    // Create fluid-like motion using curl noise
+    vec2 flow = curl(uv.x * 3.0 + time * 0.3, uv.y * 3.0 + time * 0.3);
+    uv += flow * 0.1;
 
-    // Create complex flowing patterns
-    float noise1 = snoise(uv * 2.0 + uTime * 0.2);
-    float noise2 = snoise(uv * 3.0 - uTime * 0.3);
-    float noise3 = snoise(uv * 4.0 + uTime * 0.1);
+    // Dynamic color palette with fluid motion
+    vec3 color1 = hsv2rgb(vec3(0.6 + sin(time + flow.x) * 0.1, 0.7, 0.95));
+    vec3 color2 = hsv2rgb(vec3(0.9 + cos(time + flow.y) * 0.1, 0.8, 0.95));
+    vec3 color3 = hsv2rgb(vec3(0.3 + sin(time * 1.5 + length(flow)) * 0.1, 0.7, 0.95));
+    vec3 color4 = hsv2rgb(vec3(0.1 + cos(time * 1.2 + flow.x * flow.y) * 0.1, 0.8, 0.95));
 
-    // Smooth color transitions with multiple layers
+    // Create complex flowing patterns with multiple noise layers
+    float noise1 = snoise(uv * 2.0 + time * 0.2 + flow);
+    float noise2 = snoise(uv * 3.0 - time * 0.3 - flow * 1.5);
+    float noise3 = snoise(uv * 4.0 + time * 0.1 + flow * 0.8);
+    float noise4 = snoise(uv * 1.5 - time * 0.15 + flow * 1.2);
+
+    // Smooth color transitions with multiple layers and fluid motion
     vec3 baseColor = mix(
-      mix(color1, color2, sin(noise1 * 3.0 + uTime * 0.2) * 0.5 + 0.5),
-      mix(color3, color4, cos(noise2 * 2.0 - uTime * 0.3) * 0.5 + 0.5),
-      sin(noise3 + uTime * 0.1) * 0.5 + 0.5
+      mix(color1, color2, sin(noise1 * 3.0 + time * 0.2 + flow.x) * 0.5 + 0.5),
+      mix(color3, color4, cos(noise2 * 2.0 - time * 0.3 + flow.y) * 0.5 + 0.5),
+      sin(noise3 + noise4 + time * 0.1) * 0.5 + 0.5
     );
 
     // Add dynamic glow and vignette effects
@@ -73,9 +91,13 @@ const fragmentShader = `
     float vignette = smoothstep(0.0, 0.7, length(uv - 0.5));
     baseColor += glow * 0.3 * (1.0 - vignette);
     
-    // Add subtle sparkles
-    float sparkle = pow(max(sin(noise1 * 20.0 + uTime), 0.0), 20.0);
+    // Add fluid-reactive sparkles
+    float sparkle = pow(max(sin(noise1 * 20.0 + time + dot(flow, flow)), 0.0), 20.0);
     baseColor += sparkle * 0.2;
+
+    // Add subtle wave interference patterns
+    float waves = sin(dot(uv + flow * 0.5, vec2(cos(time * 0.5), sin(time * 0.5))) * 10.0) * 0.02;
+    baseColor += waves;
 
     gl_FragColor = vec4(baseColor, 1.0);
   }
