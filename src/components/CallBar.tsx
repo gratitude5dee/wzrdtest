@@ -33,7 +33,7 @@ export function CallBar({
   return (
     <div 
       className={cn(
-        "fixed bottom-8 left-4 right-4 bg-white rounded-full shadow-lg px-6 py-4",
+        "fixed bottom-8 left-4 right-4 bg-white/80 rounded-full shadow-lg px-6 py-4",
         "flex items-center justify-between transition-all duration-300 transform",
         "hover:shadow-xl hover:-translate-y-1",
         "z-[100] border border-gray-100"

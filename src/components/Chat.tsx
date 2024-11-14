@@ -29,10 +29,6 @@ export function Chat({ personality }: ChatProps) {
 
   useEffect(() => {
     setActiveCall(personality);
-    return () => {
-      // Only clear the active call if we're actually ending the call
-      // Don't clear it when just navigating back
-    };
   }, [personality, setActiveCall]);
 
   const handleMessageClick = () => {
