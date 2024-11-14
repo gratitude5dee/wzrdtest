@@ -8,6 +8,7 @@ import { Button } from "./ui/button";
 import { ArrowLeft } from "lucide-react";
 import { GradientShader } from "./GradientShader";
 import { motion } from "framer-motion";
+import "../styles/text-effects.css";
 
 export function Login() {
   const navigate = useNavigate();
@@ -80,16 +81,43 @@ export function Login() {
             animate={{ scale: 1 }}
             transition={{ duration: 0.5, delay: 0.3 }}
           >
-            <div className="w-16 h-16 p-2 rounded-2xl bg-white/20 backdrop-blur-lg border border-white/20">
+            <div className="w-16 h-16 p-2 rounded-2xl bg-white/20 backdrop-blur-lg border border-white/20 hover-lift">
               <img src="/wzrd-logo.png" alt="WZRD" className="w-full h-full" />
             </div>
           </motion.div>
-          <h2 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-white/70">Welcome to WZRD.tech</h2>
-          <p className="mt-2 text-lg text-white/80">Sign in or create an account to continue</p>
-          <p className="mt-2 text-sm text-red-300/90">Note: During development, you need to use an authorized email domain.</p>
+          <motion.h2 
+            className="text-4xl font-bold noise-text glow-text animated-gradient-text"
+            data-text="Welcome to WZRD.tech"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+          >
+            Welcome to WZRD.tech
+          </motion.h2>
+          <motion.p 
+            className="mt-2 text-lg text-white/80 glow-text"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.5 }}
+          >
+            Sign in or create an account to continue
+          </motion.p>
+          <motion.p 
+            className="mt-2 text-sm text-red-300/90"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.6 }}
+          >
+            Note: During development, you need to use an authorized email domain.
+          </motion.p>
         </div>
 
-        <div className="backdrop-blur-xl bg-white/10 p-8 rounded-2xl border border-white/20 shadow-[0_8px_30px_rgb(0,0,0,0.12)]">
+        <motion.div 
+          className="backdrop-blur-xl bg-white/10 p-8 rounded-2xl border border-white/20 shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover-lift"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.7 }}
+        >
           <Auth
             supabaseClient={supabase}
             appearance={{ 
@@ -107,12 +135,12 @@ export function Login() {
               },
               className: {
                 message: 'text-red-300/90 text-sm',
-                label: 'text-white/90 font-medium',
-                button: 'bg-white/20 hover:bg-white/30 backdrop-blur-lg border border-white/20 transition-all duration-300',
+                label: 'text-white/90 font-medium glow-text',
+                button: 'bg-white/20 hover:bg-white/30 backdrop-blur-lg border border-white/20 transition-all duration-300 hover-lift',
                 container: 'space-y-4',
-                anchor: 'text-white/80 hover:text-white transition-colors duration-300',
+                anchor: 'text-white/80 hover:text-white transition-colors duration-300 glow-text',
                 divider: 'bg-white/20',
-                input: 'bg-white/10 border-white/20 text-white placeholder-white/50 backdrop-blur-lg',
+                input: 'bg-white/10 border-white/20 text-white placeholder-white/50 backdrop-blur-lg hover-lift',
               },
             }}
             theme="dark"
@@ -140,9 +168,16 @@ export function Login() {
               }
             }}
           />
-        </div>
+        </motion.div>
         
-        <p className="text-center text-sm text-white/60">© 2024 wzrd.tech</p>
+        <motion.p 
+          className="text-center text-sm text-white/60 glow-text"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.8 }}
+        >
+          © 2024 wzrd.tech
+        </motion.p>
       </motion.div>
     </div>
   );

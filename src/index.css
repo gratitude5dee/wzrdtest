@@ -3,6 +3,7 @@
 @import './styles/teleprompter.css';
 @import './styles/utilities.css';
 @import './styles/animations.css';
+@import './styles/text-effects.css';
 
 @tailwind base;
 @tailwind components;
