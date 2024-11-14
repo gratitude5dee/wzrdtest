@@ -54,17 +54,17 @@ const fragmentShader = `
     vec3 color1, color2, color3, color4;
     
     if (uDarkMode) {
-      // Dark mode colors - deep purples with subtle transitions
-      color1 = vec3(0.10, 0.09, 0.15); // Dark purple
-      color2 = vec3(0.18, 0.16, 0.34); // Medium purple
-      color3 = vec3(0.15, 0.13, 0.25); // Deep purple
-      color4 = vec3(0.20, 0.17, 0.33); // Rich purple
+      // Dark mode colors - purple shades with more subtle transitions
+      color1 = hsv2rgb(vec3(0.75 + sin(uTime * 0.1) * 0.05, 0.7, 0.3));
+      color2 = hsv2rgb(vec3(0.8 + cos(uTime * 0.15) * 0.05, 0.6, 0.4));
+      color3 = hsv2rgb(vec3(0.85 + sin(uTime * 0.2) * 0.05, 0.5, 0.5));
+      color4 = hsv2rgb(vec3(0.7 + cos(uTime * 0.25) * 0.05, 0.8, 0.2));
     } else {
-      // Light mode colors - soft whites and creams
-      color1 = vec3(1.0, 0.98, 0.96); // Warm white
-      color2 = vec3(0.98, 0.96, 0.94); // Soft cream
-      color3 = vec3(0.96, 0.94, 0.92); // Light cream
-      color4 = vec3(0.99, 0.97, 0.95); // Pure white
+      // Light mode colors - original palette
+      color1 = hsv2rgb(vec3(0.6 + sin(uTime * 0.1) * 0.1, 0.7, 0.95));
+      color2 = hsv2rgb(vec3(0.9 + cos(uTime * 0.15) * 0.1, 0.8, 0.95));
+      color3 = hsv2rgb(vec3(0.3 + sin(uTime * 0.2) * 0.1, 0.7, 0.95));
+      color4 = hsv2rgb(vec3(0.1 + cos(uTime * 0.25) * 0.1, 0.8, 0.95));
     }
 
     float noise1 = snoise(uv * 2.0 + uTime * 0.2);

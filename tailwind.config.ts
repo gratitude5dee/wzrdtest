@@ -38,8 +38,9 @@ export default {
       },
       keyframes: {
         "theme-switch": {
-          "0%": { opacity: "1" },
-          "100%": { opacity: "1" }
+          "0%": { opacity: "1", transform: "scale(1)" },
+          "50%": { opacity: "0", transform: "scale(0.95)" },
+          "100%": { opacity: "1", transform: "scale(1)" }
         },
         "magnetic-float": {
           "0%": { transform: "translate(calc(var(--mouse-x, 0) * 0.08px), calc(var(--mouse-y, 0) * 0.08px))" },
@@ -51,7 +52,7 @@ export default {
         },
       },
       animation: {
-        "theme-switch": "theme-switch 0.8s cubic-bezier(0.4, 0, 0.2, 1)",
+        "theme-switch": "theme-switch 0.5s ease-in-out",
         "magnetic-float": "magnetic-float 0.2s ease-out forwards",
         "card-hover": "card-hover 0.2s ease-out forwards",
       },

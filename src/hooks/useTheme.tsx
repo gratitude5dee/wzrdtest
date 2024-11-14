@@ -13,18 +13,19 @@ const ThemeContext = createContext<{
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>('light');
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   useEffect(() => {
     const loadTheme = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        const { data: preferences } = await supabase
+        const { data: preferences, error } = await supabase
           .from('user_preferences')
           .select('theme, text_color')
           .eq('id', user.id)
           .single();
         
-        if (preferences?.theme) {
+        if (!error && preferences?.theme) {
           const userTheme = preferences.theme as Theme;
           setTheme(userTheme);
           applyTheme(userTheme, preferences.text_color);
@@ -38,7 +39,13 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const applyTheme = (newTheme: Theme, textColor?: string) => {
     const root = document.documentElement;
     
-    document.body.classList.add('theme-transition');
+    const nextGradientStart = newTheme === 'dark' ? '#1a1625' : '#ffffff';
+    const nextGradientEnd = newTheme === 'dark' ? '#2D2B55' : '#f0f0f0';
+    const nextTextColor = newTheme === 'dark' 
+      ? (textColor || '#F8FAFC')
+      : (textColor || '#1F2937');
+
+    root.style.setProperty('--theme-transition', '0.8s');
     
     requestAnimationFrame(() => {
       if (newTheme === 'dark') {
@@ -47,19 +54,15 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         root.classList.remove('dark');
       }
       
-      root.style.setProperty('--text-primary', newTheme === 'dark' ? '#F8FAFC' : '#1F2937');
-      
-      if (textColor) {
-        root.style.setProperty('--user-text-color', textColor);
-      }
+      root.style.setProperty('--gradient-start', nextGradientStart);
+      root.style.setProperty('--gradient-end', nextGradientEnd);
+      root.style.setProperty('--text-primary', nextTextColor);
     });
-
-    setTimeout(() => {
-      document.body.classList.remove('theme-transition');
-    }, 800);
   };
 
   const updateTheme = async (newTheme: Theme) => {
+    setIsTransitioning(true);
+    
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {
       const { data: preferences } = await supabase
@@ -78,11 +81,24 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       setTheme(newTheme);
       applyTheme(newTheme, preferences?.text_color);
     }
+    
+    document.body.classList.add('theme-transition');
+    
+    setTimeout(() => {
+      document.body.classList.remove('theme-transition');
+      setIsTransitioning(false);
+    }, 800);
   };
 
   return (
     <ThemeContext.Provider value={{ theme, setTheme: updateTheme }}>
-      <div className="theme-transition gradient-animate">
+      <div 
+        className="transition-all duration-800 ease-in-out"
+        style={{ 
+          willChange: 'background-color',
+          transform: 'translateZ(0)'
+        }}
+      >
         {children}
       </div>
     </ThemeContext.Provider>
