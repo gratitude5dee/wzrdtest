@@ -145,7 +145,6 @@ export function PersonalityGrid({ hoveredCard, setHoveredCard, navigate }: Perso
             'group backdrop-blur-lg border border-white/30',
             'bg-clip-padding backdrop-filter',
             'shadow-[inset_0_1px_2px_rgba(255,255,255,0.4)]',
-            'noise-texture',
             personality.id === "quick-answers" ? "hovering-card" : "",
             hoveredCard === personality.id ? 
               'z-10 shadow-2xl shadow-white/30' : 
@@ -179,13 +178,12 @@ export function PersonalityGrid({ hoveredCard, setHoveredCard, navigate }: Perso
             <div className="space-y-1">
               <h3 className={cn(
                 "text-xl font-semibold text-[#2A2A2A] group-hover:text-black transition-colors",
-                personality.id === "quick-answers" && "text-glow-strong pulsating-text"
+                personality.id === "quick-answers" && "text-glow-strong"
               )}>
                 {personality.title}
               </h3>
               <p className={cn(
-                "text-gray-600 text-sm leading-relaxed group-hover:text-gray-800 transition-colors",
-                personality.id === "quick-answers" && "pulsating-text"
+                "text-gray-600 text-sm leading-relaxed group-hover:text-gray-800 transition-colors"
               )}>
                 {personality.description}
               </p>
