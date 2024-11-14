@@ -139,16 +139,16 @@ export function PersonalityGrid({ hoveredCard, setHoveredCard, navigate }: Perso
             personality.gradient,
             personality.span || '',
             'rounded-[32px] p-6 text-left relative overflow-hidden transition-all duration-300',
-            'before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/30 before:to-transparent before:opacity-0 before:transition-opacity before:duration-300',
-            'after:absolute after:inset-0 after:bg-[radial-gradient(circle_at_var(--glow-x,50%)_var(--glow-y,50%),rgba(255,255,255,0.8)_0%,transparent_70%)] after:opacity-0 after:transition-opacity after:duration-300',
+            'before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/20 before:to-transparent before:opacity-0 before:transition-opacity before:duration-300',
+            'after:absolute after:inset-0 after:bg-[radial-gradient(circle_at_var(--glow-x,50%)_var(--glow-y,50%),rgba(255,255,255,0.5)_0%,transparent_70%)] after:opacity-0 after:transition-opacity after:duration-300',
             'hover:before:opacity-100 hover:after:opacity-100',
-            'group backdrop-blur-lg border border-white/40',
+            'group backdrop-blur-lg border border-white/30',
             'bg-clip-padding backdrop-filter',
             'shadow-[inset_0_1px_2px_rgba(255,255,255,0.4)]',
-            'noise-texture card-hover-effect animate-card-glow',
+            'noise-texture card-hover-effect',
             hoveredCard === personality.id ? 
-              'z-10 shadow-2xl shadow-white/40' : 
-              'z-0 hover:shadow-xl hover:shadow-white/30'
+              'z-10 shadow-2xl shadow-white/30' : 
+              'z-0 hover:shadow-xl hover:shadow-white/20'
           )}
           onClick={() => {
             if (personality.id === "affirmations") {
@@ -164,14 +164,7 @@ export function PersonalityGrid({ hoveredCard, setHoveredCard, navigate }: Perso
             resetCard(personality.id);
             setHoveredCard(null);
           }}
-          style={{ 
-            willChange: 'transform, box-shadow',
-            background: `linear-gradient(135deg, 
-              ${personality.id === 'quick-answers' ? 'rgba(107, 155, 255, 0.3)' : 
-              personality.id === 'life-advice' ? 'rgba(155, 107, 255, 0.3)' : 
-              'rgba(255, 107, 155, 0.3)'}, 
-              rgba(255, 255, 255, 0.1))`,
-          }}
+          style={{ willChange: 'transform, box-shadow' }}
           aria-label={`Select ${personality.title} personality`}
         >
           <div className="card-content relative z-10 space-y-3 transition-transform duration-300">
