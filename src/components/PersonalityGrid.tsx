@@ -147,10 +147,15 @@ export function PersonalityGrid({ hoveredCard, setHoveredCard, navigate }: Perso
               'z-10 shadow-2xl shadow-white/20' : 
               'z-0 hover:shadow-xl hover:shadow-white/10'
           )}
-          onClick={() => personality.id === "affirmations" ? 
-            navigate("/affirmations") : 
-            navigate(`/chat/${personality.id}`)
-          }
+          onClick={() => {
+            if (personality.id === "affirmations") {
+              navigate("/affirmations");
+            } else if (personality.id === "quick-answers") {
+              navigate("/quick-answers");
+            } else {
+              navigate(`/chat/${personality.id}`);
+            }
+          }}
           onMouseEnter={() => setHoveredCard(personality.id)}
           onMouseLeave={() => {
             resetCard(personality.id);
