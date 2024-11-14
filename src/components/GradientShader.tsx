@@ -13,12 +13,11 @@ const fragmentShader = `
   uniform float uTime;
   varying vec2 vUv;
 
-  // Improved noise functions
+  // Noise functions
   vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
   vec2 mod289(vec2 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
   vec3 permute(vec3 x) { return mod289(((x*34.0)+1.0)*x); }
 
-  // Enhanced Simplex noise
   float snoise(vec2 v) {
     const vec4 C = vec4(0.211324865405187, 0.366025403784439,
                        -0.577350269189626, 0.024390243902439);
@@ -42,32 +41,6 @@ const fragmentShader = `
     return 130.0 * dot(m, g);
   }
 
-  // Curl noise for fluid motion
-  vec2 curl(vec2 p) {
-    const float h = 0.001;
-    float n1 = snoise(vec2(p.x + h, p.y));
-    float n2 = snoise(vec2(p.x - h, p.y));
-    float n3 = snoise(vec2(p.x, p.y + h));
-    float n4 = snoise(vec2(p.x, p.y - h));
-    float x = n1 - n2;
-    float y = n3 - n4;
-    return vec2(x, y) / (2.0 * h);
-  }
-
-  // Fractal Brownian Motion for layered texture
-  float fbm(vec2 p) {
-    float value = 0.0;
-    float amplitude = 0.5;
-    float frequency = 1.0;
-    for(int i = 0; i < 6; i++) {
-      value += amplitude * snoise(p * frequency);
-      amplitude *= 0.5;
-      frequency *= 2.0;
-      p = p * 2.0 + value;
-    }
-    return value;
-  }
-
   vec3 hsv2rgb(vec3 c) {
     vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
     vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
@@ -76,44 +49,33 @@ const fragmentShader = `
 
   void main() {
     vec2 uv = vUv;
-    float time = uTime * 0.2;
     
-    // Dynamic color palette with time variation
-    vec3 color1 = hsv2rgb(vec3(0.6 + sin(time * 0.1) * 0.1, 0.7, 0.95));
-    vec3 color2 = hsv2rgb(vec3(0.9 + cos(time * 0.15) * 0.1, 0.8, 0.95));
-    vec3 color3 = hsv2rgb(vec3(0.3 + sin(time * 0.2) * 0.1, 0.7, 0.95));
-    vec3 color4 = hsv2rgb(vec3(0.1 + cos(time * 0.25) * 0.1, 0.8, 0.95));
+    // Dynamic color palette
+    vec3 color1 = hsv2rgb(vec3(0.6 + sin(uTime * 0.1) * 0.1, 0.7, 0.95)); // Vibrant blue
+    vec3 color2 = hsv2rgb(vec3(0.9 + cos(uTime * 0.15) * 0.1, 0.8, 0.95)); // Dynamic pink
+    vec3 color3 = hsv2rgb(vec3(0.3 + sin(uTime * 0.2) * 0.1, 0.7, 0.95)); // Shifting cyan
+    vec3 color4 = hsv2rgb(vec3(0.1 + cos(uTime * 0.25) * 0.1, 0.8, 0.95)); // Warm orange
 
-    // Fluid motion using curl noise
-    vec2 flow = curl(uv * 3.0 + time);
-    vec2 uvFlow = uv + flow * 0.1;
-    
-    // Complex layered noise
-    float noise1 = fbm(uvFlow * 2.0 + time * 0.2);
-    float noise2 = fbm(uvFlow * 3.0 - time * 0.3);
-    float noise3 = fbm(uvFlow * 4.0 + time * 0.1);
+    // Create complex flowing patterns
+    float noise1 = snoise(uv * 2.0 + uTime * 0.2);
+    float noise2 = snoise(uv * 3.0 - uTime * 0.3);
+    float noise3 = snoise(uv * 4.0 + uTime * 0.1);
 
-    // Texture detail
-    float detail = fbm(uvFlow * 8.0 + noise1);
-    
     // Smooth color transitions with multiple layers
     vec3 baseColor = mix(
-      mix(color1, color2, sin(noise1 * 3.0 + time * 0.2) * 0.5 + 0.5),
-      mix(color3, color4, cos(noise2 * 2.0 - time * 0.3) * 0.5 + 0.5),
-      sin(noise3 + time * 0.1) * 0.5 + 0.5
+      mix(color1, color2, sin(noise1 * 3.0 + uTime * 0.2) * 0.5 + 0.5),
+      mix(color3, color4, cos(noise2 * 2.0 - uTime * 0.3) * 0.5 + 0.5),
+      sin(noise3 + uTime * 0.1) * 0.5 + 0.5
     );
 
-    // Enhanced glow and vignette effects
+    // Add dynamic glow and vignette effects
     float glow = smoothstep(0.2, 0.8, noise1 * noise2 * noise3);
     float vignette = smoothstep(0.0, 0.7, length(uv - 0.5));
     baseColor += glow * 0.3 * (1.0 - vignette);
     
-    // Dynamic sparkles with fluid motion influence
-    float sparkle = pow(max(sin(detail * 20.0 + time + noise1 * 5.0), 0.0), 20.0);
+    // Add subtle sparkles
+    float sparkle = pow(max(sin(noise1 * 20.0 + uTime), 0.0), 20.0);
     baseColor += sparkle * 0.2;
-
-    // Texture detail enhancement
-    baseColor *= 1.0 + detail * 0.1;
 
     gl_FragColor = vec4(baseColor, 1.0);
   }
