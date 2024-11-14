@@ -33,20 +33,15 @@
   --theme-transition: 0.5s;
   --gradient-start: #ffffff;
   --gradient-end: #f0f0f0;
+  --text-primary: #1F2937;
 }
 
 .theme-transition {
-  transition: background-color var(--theme-transition),
-              color var(--theme-transition),
-              border-color var(--theme-transition),
-              box-shadow var(--theme-transition);
+  transition: all var(--theme-transition) cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .dark .theme-transition {
-  transition: background-color var(--theme-transition),
-              color var(--theme-transition),
-              border-color var(--theme-transition),
-              box-shadow var(--theme-transition);
+  transition: all var(--theme-transition) cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Gradient animation for theme switch */
@@ -63,11 +58,34 @@
 @keyframes gradient {
   0% {
     background-position: 0% 50%;
+    opacity: 1;
   }
   50% {
     background-position: 100% 50%;
+    opacity: 0.8;
   }
   100% {
     background-position: 0% 50%;
+    opacity: 1;
   }
+}
+
+/* Theme switch animation */
+@keyframes theme-switch {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-theme-switch {
+  animation: theme-switch 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
