@@ -31,8 +31,8 @@ export const personalities = [
   },
   {
     id: "spirituality",
-    title: "Spirituality",
-    description: "Gives spiritual advice",
+    title: "Access Meditations",
+    description: "Connect with meditations from world-class healers and teachers at the touch of a button. (COMING SOON)",
     gradient: "bg-gradient-to-br from-orange-100 via-pink-50 to-red-100",
     icon: "/spirituality-avatar.png"
   },
@@ -46,7 +46,7 @@ export const personalities = [
   {
     id: "affirmations",
     title: "Affirmations",
-    description: "Daily affirmations with teleprompter",
+    description: "Personalized affirmations reader to help strengthen your mental fortitude.",
     gradient: "bg-gradient-to-br from-purple-100 via-purple-50 to-pink-100",
     span: "col-span-2",
     icon: "/affirmations-avatar.png"

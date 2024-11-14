@@ -145,6 +145,7 @@ export function PersonalityGrid({ hoveredCard, setHoveredCard, navigate }: Perso
             'group backdrop-blur-lg border border-white/30',
             'bg-clip-padding backdrop-filter',
             'shadow-[inset_0_1px_2px_rgba(255,255,255,0.4)]',
+            'card-glow',
             personality.id === "quick-answers" ? "hovering-card" : "",
             hoveredCard === personality.id ? 
               'z-10 shadow-2xl shadow-white/30' : 
