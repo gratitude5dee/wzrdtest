@@ -13,6 +13,7 @@ const ThemeContext = createContext<{
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>('light');
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   useEffect(() => {
     const loadTheme = async () => {
@@ -27,7 +28,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         if (!error && preferences?.theme) {
           const userTheme = preferences.theme as Theme;
           setTheme(userTheme);
-          document.documentElement.classList.toggle('dark', userTheme === 'dark');
+          applyTheme(userTheme);
         }
       }
     };
@@ -35,9 +36,23 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     loadTheme();
   }, []);
 
+  const applyTheme = (newTheme: Theme) => {
+    const root = document.documentElement;
+    root.style.setProperty('--theme-transition', '0.5s');
+    
+    if (newTheme === 'dark') {
+      root.classList.add('dark');
+      root.style.setProperty('--gradient-start', '#1a1625');
+      root.style.setProperty('--gradient-end', '#2D2B55');
+    } else {
+      root.classList.remove('dark');
+      root.style.setProperty('--gradient-start', '#ffffff');
+      root.style.setProperty('--gradient-end', '#f0f0f0');
+    }
+  };
+
   const updateTheme = async (newTheme: Theme) => {
-    setTheme(newTheme);
-    document.documentElement.classList.toggle('dark', newTheme === 'dark');
+    setIsTransitioning(true);
     
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {
@@ -48,11 +63,25 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
           theme: newTheme,
         });
     }
+
+    setTheme(newTheme);
+    applyTheme(newTheme);
+    
+    // Add animation class to body
+    document.body.classList.add('animate-theme-switch');
+    
+    // Remove animation class after transition
+    setTimeout(() => {
+      document.body.classList.remove('animate-theme-switch');
+      setIsTransitioning(false);
+    }, 500);
   };
 
   return (
     <ThemeContext.Provider value={{ theme, setTheme: updateTheme }}>
-      {children}
+      <div className={`transition-colors duration-500 ease-in-out ${isTransitioning ? 'animate-theme-switch' : ''}`}>
+        {children}
+      </div>
     </ThemeContext.Provider>
   );
 }

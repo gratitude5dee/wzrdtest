@@ -27,3 +27,47 @@
 .fade-scale:hover {
   transform: scale(1.02);
 }
+
+/* Theme transition styles */
+:root {
+  --theme-transition: 0.5s;
+  --gradient-start: #ffffff;
+  --gradient-end: #f0f0f0;
+}
+
+.theme-transition {
+  transition: background-color var(--theme-transition),
+              color var(--theme-transition),
+              border-color var(--theme-transition),
+              box-shadow var(--theme-transition);
+}
+
+.dark .theme-transition {
+  transition: background-color var(--theme-transition),
+              color var(--theme-transition),
+              border-color var(--theme-transition),
+              box-shadow var(--theme-transition);
+}
+
+/* Gradient animation for theme switch */
+.gradient-animate {
+  background: linear-gradient(
+    135deg,
+    var(--gradient-start),
+    var(--gradient-end)
+  );
+  background-size: 400% 400%;
+  animation: gradient 3s ease infinite;
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
