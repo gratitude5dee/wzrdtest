@@ -151,10 +151,10 @@ export function PersonalityGrid({ hoveredCard, setHoveredCard, navigate }: Perso
               'z-0 hover:shadow-xl hover:shadow-white/20'
           )}
           onClick={() => {
-            if (personality.id === "affirmations") {
-              navigate("/affirmations");
-            } else if (personality.id === "quick-answers") {
+            if (personality.id === "quick-answers") {
               navigate("/quick-answers");
+            } else if (personality.id === "affirmations") {
+              navigate("/affirmations");
             } else {
               navigate(`/chat/${personality.id}`);
             }
@@ -177,8 +177,8 @@ export function PersonalityGrid({ hoveredCard, setHoveredCard, navigate }: Perso
             </div>
             <div className="space-y-1">
               <h3 className={cn(
-                "text-xl font-semibold text-[#2A2A2A] group-hover:text-black transition-colors pulsating-text",
-                personality.id === "quick-answers" && "text-glow-strong"
+                "text-xl font-semibold text-[#2A2A2A] group-hover:text-black transition-colors",
+                personality.id === "quick-answers" && "text-glow-strong pulsating-text"
               )}>
                 {personality.title}
               </h3>

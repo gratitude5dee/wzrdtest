@@ -29,17 +29,23 @@
 
 @keyframes textPulse {
   0% {
-    text-shadow: 0 0 4px rgba(255, 255, 255, 0.1),
-                 0 0 8px rgba(255, 255, 255, 0.1);
+    text-shadow: 0 0 4px rgba(59, 130, 246, 0.3),
+                 0 0 8px rgba(59, 130, 246, 0.3),
+                 0 0 12px rgba(59, 130, 246, 0.3);
+    transform: scale(1);
   }
   50% {
-    text-shadow: 0 0 8px rgba(255, 255, 255, 0.3),
-                 0 0 16px rgba(255, 255, 255, 0.3),
-                 0 0 24px rgba(100, 108, 255, 0.3);
+    text-shadow: 0 0 8px rgba(59, 130, 246, 0.5),
+                 0 0 16px rgba(59, 130, 246, 0.5),
+                 0 0 24px rgba(59, 130, 246, 0.5),
+                 0 0 32px rgba(59, 130, 246, 0.3);
+    transform: scale(1.02);
   }
   100% {
-    text-shadow: 0 0 4px rgba(255, 255, 255, 0.1),
-                 0 0 8px rgba(255, 255, 255, 0.1);
+    text-shadow: 0 0 4px rgba(59, 130, 246, 0.3),
+                 0 0 8px rgba(59, 130, 246, 0.3),
+                 0 0 12px rgba(59, 130, 246, 0.3);
+    transform: scale(1);
   }
 }
 
@@ -53,9 +59,9 @@
 
 .text-glow-strong {
   text-shadow: 
-    0 0 7px rgba(255,255,255,.3),
-    0 0 10px rgba(255,255,255,.2),
-    0 0 21px rgba(255,255,255,.1);
+    0 0 7px rgba(59, 130, 246, 0.3),
+    0 0 10px rgba(59, 130, 246, 0.2),
+    0 0 21px rgba(59, 130, 246, 0.1);
   letter-spacing: 0.1em;
 }
 
