@@ -58,7 +58,16 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
     return <LoadingAnimation onComplete={() => setShowInitialLoading(false)} />;
   }
 
-  return children;
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.9, ease: "easeInOut" }}
+    >
+      {children}
+    </motion.div>
+  );
 }
 
 function ChatWrapper() {
@@ -124,7 +133,14 @@ function App() {
               } />
               <Route path="/home" element={
                 <ProtectedRoute>
-                  <Home />
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.9, ease: "easeInOut" }}
+                  >
+                    <Home />
+                  </motion.div>
                 </ProtectedRoute>
               } />
               <Route path="/chat/:personality" element={
