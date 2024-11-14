@@ -13,10 +13,22 @@
 
 .text-glow-strong {
   text-shadow: 
-    0 0 7px rgba(155, 135, 245, 0.3),
-    0 0 10px rgba(155, 135, 245, 0.2),
-    0 0 21px rgba(155, 135, 245, 0.1);
+    0 0 10px rgba(155, 135, 245, 0.6),
+    0 0 20px rgba(155, 135, 245, 0.4),
+    0 0 30px rgba(155, 135, 245, 0.6),
+    0 0 40px rgba(155, 135, 245, 0.4),
+    0 0 50px rgba(155, 135, 245, 0.2);
   letter-spacing: 0.1em;
+  transition: text-shadow 0.3s ease;
+}
+
+.text-glow-strong:hover {
+  text-shadow: 
+    0 0 15px rgba(155, 135, 245, 0.8),
+    0 0 25px rgba(155, 135, 245, 0.6),
+    0 0 35px rgba(155, 135, 245, 0.6),
+    0 0 45px rgba(155, 135, 245, 0.4),
+    0 0 55px rgba(155, 135, 245, 0.3);
 }
 
 .hover-lift {
