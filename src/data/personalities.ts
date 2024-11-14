@@ -1,8 +1,8 @@
 export const personalities = [
   {
     id: "quick-answers",
-    title: "Quick Answers",
-    description: "Fast question-answering",
+    title: "Talk to WZRD",
+    description: "Talk to your real-time etheric, empathic WZRD today!",
     gradient: "bg-gradient-to-br from-blue-100 via-blue-50 to-blue-200",
     span: "col-span-2",
     icon: "/quick-answers-avatar.png"

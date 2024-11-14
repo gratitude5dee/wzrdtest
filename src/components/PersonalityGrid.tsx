@@ -176,10 +176,16 @@ export function PersonalityGrid({ hoveredCard, setHoveredCard, navigate }: Perso
               />
             </div>
             <div className="space-y-1">
-              <h3 className="text-xl font-semibold text-[#2A2A2A] group-hover:text-black transition-colors">
+              <h3 className={cn(
+                "text-xl font-semibold text-[#2A2A2A] group-hover:text-black transition-colors pulsating-text",
+                personality.id === "quick-answers" && "text-glow-strong"
+              )}>
                 {personality.title}
               </h3>
-              <p className="text-gray-600 text-sm leading-relaxed group-hover:text-gray-800 transition-colors">
+              <p className={cn(
+                "text-gray-600 text-sm leading-relaxed group-hover:text-gray-800 transition-colors",
+                personality.id === "quick-answers" && "pulsating-text"
+              )}>
                 {personality.description}
               </p>
             </div>
