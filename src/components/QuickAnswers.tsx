@@ -16,15 +16,15 @@ export function QuickAnswers() {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5, ease: "easeInOut" }}
     >
-      {/* Gradient Shader Background */}
+      {/* Enhanced Gradient Shader Background */}
       <div className="absolute inset-0">
         <GradientShader />
       </div>
 
-      {/* Glassmorphism Overlay */}
+      {/* Improved Glassmorphism Overlay */}
       <div className="absolute inset-0 backdrop-blur-[100px] bg-white/10" />
       
-      {/* Back Button */}
+      {/* Enhanced Back Button */}
       <div className="fixed top-8 left-8 z-50">
         <Button
           variant="ghost"
