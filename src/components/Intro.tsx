@@ -7,7 +7,7 @@ export function Intro() {
 
   return (
     <motion.div 
-      className="relative w-full h-screen overflow-hidden"
+      className="relative w-full h-screen overflow-hidden bg-[#FFF8F6]"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}

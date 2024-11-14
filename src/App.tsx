@@ -58,16 +58,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
     return <LoadingAnimation onComplete={() => setShowInitialLoading(false)} />;
   }
 
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.9, ease: "easeInOut" }}
-    >
-      {children}
-    </motion.div>
-  );
+  return children;
 }
 
 function ChatWrapper() {
@@ -101,7 +92,7 @@ function AffirmationsWrapper() {
   );
 }
 
-const App = () => {
+function App() {
   const [activeCall, setActiveCall] = useState<string | null>(null);
   const location = useLocation();
 
@@ -155,6 +146,6 @@ const App = () => {
       </ActiveCallContext.Provider>
     </QueryClientProvider>
   );
-};
+}
 
 export default App;
