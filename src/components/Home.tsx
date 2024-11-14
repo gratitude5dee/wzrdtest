@@ -18,10 +18,17 @@ export function Home() {
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
 
   const getPersonalityById = (title: string) => {
-    return personalities.find(p => p.title === title);
+    return personalities.find(p => p.id === title) || {
+      id: title,
+      title: title,
+      icon: "/wzrd-logo.png"
+    };
   };
 
-  const activePersonality = activeCall ? getPersonalityById(activeCall) : null;
+  const activePersonality = activeCall ? {
+    icon: getPersonalityById(activeCall).icon,
+    title: activeCall
+  } : null;
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -41,7 +48,7 @@ export function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FFF8F6] p-6 pb-32 overflow-auto">
+    <div className="min-h-screen bg-[#FFF8F6] p-6 pb-32 overflow-auto [--scrollbar-thumb:rgba(0,0,0,0.2)] hover:[--scrollbar-thumb:rgba(0,0,0,0.3)] [--scrollbar-track:transparent] [scrollbar-gutter:stable] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-[var(--scrollbar-track)] [&::-webkit-scrollbar-thumb]:bg-[var(--scrollbar-thumb)] [&::-webkit-scrollbar-thumb]:rounded-full transition-colors duration-300">
       <header className="flex justify-between items-center mb-8">
         <div className="flex items-center space-x-3">
           <div className="w-8 h-8">
