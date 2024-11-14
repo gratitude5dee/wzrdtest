@@ -16,6 +16,9 @@ export default {
           pink: "#FFE5E5",
           purple: "#F0E5FF",
           blue: "#E5F0FF",
+          "vibrant-pink": "#FF6B9B",
+          "vibrant-purple": "#9B6BFF",
+          "vibrant-blue": "#6B9BFF",
         },
         teleprompter: {
           bg: "#0F172A",
@@ -50,11 +53,26 @@ export default {
           "0%": { transform: "translateY(0)" },
           "100%": { transform: "translateY(-6px)" },
         },
+        "card-glow": {
+          "0%": { 
+            boxShadow: "0 0 5px rgba(255,255,255,0.3), 0 0 10px rgba(255,255,255,0.2), 0 0 15px rgba(255,255,255,0.1)",
+            transform: "translateY(0)"
+          },
+          "50%": { 
+            boxShadow: "0 0 10px rgba(255,255,255,0.4), 0 0 20px rgba(255,255,255,0.3), 0 0 30px rgba(255,255,255,0.2)",
+            transform: "translateY(-2px)"
+          },
+          "100%": { 
+            boxShadow: "0 0 5px rgba(255,255,255,0.3), 0 0 10px rgba(255,255,255,0.2), 0 0 15px rgba(255,255,255,0.1)",
+            transform: "translateY(0)"
+          }
+        },
       },
       animation: {
         "theme-switch": "theme-switch 0.5s ease-in-out",
         "magnetic-float": "magnetic-float 0.2s ease-out forwards",
         "card-hover": "card-hover 0.2s ease-out forwards",
+        "card-glow": "card-glow 3s ease-in-out infinite",
       },
     },
   },
