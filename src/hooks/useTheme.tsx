@@ -38,19 +38,31 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   const applyTheme = (newTheme: Theme, textColor?: string) => {
     const root = document.documentElement;
-    root.style.setProperty('--theme-transition', '0.5s');
     
-    if (newTheme === 'dark') {
-      root.classList.add('dark');
-      root.style.setProperty('--gradient-start', '#1a1625');
-      root.style.setProperty('--gradient-end', '#2D2B55');
-      root.style.setProperty('--text-primary', textColor || '#F8FAFC');
-    } else {
-      root.classList.remove('dark');
-      root.style.setProperty('--gradient-start', '#ffffff');
-      root.style.setProperty('--gradient-end', '#f0f0f0');
-      root.style.setProperty('--text-primary', textColor || '#1F2937');
-    }
+    // Pre-load the next theme's gradient colors
+    const nextGradientStart = newTheme === 'dark' ? '#1a1625' : '#ffffff';
+    const nextGradientEnd = newTheme === 'dark' ? '#2D2B55' : '#f0f0f0';
+    const nextTextColor = newTheme === 'dark' 
+      ? (textColor || '#F8FAFC')
+      : (textColor || '#1F2937');
+
+    // Apply transitions
+    root.style.setProperty('--theme-transition', '0.8s');
+    
+    // Use requestAnimationFrame for smooth transition
+    requestAnimationFrame(() => {
+      if (newTheme === 'dark') {
+        root.classList.add('dark');
+        root.style.setProperty('--gradient-start', nextGradientStart);
+        root.style.setProperty('--gradient-end', nextGradientEnd);
+        root.style.setProperty('--text-primary', nextTextColor);
+      } else {
+        root.classList.remove('dark');
+        root.style.setProperty('--gradient-start', nextGradientStart);
+        root.style.setProperty('--gradient-end', nextGradientEnd);
+        root.style.setProperty('--text-primary', nextTextColor);
+      }
+    });
   };
 
   const updateTheme = async (newTheme: Theme) => {
@@ -75,7 +87,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       applyTheme(newTheme, preferences?.text_color);
     }
     
-    // Add animation class to body with smooth transition
+    // Add animation classes with smooth transition
     document.body.classList.add('animate-theme-switch');
     document.body.classList.add('theme-transition');
     
@@ -84,12 +96,22 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       document.body.classList.remove('animate-theme-switch');
       document.body.classList.remove('theme-transition');
       setIsTransitioning(false);
-    }, 500);
+    }, 800);
   };
 
   return (
     <ThemeContext.Provider value={{ theme, setTheme: updateTheme }}>
-      <div className={`transition-all duration-500 ease-in-out ${isTransitioning ? 'animate-theme-switch' : ''}`}>
+      <div 
+        className={`
+          transition-all duration-800 ease-in-out 
+          ${isTransitioning ? 'animate-theme-switch' : ''}
+        `}
+        style={{ 
+          willChange: 'transform, opacity, background-color',
+          backfaceVisibility: 'hidden',
+          transform: 'translateZ(0)'
+        }}
+      >
         {children}
       </div>
     </ThemeContext.Provider>
