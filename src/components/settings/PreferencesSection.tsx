@@ -5,20 +5,30 @@ import { motion } from "framer-motion";
 import { Palette, Type, Monitor } from "lucide-react";
 import { useUserPreferences } from "@/hooks/useUserPreferences";
 import { toast } from "sonner";
+import { useEffect, useState } from "react";
 
 export function PreferencesSection() {
   const { preferences, updatePreferences, loading } = useUserPreferences();
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+
+  useEffect(() => {
+    // Apply theme to document
+    document.documentElement.classList.toggle('dark', theme === 'dark');
+  }, [theme]);
 
   const handleSave = async () => {
-    const success = await updatePreferences(preferences);
-    if (success) {
-      toast.success("Preferences saved successfully", {
-        style: {
-          background: "#FFF8F6",
-          border: "1px solid #E2E8F0",
-          color: "#1F2937",
-        },
+    try {
+      const success = await updatePreferences({
+        ...preferences,
+        textColor: theme === 'dark' ? '#F8FAFC' : '#1F2937',
+        backgroundColor: theme === 'dark' ? '#0F172A' : '#FFF8F6'
       });
+      
+      if (success) {
+        toast.success("Preferences saved successfully");
+      }
+    } catch (error) {
+      toast.error("Failed to save preferences");
     }
   };
 
@@ -38,61 +48,40 @@ export function PreferencesSection() {
         <div className="space-y-1.5">
           <div className="flex items-center space-x-2">
             <Monitor className="h-4 w-4 text-gray-500" />
-            <h3 className="text-sm font-medium text-gray-900">Theme</h3>
+            <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">Theme</h3>
           </div>
-          <p className="text-sm text-gray-500">Choose your preferred theme settings.</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Choose your preferred theme settings.</p>
         </div>
         
         <div className="grid grid-cols-2 gap-3">
           <Button
-            variant="outline"
-            className="h-16 rounded-lg border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-all duration-200"
+            variant={theme === 'light' ? "default" : "outline"}
+            className={`h-16 rounded-lg transition-all duration-200 ${
+              theme === 'light' 
+                ? 'border-primary bg-primary/10' 
+                : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+            }`}
+            onClick={() => setTheme('light')}
           >
             <div className="space-y-1.5">
               <div className="w-5 h-5 rounded-full bg-white border border-gray-200 mx-auto" />
-              <div className="text-xs font-medium text-gray-700">Light</div>
+              <div className="text-xs font-medium">Light</div>
             </div>
           </Button>
           <Button
-            variant="outline"
-            className="h-16 rounded-lg border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-all duration-200"
+            variant={theme === 'dark' ? "default" : "outline"}
+            className={`h-16 rounded-lg transition-all duration-200 ${
+              theme === 'dark'
+                ? 'border-primary bg-primary/10'
+                : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+            }`}
+            onClick={() => setTheme('dark')}
           >
             <div className="space-y-1.5">
               <div className="w-5 h-5 rounded-full bg-gray-900 mx-auto" />
-              <div className="text-xs font-medium text-gray-700">Dark</div>
+              <div className="text-xs font-medium">Dark</div>
             </div>
           </Button>
-        </div>
-      </div>
-
-      {/* Colors Section */}
-      <div className="space-y-4">
-        <div className="space-y-1.5">
-          <div className="flex items-center space-x-2">
-            <Palette className="h-4 w-4 text-gray-500" />
-            <h3 className="text-sm font-medium text-gray-900">Colors</h3>
-          </div>
-          <p className="text-sm text-gray-500">Customize your color preferences.</p>
-        </div>
-
-        <div className="space-y-4">
-          <div className="space-y-1.5">
-            <Label className="text-xs font-medium text-gray-700">
-              Text Color
-            </Label>
-            <div className="flex gap-2 items-center">
-              <div 
-                className="w-8 h-8 rounded-md border border-gray-200 shadow-sm"
-                style={{ backgroundColor: preferences.textColor }}
-              />
-              <input
-                type="color"
-                value={preferences.textColor}
-                onChange={(e) => updatePreferences({ textColor: e.target.value })}
-                className="h-8 flex-1 rounded-md border border-gray-200 cursor-pointer"
-              />
-            </div>
-          </div>
         </div>
       </div>
 
@@ -101,20 +90,20 @@ export function PreferencesSection() {
         <div className="space-y-1.5">
           <div className="flex items-center space-x-2">
             <Type className="h-4 w-4 text-gray-500" />
-            <h3 className="text-sm font-medium text-gray-900">Typography</h3>
+            <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">Typography</h3>
           </div>
-          <p className="text-sm text-gray-500">Choose your preferred font settings.</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Choose your preferred font settings.</p>
         </div>
 
         <div className="space-y-1.5">
-          <Label className="text-xs font-medium text-gray-700">
+          <Label className="text-xs font-medium text-gray-700 dark:text-gray-300">
             Font Family
           </Label>
           <Select 
             value={preferences.fontFamily}
             onValueChange={(value) => updatePreferences({ fontFamily: value })}
           >
-            <SelectTrigger className="h-9 text-sm rounded-md border-gray-200">
+            <SelectTrigger className="h-9 text-sm rounded-md border-gray-200 dark:border-gray-700 dark:bg-gray-800">
               <SelectValue placeholder="Select a font" />
             </SelectTrigger>
             <SelectContent>
@@ -127,7 +116,7 @@ export function PreferencesSection() {
 
       <div className="pt-4">
         <Button 
-          className="w-full bg-gray-900 hover:bg-gray-800 text-white"
+          className="w-full bg-gray-900 hover:bg-gray-800 text-white dark:bg-gray-700 dark:hover:bg-gray-600"
           onClick={handleSave}
         >
           Save Changes
