@@ -51,15 +51,14 @@ const fragmentShader = `
   void main() {
     vec2 uv = vUv;
     
-    // Dynamic color palette based on dark mode
     vec3 color1, color2, color3, color4;
     
     if (uDarkMode) {
-      // Dark mode colors - purple shades
-      color1 = hsv2rgb(vec3(0.75 + sin(uTime * 0.1) * 0.05, 0.7, 0.3)); // Dark purple
-      color2 = hsv2rgb(vec3(0.8 + cos(uTime * 0.15) * 0.05, 0.6, 0.4)); // Medium purple
-      color3 = hsv2rgb(vec3(0.85 + sin(uTime * 0.2) * 0.05, 0.5, 0.5)); // Light purple
-      color4 = hsv2rgb(vec3(0.7 + cos(uTime * 0.25) * 0.05, 0.8, 0.2)); // Deep purple
+      // Dark mode colors - purple shades with more subtle transitions
+      color1 = hsv2rgb(vec3(0.75 + sin(uTime * 0.1) * 0.05, 0.7, 0.3));
+      color2 = hsv2rgb(vec3(0.8 + cos(uTime * 0.15) * 0.05, 0.6, 0.4));
+      color3 = hsv2rgb(vec3(0.85 + sin(uTime * 0.2) * 0.05, 0.5, 0.5));
+      color4 = hsv2rgb(vec3(0.7 + cos(uTime * 0.25) * 0.05, 0.8, 0.2));
     } else {
       // Light mode colors - original palette
       color1 = hsv2rgb(vec3(0.6 + sin(uTime * 0.1) * 0.1, 0.7, 0.95));
@@ -161,3 +160,4 @@ export function GradientShader() {
     />
   );
 }
+

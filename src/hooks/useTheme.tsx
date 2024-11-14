@@ -39,29 +39,24 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const applyTheme = (newTheme: Theme, textColor?: string) => {
     const root = document.documentElement;
     
-    // Pre-load the next theme's gradient colors
     const nextGradientStart = newTheme === 'dark' ? '#1a1625' : '#ffffff';
     const nextGradientEnd = newTheme === 'dark' ? '#2D2B55' : '#f0f0f0';
     const nextTextColor = newTheme === 'dark' 
       ? (textColor || '#F8FAFC')
       : (textColor || '#1F2937');
 
-    // Apply transitions
     root.style.setProperty('--theme-transition', '0.8s');
     
-    // Use requestAnimationFrame for smooth transition
     requestAnimationFrame(() => {
       if (newTheme === 'dark') {
         root.classList.add('dark');
-        root.style.setProperty('--gradient-start', nextGradientStart);
-        root.style.setProperty('--gradient-end', nextGradientEnd);
-        root.style.setProperty('--text-primary', nextTextColor);
       } else {
         root.classList.remove('dark');
-        root.style.setProperty('--gradient-start', nextGradientStart);
-        root.style.setProperty('--gradient-end', nextGradientEnd);
-        root.style.setProperty('--text-primary', nextTextColor);
       }
+      
+      root.style.setProperty('--gradient-start', nextGradientStart);
+      root.style.setProperty('--gradient-end', nextGradientEnd);
+      root.style.setProperty('--text-primary', nextTextColor);
     });
   };
 
@@ -87,13 +82,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       applyTheme(newTheme, preferences?.text_color);
     }
     
-    // Add animation classes with smooth transition
-    document.body.classList.add('animate-theme-switch');
     document.body.classList.add('theme-transition');
     
-    // Remove animation classes after transition
     setTimeout(() => {
-      document.body.classList.remove('animate-theme-switch');
       document.body.classList.remove('theme-transition');
       setIsTransitioning(false);
     }, 800);
@@ -102,13 +93,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   return (
     <ThemeContext.Provider value={{ theme, setTheme: updateTheme }}>
       <div 
-        className={`
-          transition-all duration-800 ease-in-out 
-          ${isTransitioning ? 'animate-theme-switch' : ''}
-        `}
+        className="transition-all duration-800 ease-in-out"
         style={{ 
-          willChange: 'transform, opacity, background-color',
-          backfaceVisibility: 'hidden',
+          willChange: 'background-color',
           transform: 'translateZ(0)'
         }}
       >
