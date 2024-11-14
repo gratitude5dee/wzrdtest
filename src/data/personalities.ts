@@ -23,8 +23,8 @@ export const personalities = [
   },
   {
     id: "deeper-questions",
-    title: "Deeper Questions",
-    description: "Answers questions but from more of a philosophical and scientific angle",
+    title: "Talk to Your Higher Self",
+    description: "(COMING SOON) Clone your voice and talk to a digital twin of yourself",
     gradient: "bg-gradient-to-br from-rose-100 via-orange-50 to-orange-200",
     span: "col-span-2",
     icon: "/deeper-questions-avatar.png"
