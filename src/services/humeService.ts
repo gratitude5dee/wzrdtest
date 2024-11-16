@@ -1,3 +1,5 @@
+import { supabase } from "@/integrations/supabase/client";
+
 interface HumeMessage {
   type: 'transcript' | 'response' | 'interruption';
   text?: string;
