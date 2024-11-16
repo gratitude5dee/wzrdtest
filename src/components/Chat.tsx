@@ -4,6 +4,8 @@ import { ActiveCallContext } from "../App";
 import { ChatHeader } from "./chat/ChatHeader";
 import { ChatMessages } from "./chat/ChatMessages";
 import { ChatControls } from "./chat/ChatControls";
+import { humeService } from "@/services/humeService";
+import { toast } from "./ui/use-toast";
 
 interface Message {
   text: string;
@@ -29,36 +31,59 @@ export function Chat({ personality }: ChatProps) {
 
   useEffect(() => {
     setActiveCall(personality);
+    initializeHume();
+    return () => {
+      humeService.cleanup();
+    };
   }, [personality, setActiveCall]);
 
-  const handleMessageClick = () => {
-    setIsListening(false);
-    setShowMessages(true);
-    setMessages([
-      {
-        text: "Hello! How can I help you today?",
-        emotions: [
-          { name: "WARMTH", color: "bg-amber-300" },
-          { name: "OPENNESS", color: "bg-blue-300" },
-        ],
-        isUser: false
-      },
-      {
-        isInterruption: true,
-        text: "USER INTERRUPTION DETECTED"
-      },
-      {
-        text: "I notice you seem uncertain. Would you like to discuss what's on your mind?",
-        emotions: [
-          { name: "DOUBT", color: "bg-amber-700" },
-          { name: "EMPATHY", color: "bg-purple-300" },
-        ],
-        isUser: false
+  const initializeHume = async () => {
+    const isHumeEnabled = ["life-advice", "storytelling", "emotional-reflection"].includes(personality);
+    
+    if (!isHumeEnabled) return;
+
+    const connected = await humeService.connect((message) => {
+      switch (message.type) {
+        case 'user_message':
+          setMessages(prev => [...prev, {
+            text: message.transcript,
+            isUser: true,
+            emotions: message.expressions?.map((exp: any) => ({
+              name: exp.name,
+              color: `bg-${exp.score > 0.5 ? 'green' : 'amber'}-300`
+            }))
+          }]);
+          break;
+        case 'assistant_message':
+          setMessages(prev => [...prev, {
+            text: message.text,
+            emotions: message.expressions?.map((exp: any) => ({
+              name: exp.name,
+              color: `bg-${exp.score > 0.5 ? 'blue' : 'purple'}-300`
+            }))
+          }]);
+          break;
+        case 'user_interruption':
+          setMessages(prev => [...prev, {
+            isInterruption: true,
+            text: "USER INTERRUPTION DETECTED"
+          }]);
+          break;
       }
-    ]);
+    });
+
+    if (!connected) {
+      toast({
+        title: "Connection Error",
+        description: "Failed to connect to voice service. Please try again.",
+        variant: "destructive"
+      });
+      navigate('/home');
+    }
   };
 
   const handleEndCall = () => {
+    humeService.cleanup();
     setActiveCall(null);
     navigate('/home');
   };
@@ -107,7 +132,7 @@ export function Chat({ personality }: ChatProps) {
         isMicMuted={isMicMuted}
         onMicToggle={handleMicToggle}
         onEndCall={handleEndCall}
-        onMessageClick={handleMessageClick}
+        onMessageClick={() => setShowMessages(true)}
       />
     </div>
   );
