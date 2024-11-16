@@ -29,19 +29,11 @@ export function Chat({ personality }: ChatProps) {
   const [isMicMuted, setIsMicMuted] = useState(false);
   const { setActiveCall } = useContext(ActiveCallContext);
 
-  const cleanupAndResetState = () => {
-    humeService.cleanup();
-    setActiveCall(null);
-    setMessages([]);
-    setIsListening(false);
-  };
-
   useEffect(() => {
     setActiveCall(personality);
     initializeHume();
-    
     return () => {
-      cleanupAndResetState();
+      humeService.cleanup();
     };
   }, [personality, setActiveCall]);
 
@@ -86,22 +78,18 @@ export function Chat({ personality }: ChatProps) {
         description: "Failed to connect to voice service. Please try again.",
         variant: "destructive"
       });
-      handleEndCall();
+      navigate('/home');
     }
   };
 
   const handleEndCall = () => {
-    cleanupAndResetState();
-    setTimeout(() => {
-      navigate('/home', { replace: true });
-    }, 0);
+    humeService.cleanup();
+    setActiveCall(null);
+    navigate('/home');
   };
 
   const handleBack = () => {
-    cleanupAndResetState();
-    setTimeout(() => {
-      navigate('/home', { replace: true });
-    }, 0);
+    navigate('/home');
   };
 
   const handleMicToggle = () => {
