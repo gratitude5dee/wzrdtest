@@ -6,6 +6,7 @@ import { ChatMessages } from "./chat/ChatMessages";
 import { ChatControls } from "./chat/ChatControls";
 import { humeService } from "@/services/humeService";
 import { toast } from "./ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Message {
   text: string;
@@ -74,6 +75,26 @@ export function Chat({ personality }: ChatProps) {
         });
         navigate('/home');
       }
+
+      // Subscribe to real-time emotional responses
+      const subscription = supabase
+        .channel('emotional-responses')
+        .on(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'emotional_responses'
+          },
+          (payload) => {
+            console.log('New emotional response:', payload);
+          }
+        )
+        .subscribe();
+
+      return () => {
+        subscription.unsubscribe();
+      };
     };
 
     initializeHume();

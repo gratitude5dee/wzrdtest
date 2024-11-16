@@ -1,1 +1,4 @@
 project_id = "udzyovnxqthipzyeqzyi"
+
+[functions.process-analytics]
+verify_jwt = true
