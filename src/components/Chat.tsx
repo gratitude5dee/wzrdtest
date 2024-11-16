@@ -47,6 +47,13 @@ export function Chat({ personality }: ChatProps) {
     setIsMicMuted(false);
   };
 
+  const handleNavigateHome = () => {
+    cleanupAndNavigate();
+    setTimeout(() => {
+      navigate('/home');
+    }, 100);
+  };
+
   const initializeHume = async () => {
     const isHumeEnabled = ["life-advice", "storytelling", "emotional-reflection"].includes(personality);
     
@@ -92,13 +99,6 @@ export function Chat({ personality }: ChatProps) {
     }
   };
 
-  const handleNavigateHome = () => {
-    cleanupAndNavigate();
-    setTimeout(() => {
-      navigate('/home');
-    }, 100);
-  };
-
   const handleEndCall = () => {
     handleNavigateHome();
   };
@@ -110,7 +110,7 @@ export function Chat({ personality }: ChatProps) {
   const handleMicToggle = () => {
     setIsMicMuted(!isMicMuted);
     if (humeService) {
-      // Add mic mute handling in humeService if needed
+      humeService.toggleMic?.(isMicMuted);
     }
   };
 
