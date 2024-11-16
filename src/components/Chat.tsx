@@ -30,57 +30,59 @@ export function Chat({ personality }: ChatProps) {
   const { setActiveCall } = useContext(ActiveCallContext);
 
   useEffect(() => {
-    setActiveCall(personality);
+    const initializeHume = async () => {
+      setActiveCall(personality);
+      const isHumeEnabled = ["life-advice", "storytelling", "emotional-reflection"].includes(personality);
+      
+      if (!isHumeEnabled) return;
+
+      const connected = await humeService.connect((message) => {
+        switch (message.type) {
+          case 'user_message':
+            setMessages(prev => [...prev, {
+              text: message.transcript,
+              isUser: true,
+              emotions: message.expressions?.map((exp: any) => ({
+                name: exp.name,
+                color: `bg-${exp.score > 0.5 ? 'green' : 'amber'}-300`
+              }))
+            }]);
+            break;
+          case 'assistant_message':
+            setMessages(prev => [...prev, {
+              text: message.text,
+              emotions: message.expressions?.map((exp: any) => ({
+                name: exp.name,
+                color: `bg-${exp.score > 0.5 ? 'blue' : 'purple'}-300`
+              }))
+            }]);
+            break;
+          case 'user_interruption':
+            setMessages(prev => [...prev, {
+              isInterruption: true,
+              text: "USER INTERRUPTION DETECTED"
+            }]);
+            break;
+        }
+      }, personality);
+
+      if (!connected) {
+        toast({
+          title: "Connection Error",
+          description: "Failed to connect to voice service. Please try again.",
+          variant: "destructive"
+        });
+        navigate('/home');
+      }
+    };
+
     initializeHume();
+
     return () => {
       humeService.cleanup();
+      setActiveCall(null);
     };
-  }, [personality, setActiveCall]);
-
-  const initializeHume = async () => {
-    const isHumeEnabled = ["life-advice", "storytelling", "emotional-reflection"].includes(personality);
-    
-    if (!isHumeEnabled) return;
-
-    const connected = await humeService.connect((message) => {
-      switch (message.type) {
-        case 'user_message':
-          setMessages(prev => [...prev, {
-            text: message.transcript,
-            isUser: true,
-            emotions: message.expressions?.map((exp: any) => ({
-              name: exp.name,
-              color: `bg-${exp.score > 0.5 ? 'green' : 'amber'}-300`
-            }))
-          }]);
-          break;
-        case 'assistant_message':
-          setMessages(prev => [...prev, {
-            text: message.text,
-            emotions: message.expressions?.map((exp: any) => ({
-              name: exp.name,
-              color: `bg-${exp.score > 0.5 ? 'blue' : 'purple'}-300`
-            }))
-          }]);
-          break;
-        case 'user_interruption':
-          setMessages(prev => [...prev, {
-            isInterruption: true,
-            text: "USER INTERRUPTION DETECTED"
-          }]);
-          break;
-      }
-    });
-
-    if (!connected) {
-      toast({
-        title: "Connection Error",
-        description: "Failed to connect to voice service. Please try again.",
-        variant: "destructive"
-      });
-      navigate('/home');
-    }
-  };
+  }, [personality, setActiveCall, navigate]);
 
   const handleEndCall = () => {
     humeService.cleanup();
