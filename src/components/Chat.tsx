@@ -43,6 +43,8 @@ export function Chat({ personality }: ChatProps) {
     setActiveCall(null);
     setMessages([]);
     setIsListening(false);
+    setShowMessages(false);
+    setIsMicMuted(false);
   };
 
   const initializeHume = async () => {
@@ -86,28 +88,30 @@ export function Chat({ personality }: ChatProps) {
         description: "Failed to connect to voice service. Please try again.",
         variant: "destructive"
       });
-      navigate('/home');
+      handleNavigateHome();
     }
   };
 
-  const handleEndCall = () => {
+  const handleNavigateHome = () => {
     cleanupAndNavigate();
-    // Add a small delay to ensure cleanup is complete before navigation
     setTimeout(() => {
       navigate('/home');
     }, 100);
   };
 
+  const handleEndCall = () => {
+    handleNavigateHome();
+  };
+
   const handleBack = () => {
-    cleanupAndNavigate();
-    // Add a small delay to ensure cleanup is complete before navigation
-    setTimeout(() => {
-      navigate('/home');
-    }, 100);
+    handleNavigateHome();
   };
 
   const handleMicToggle = () => {
     setIsMicMuted(!isMicMuted);
+    if (humeService) {
+      // Add mic mute handling in humeService if needed
+    }
   };
 
   const getPersonalityInfo = () => {
