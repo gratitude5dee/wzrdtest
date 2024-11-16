@@ -34,7 +34,6 @@ export function Chat({ personality }: ChatProps) {
     initializeHume();
     return () => {
       humeService.cleanup();
-      setActiveCall(null); // Clean up active call state when component unmounts
     };
   }, [personality, setActiveCall]);
 
@@ -79,7 +78,7 @@ export function Chat({ personality }: ChatProps) {
         description: "Failed to connect to voice service. Please try again.",
         variant: "destructive"
       });
-      handleEndCall();
+      navigate('/home');
     }
   };
 
@@ -90,8 +89,6 @@ export function Chat({ personality }: ChatProps) {
   };
 
   const handleBack = () => {
-    humeService.cleanup();
-    setActiveCall(null);
     navigate('/home');
   };
 
