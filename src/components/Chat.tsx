@@ -32,11 +32,19 @@ export function Chat({ personality }: ChatProps) {
   useEffect(() => {
     setActiveCall(personality);
     initializeHume();
+    
+    // Cleanup function
     return () => {
-      humeService.cleanup();
-      setActiveCall(null); // Clean up active call state when component unmounts
+      cleanupAndResetState();
     };
   }, [personality, setActiveCall]);
+
+  const cleanupAndResetState = () => {
+    humeService.cleanup();
+    setActiveCall(null);
+    setMessages([]);
+    setIsListening(false);
+  };
 
   const initializeHume = async () => {
     const isHumeEnabled = ["life-advice", "storytelling", "emotional-reflection"].includes(personality);
@@ -84,15 +92,13 @@ export function Chat({ personality }: ChatProps) {
   };
 
   const handleEndCall = () => {
-    humeService.cleanup();
-    setActiveCall(null);
-    navigate('/home');
+    cleanupAndResetState();
+    navigate('/home', { replace: true });
   };
 
   const handleBack = () => {
-    humeService.cleanup();
-    setActiveCall(null);
-    navigate('/home');
+    cleanupAndResetState();
+    navigate('/home', { replace: true });
   };
 
   const handleMicToggle = () => {
