@@ -1,5 +1,3 @@
-import { createClient } from '@humeai/client';
-
 interface HumeMessage {
   type: 'transcript' | 'response' | 'interruption';
   text?: string;
@@ -16,15 +14,10 @@ interface HumeConfig {
 }
 
 class HumeService {
-  private client: any;
   private socket: WebSocket | null = null;
   private recorder: MediaRecorder | null = null;
   private audioStream: MediaStream | null = null;
   private onMessageCallback: ((message: any) => void) | null = null;
-
-  constructor() {
-    this.client = createClient(import.meta.env.VITE_HUME_API_KEY || '');
-  }
 
   async connect(onMessage: (message: any) => void, personality: string) {
     try {
@@ -76,13 +69,15 @@ class HumeService {
     this.socket.onopen = () => {
       console.log('Connected to Hume EVI');
       // Send configuration
-      this.socket.send(JSON.stringify({
-        type: 'config',
-        ...config,
-        language: 'en',
-        enableVAD: true,
-        enableInterruption: true
-      }));
+      if (this.socket) {
+        this.socket.send(JSON.stringify({
+          type: 'config',
+          ...config,
+          language: 'en',
+          enableVAD: true,
+          enableInterruption: true
+        }));
+      }
     };
 
     this.socket.onmessage = (event) => {
