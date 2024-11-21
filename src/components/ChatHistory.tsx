@@ -5,16 +5,9 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
+import type { Database } from '@/integrations/supabase/types/database';
 
-interface ChatMessage {
-  id: string;
-  personality: string;
-  message: string;
-  emotion_name?: string;
-  emotion_score?: number;
-  is_user_message: boolean;
-  created_at: string;
-}
+type ChatMessage = Database['public']['Tables']['chat_history']['Row'];
 
 export function ChatHistory() {
   const navigate = useNavigate();
@@ -109,7 +102,7 @@ export function ChatHistory() {
                   )}
                   <div className="px-1">
                     <span className="text-xs text-white/50">
-                      {format(new Date(message.created_at), 'MMM d, h:mm a')}
+                      {format(new Date(message.created_at || ''), 'MMM d, h:mm a')}
                     </span>
                   </div>
                 </div>

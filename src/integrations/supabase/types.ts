@@ -9,6 +9,47 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      chat_history: {
+        Row: {
+          created_at: string | null
+          emotion_name: string | null
+          emotion_score: number | null
+          id: string
+          is_user_message: boolean | null
+          message: string
+          personality: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          emotion_name?: string | null
+          emotion_score?: number | null
+          id?: string
+          is_user_message?: boolean | null
+          message: string
+          personality: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          emotion_name?: string | null
+          emotion_score?: number | null
+          id?: string
+          is_user_message?: boolean | null
+          message?: string
+          personality?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_history_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       emotional_responses: {
         Row: {
           created_at: string | null
