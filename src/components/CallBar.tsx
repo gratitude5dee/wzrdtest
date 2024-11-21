@@ -1,12 +1,16 @@
-import { Mic, MicOff, Phone, WaveformIcon } from 'lucide-react';
+import { Mic, MicOff, Phone, AudioWaveform } from 'lucide-react';
 
 interface CallBarProps {
+  activeCall: string | null;
   isMicMuted: boolean;
+  callDuration: number;
   onMicToggle: () => void;
   onEndCall: () => void;
+  setCallDuration: (duration: number) => void;
 }
 
 export function CallBar({
+  activeCall,
   isMicMuted,
   onMicToggle,
   onEndCall,
@@ -28,7 +32,7 @@ export function CallBar({
       </button>
       
       <button className="w-14 h-14 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/30 transition-colors">
-        <WaveformIcon className="h-6 w-6" />
+        <AudioWaveform className="h-6 w-6" />
       </button>
     </div>
   );
