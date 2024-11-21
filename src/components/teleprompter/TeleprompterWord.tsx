@@ -46,7 +46,8 @@ export const TeleprompterWord = ({
       }}
       style={{
         color: index === currentWordIndex ? textColor : undefined,
-        textShadow: index === currentWordIndex ? `0 0 20px ${textColor}40, 0 0 40px ${textColor}20` : undefined
+        textShadow: index === currentWordIndex ? 
+          `0 0 20px ${textColor}40, 0 0 40px ${textColor}20` : undefined
       }}
     >
       {word}

@@ -26,8 +26,6 @@ export const Teleprompter = ({
   autoStart = false,
   onExit,
 }: TeleprompterProps) => {
-  const location = useLocation();
-  const navigate = useNavigate();
   const [words, setWords] = useState<string[]>([]);
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
@@ -49,16 +47,10 @@ export const Teleprompter = ({
   useKeyboardShortcuts(updateSpeed, togglePlay, speed);
 
   useEffect(() => {
-    const scriptToUse = location.state?.script || initialScript;
-    if (!scriptToUse) {
-      if (!onExit) {
-        navigate('/');
-      }
-      return;
-    }
-    setWords(scriptToUse.split(/\s+/).filter(word => word.length > 0));
-    setEditableScript(scriptToUse);
-  }, [location.state?.script, initialScript, navigate, onExit]);
+    if (!initialScript) return;
+    setWords(initialScript.split(/\s+/).filter(word => word.length > 0));
+    setEditableScript(initialScript);
+  }, [initialScript]);
 
   useEffect(() => {
     if (isPlaying) {
@@ -96,10 +88,8 @@ export const Teleprompter = ({
     setCurrentWordIndex(0);
     if (onExit) {
       onExit();
-    } else {
-      navigate('/');
     }
-  }, [reset, navigate, onExit]);
+  }, [reset, onExit]);
 
   const handleEditToggle = useCallback(() => {
     if (isEditing) {
