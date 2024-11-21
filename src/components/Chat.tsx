@@ -4,6 +4,7 @@ import { ActiveCallContext } from "../App";
 import { ChatHeader } from "./chat/ChatHeader";
 import { ChatMessages } from "./chat/ChatMessages";
 import { ChatControls } from "./chat/ChatControls";
+import { EmotionalReflectionDashboard } from "./EmotionalReflectionDashboard";
 import { humeService } from "@/services/humeService";
 import { toast } from "./ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -145,11 +146,15 @@ export function Chat({ personality }: ChatProps) {
         personalityInfo={personalityInfo}
       />
       
-      <ChatMessages 
-        messages={messages}
-        isListening={isListening}
-        personality={personality}
-      />
+      {personality === "Emotional Reflection" ? (
+        <EmotionalReflectionDashboard />
+      ) : (
+        <ChatMessages 
+          messages={messages}
+          isListening={isListening}
+          personality={personality}
+        />
+      )}
       
       <ChatControls 
         isMicMuted={isMicMuted}
