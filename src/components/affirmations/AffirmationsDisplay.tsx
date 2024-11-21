@@ -5,7 +5,7 @@ interface AffirmationsDisplayProps {
   words: string[];
   currentWordIndex: number;
   highlightRef: React.RefObject<HTMLSpanElement>;
-  firstWordRef: React.RefRef<HTMLSpanElement>;
+  firstWordRef: React.RefObject<HTMLSpanElement>;
   handleWordClick: (index: number) => void;
 }
 

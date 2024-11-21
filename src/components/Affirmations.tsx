@@ -158,6 +158,7 @@ export const Affirmations = () => {
         onTogglePlay={() => setIsPlaying(!isPlaying)}
         onSpeedChange={setSpeed}
         onExit={handleRestart}
+        onRestart={handleRestart}
       />
     </motion.div>
   );
