@@ -10,13 +10,12 @@ interface CallBarProps {
 }
 
 export function CallBar({
-  activeCall,
   isMicMuted,
   onMicToggle,
   onEndCall,
 }: CallBarProps) {
   return (
-    <div className="fixed bottom-8 left-1/2 -translate-x-1/2 flex items-center justify-center gap-4">
+    <div className="fixed bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-black/90 to-transparent flex items-center justify-center gap-6">
       <button
         onClick={onMicToggle}
         className="w-14 h-14 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/20 transition-all duration-300"
