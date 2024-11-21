@@ -9,7 +9,6 @@ import { Login } from "./components/Login";
 import { Intro } from "./components/Intro";
 import { QuickAnswers } from "./components/QuickAnswers";
 import { Affirmations } from "./components/Affirmations";
-import Teleprompter from "./components/Teleprompter";
 import { EmotionalReflectionDashboard } from "./components/EmotionalReflectionDashboard";
 import { createContext, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -87,11 +86,6 @@ function App() {
                 <Route path="/emotional-reflection" element={
                   <ProtectedRoute>
                     <EmotionalReflectionDashboard />
-                  </ProtectedRoute>
-                } />
-                <Route path="/teleprompter" element={
-                  <ProtectedRoute>
-                    <Teleprompter />
                   </ProtectedRoute>
                 } />
                 <Route path="/affirmations" element={
