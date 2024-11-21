@@ -14,6 +14,12 @@ export function Home() {
   const navigate = useNavigate();
   const { activeCall, setActiveCall } = useContext(ActiveCallContext);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [hoveredCard, setHoveredCard] = useState<string | null>(null);
+  const [isMicMuted, setIsMicMuted] = useState(false);
+  const [callDuration, setCallDuration] = useState(0);
+
+  const handleMicToggle = () => setIsMicMuted(!isMicMuted);
+  const handleEndCall = () => setActiveCall(null);
 
   return (
     <motion.div 
@@ -57,9 +63,20 @@ export function Home() {
           </div>
         </header>
 
-        <PersonalityGrid />
+        <PersonalityGrid 
+          hoveredCard={hoveredCard}
+          setHoveredCard={setHoveredCard}
+          navigate={navigate}
+        />
 
-        <CallBar />
+        <CallBar 
+          activeCall={activeCall}
+          isMicMuted={isMicMuted}
+          callDuration={callDuration}
+          onMicToggle={handleMicToggle}
+          onEndCall={handleEndCall}
+          setCallDuration={setCallDuration}
+        />
 
         <Settings open={settingsOpen} onOpenChange={setSettingsOpen} />
       </div>
