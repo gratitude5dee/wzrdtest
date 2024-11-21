@@ -2,19 +2,19 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useLocation, Navigate, useNavigate, useParams } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation, useParams } from "react-router-dom";
 import { Home } from "./components/Home";
 import { Chat } from "./components/Chat";
 import { Login } from "./components/Login";
 import { Intro } from "./components/Intro";
 import { QuickAnswers } from "./components/QuickAnswers";
+import { Affirmations } from "./components/Affirmations";
 import Teleprompter from "./components/Teleprompter";
 import { EmotionalReflectionDashboard } from "./components/EmotionalReflectionDashboard";
-import { LoadingAnimation } from "./components/LoadingAnimation";
-import { createContext, useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { createContext, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ThemeProvider } from "@/hooks/useTheme";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 import "./styles/animations.css";
 
 const queryClient = new QueryClient();
@@ -30,102 +30,6 @@ export const ActiveCallContext = createContext<{
 function ChatWrapper() {
   const { personality } = useParams();
   return <Chat personality={personality || "Assistant"} />;
-}
-
-function AffirmationsWrapper() {
-  const navigate = useNavigate();
-  const affirmationsText = `I am worthy of love and respect.
-Each day brings new opportunities for growth and learning.
-I trust in my journey and embrace each moment with gratitude.
-My potential is limitless, and I have the power to achieve my dreams.
-I radiate positivity and attract success naturally.
-I am grateful for all the abundance in my life.
-I choose happiness and spread joy to others.
-I am exactly where I need to be right now.
-My future is bright and full of possibilities.
-I deserve all the good things life has to offer.
-I am resilient and can overcome any challenge.
-My thoughts and feelings are valid and deserving of expression.
-I attract positive energy and release what no longer serves me.
-Every day in every way, I am getting better and better.
-I am surrounded by love and support.
-My presence makes a positive difference in the world.
-I embrace change as an opportunity for growth.
-I am at peace with my past and excited about my future.
-My creativity flows freely and inspires others.
-I trust my intuition and inner wisdom to guide me.
-I am confident in my abilities and trust myself completely.
-I attract meaningful relationships and nurturing friendships.
-My mind is clear, focused, and ready for success.
-I choose to be happy and create joy in my life.
-I am becoming stronger and more confident each day.`;
-
-  return (
-    <ProtectedRoute>
-      <motion.div 
-        className="fixed inset-0 min-h-screen w-full bg-[#FFF8F6] overflow-hidden"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.9, ease: "easeInOut" }}
-      >
-        <Teleprompter 
-          initialScript={affirmationsText}
-          fontSize={44}
-          fontFamily="cal-sans"
-          textColor="#785340"
-          autoStart={true}
-          onExit={() => navigate('/home')}
-        />
-      </motion.div>
-    </ProtectedRoute>
-  );
-}
-
-function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const [loading, setLoading] = useState(true);
-  const [authenticated, setAuthenticated] = useState(false);
-  const [showInitialLoading, setShowInitialLoading] = useState(true);
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setAuthenticated(!!session);
-      setLoading(false);
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      setAuthenticated(!!session);
-      if (event === 'SIGNED_IN') {
-        setShowInitialLoading(true);
-        setTimeout(() => setShowInitialLoading(false), 5000);
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  if (loading) {
-    return <LoadingAnimation />;
-  }
-
-  if (!authenticated) {
-    return <Navigate to="/login" replace />;
-  }
-
-  if (showInitialLoading) {
-    return <LoadingAnimation onComplete={() => setShowInitialLoading(false)} />;
-  }
-
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.9, ease: "easeInOut" }}
-    >
-      {children}
-    </motion.div>
-  );
 }
 
 function App() {
@@ -191,7 +95,7 @@ function App() {
                     <Teleprompter />
                   </ProtectedRoute>
                 } />
-                <Route path="/affirmations" element={<AffirmationsWrapper />} />
+                <Route path="/affirmations" element={<Affirmations />} />
               </Routes>
             </AnimatePresence>
             <Toaster />
