@@ -2,13 +2,14 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useLocation, useParams } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { Home } from "./components/Home";
 import { Chat } from "./components/Chat";
 import { Login } from "./components/Login";
 import { Intro } from "./components/Intro";
 import { QuickAnswers } from "./components/QuickAnswers";
 import { Affirmations } from "./components/Affirmations";
+import { ChatHistory } from "./components/ChatHistory";
 import { EmotionalReflectionDashboard } from "./components/EmotionalReflectionDashboard";
 import { createContext, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -41,36 +42,16 @@ function App() {
           <TooltipProvider>
             <AnimatePresence mode="wait">
               <Routes location={location} key={location.pathname}>
-                <Route path="/" element={
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.9, ease: "easeInOut" }}
-                  >
-                    <Intro />
-                  </motion.div>
-                } />
-                <Route path="/login" element={
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.9, ease: "easeInOut" }}
-                  >
-                    <Login />
-                  </motion.div>
-                } />
+                <Route path="/" element={<Intro />} />
+                <Route path="/login" element={<Login />} />
                 <Route path="/home" element={
                   <ProtectedRoute>
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.9, ease: "easeInOut" }}
-                    >
-                      <Home />
-                    </motion.div>
+                    <Home />
+                  </ProtectedRoute>
+                } />
+                <Route path="/chat-history" element={
+                  <ProtectedRoute>
+                    <ChatHistory />
                   </ProtectedRoute>
                 } />
                 <Route path="/quick-answers" element={
