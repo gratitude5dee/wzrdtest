@@ -3,6 +3,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { motion } from "framer-motion";
 import { Draggable } from "react-beautiful-dnd";
 import { EmotionsBreakdown } from "../charts/EmotionsBreakdown";
+import { cn } from "@/lib/utils";
 
 interface ChartSectionProps {
   chartId: string;
