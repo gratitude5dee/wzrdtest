@@ -58,9 +58,12 @@ export function ChatView({
         </div>
       </div>
       <CallBar
+        activeCall={personality}
         isMicMuted={isMicMuted}
         onMicToggle={onMicToggle}
         onEndCall={onEndCall}
+        callDuration={0}
+        setCallDuration={() => {}}
       />
     </div>
   );
