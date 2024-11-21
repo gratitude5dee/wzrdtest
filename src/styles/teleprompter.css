@@ -58,7 +58,7 @@
 @media (max-width: 640px) {
   .teleprompter-text {
     font-size: 2rem;
-    padding: 50vh 0;
+    padding: 15vh 0;
     max-width: 100%;
     line-height: 1.8;
   }

@@ -16,7 +16,7 @@ export const TeleprompterWord = ({
   currentWordIndex,
   onClick,
   highlightRef,
-  textColor,
+  textColor = "#785340",
 }: TeleprompterWordProps) => {
   return (
     <motion.span
@@ -47,7 +47,7 @@ export const TeleprompterWord = ({
       style={{
         color: index === currentWordIndex ? textColor : undefined,
         textShadow: index === currentWordIndex ? 
-          `0 0 20px ${textColor}40, 0 0 40px ${textColor}20` : undefined
+          `0 0 20px ${textColor}40, 0 0 40px ${textColor}20, 0 0 60px ${textColor}10` : undefined
       }}
     >
       {word}
