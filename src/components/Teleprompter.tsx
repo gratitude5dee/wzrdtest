@@ -18,33 +18,20 @@ interface TeleprompterProps {
   onExit?: () => void;
 }
 
-interface TeleprompterState {
-  script: string;
-  fontSize: number;
-  fontFamily: string;
-  textColor: string;
-}
-
 export const Teleprompter = ({
-  initialScript,
-  fontSize: initialFontSize,
-  fontFamily: initialFontFamily,
-  textColor: initialTextColor,
+  initialScript = '',
+  fontSize: initialFontSize = 44,
+  fontFamily: initialFontFamily = 'inter',
+  textColor: initialTextColor = '#F8FAFC',
   autoStart = false,
   onExit,
-}: TeleprompterProps = {}) => {
+}: TeleprompterProps) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [words, setWords] = useState<string[]>([]);
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
-  const [editableScript, setEditableScript] = useState('');
-  const { script, fontSize, fontFamily, textColor } = (location.state as TeleprompterState) || {
-    script: initialScript,
-    fontSize: initialFontSize,
-    fontFamily: initialFontFamily,
-    textColor: initialTextColor,
-  };
+  const [editableScript, setEditableScript] = useState(initialScript);
   
   const highlightRef = useRef<HTMLSpanElement>(null);
   const firstWordRef = useRef<HTMLSpanElement>(null);
@@ -62,13 +49,16 @@ export const Teleprompter = ({
   useKeyboardShortcuts(updateSpeed, togglePlay, speed);
 
   useEffect(() => {
-    if (!script) {
-      navigate('/');
+    const scriptToUse = location.state?.script || initialScript;
+    if (!scriptToUse) {
+      if (!onExit) {
+        navigate('/');
+      }
       return;
     }
-    setWords(script.split(/\s+/).filter(word => word.length > 0));
-    setEditableScript(script);
-  }, [script, navigate]);
+    setWords(scriptToUse.split(/\s+/).filter(word => word.length > 0));
+    setEditableScript(scriptToUse);
+  }, [location.state?.script, initialScript, navigate, onExit]);
 
   useEffect(() => {
     if (isPlaying) {
@@ -142,18 +132,18 @@ export const Teleprompter = ({
           <TeleprompterEditor
             editableScript={editableScript}
             setEditableScript={setEditableScript}
-            fontFamily={fontFamily}
-            fontSize={fontSize}
-            textColor={textColor}
+            fontFamily={initialFontFamily}
+            fontSize={initialFontSize}
+            textColor={initialTextColor}
           />
         ) : (
           <div 
             className="teleprompter-text max-w-4xl mx-auto"
             style={{
-              fontFamily: fontFamily === 'inter' ? 'Inter' : 
-                         fontFamily === 'cal-sans' ? 'Cal Sans' : fontFamily,
-              fontSize: `${fontSize / 16}rem`,
-              color: textColor,
+              fontFamily: initialFontFamily === 'inter' ? 'Inter' : 
+                         initialFontFamily === 'cal-sans' ? 'Cal Sans' : initialFontFamily,
+              fontSize: `${initialFontSize / 16}rem`,
+              color: initialTextColor,
             }}
           >
             {words.map((word, index) => (
@@ -165,7 +155,7 @@ export const Teleprompter = ({
                 onClick={handleWordClick}
                 highlightRef={index === currentWordIndex ? highlightRef : 
                             index === 0 ? firstWordRef : null}
-                textColor={textColor}
+                textColor={initialTextColor}
               />
             ))}
           </div>

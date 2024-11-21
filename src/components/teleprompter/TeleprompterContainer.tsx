@@ -20,7 +20,6 @@ export const TeleprompterContainer = ({
 
   useEffect(() => {
     if (!initialScrollComplete.current && containerRef.current && firstWordRef?.current) {
-      // Immediate initial scroll for better positioning
       scrollToWord(firstWordRef.current!, containerRef.current!, false);
       initialScrollComplete.current = true;
     }
