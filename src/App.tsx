@@ -46,9 +46,9 @@ function AffirmationsWrapper() {
         transition={{ duration: 0.9, ease: "easeInOut" }}
       >
         <Teleprompter 
-          initialScript={affirmationsText} 
-          fontSize={44} 
-          fontFamily="cal-sans" 
+          initialScript={affirmationsText}
+          fontSize={44}
+          fontFamily="cal-sans"
           textColor="#785340"
           autoStart={true}
           onExit={() => navigate('/home')}
