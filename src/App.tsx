@@ -2,14 +2,14 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation, Navigate, useNavigate, useParams } from "react-router-dom";
 import { Home } from "./components/Home";
 import { Chat } from "./components/Chat";
 import { Login } from "./components/Login";
 import { Intro } from "./components/Intro";
 import { QuickAnswers } from "./components/QuickAnswers";
 import Teleprompter from "./components/Teleprompter";
-import EmotionalReflectionPage from "./pages/EmotionalReflectionDashboard";
+import { EmotionalReflectionDashboard } from "./components/EmotionalReflectionDashboard";
 import { LoadingAnimation } from "./components/LoadingAnimation";
 import { createContext, useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -26,6 +26,37 @@ export const ActiveCallContext = createContext<{
   activeCall: null,
   setActiveCall: () => {},
 });
+
+function ChatWrapper() {
+  const { personality } = useParams();
+  return <Chat personality={personality || "Assistant"} />;
+}
+
+function AffirmationsWrapper() {
+  const navigate = useNavigate();
+  const affirmationsText = "I am worthy of love and respect. Every day I grow stronger and more confident. I trust in my abilities and embrace new challenges. My potential is limitless. I radiate positivity and attract success. I am grateful for all that I have. I choose to be happy and spread joy to others. I am exactly where I need to be. My future is bright and full of possibilities. I deserve all the good things life has to offer.";
+
+  return (
+    <ProtectedRoute>
+      <motion.div 
+        className="fixed inset-0 min-h-screen w-full bg-[#FFF8F6] overflow-hidden"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.9, ease: "easeInOut" }}
+      >
+        <Teleprompter 
+          initialScript={affirmationsText} 
+          fontSize={44} 
+          fontFamily="cal-sans" 
+          textColor="#785340"
+          autoStart={true}
+          onExit={() => navigate('/home')}
+        />
+      </motion.div>
+    </ProtectedRoute>
+  );
+}
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
@@ -70,37 +101,6 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
     >
       {children}
     </motion.div>
-  );
-}
-
-function ChatWrapper() {
-  const { personality } = useParams();
-  return <Chat personality={personality || "Assistant"} />;
-}
-
-function AffirmationsWrapper() {
-  const navigate = useNavigate();
-  const affirmationsText = "I am worthy of love and respect. Every day I grow stronger and more confident. I trust in my abilities and embrace new challenges. My potential is limitless. I radiate positivity and attract success. I am grateful for all that I have. I choose to be happy and spread joy to others. I am exactly where I need to be. My future is bright and full of possibilities. I deserve all the good things life has to offer.";
-
-  return (
-    <ProtectedRoute>
-      <motion.div 
-        className="fixed inset-0 min-h-screen w-full bg-[#FFF8F6] overflow-hidden"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.9, ease: "easeInOut" }}
-      >
-        <Teleprompter 
-          initialScript={affirmationsText} 
-          fontSize={44} 
-          fontFamily="cal-sans" 
-          textColor="#785340"
-          autoStart={true}
-          onExit={() => navigate('/home')}
-        />
-      </motion.div>
-    </ProtectedRoute>
   );
 }
 
@@ -159,7 +159,7 @@ function App() {
                 } />
                 <Route path="/emotional-reflection" element={
                   <ProtectedRoute>
-                    <EmotionalReflectionPage />
+                    <EmotionalReflectionDashboard />
                   </ProtectedRoute>
                 } />
                 <Route path="/teleprompter" element={
