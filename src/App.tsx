@@ -15,7 +15,6 @@ import { createContext, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ThemeProvider } from "@/hooks/useTheme";
 import { ProtectedRoute } from "./components/ProtectedRoute";
-import "./styles/animations.css";
 
 const queryClient = new QueryClient();
 
@@ -95,7 +94,11 @@ function App() {
                     <Teleprompter />
                   </ProtectedRoute>
                 } />
-                <Route path="/affirmations" element={<Affirmations />} />
+                <Route path="/affirmations" element={
+                  <ProtectedRoute>
+                    <Affirmations />
+                  </ProtectedRoute>
+                } />
               </Routes>
             </AnimatePresence>
             <Toaster />

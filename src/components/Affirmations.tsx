@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import Teleprompter from "./Teleprompter";
-import { ProtectedRoute } from "./ProtectedRoute";
 
 const affirmationsText = `I am worthy of love and respect.
 Each day brings new opportunities for growth and learning.
@@ -33,23 +32,21 @@ export const Affirmations = () => {
   const navigate = useNavigate();
 
   return (
-    <ProtectedRoute>
-      <motion.div 
-        className="fixed inset-0 min-h-screen w-full bg-[#FFF8F6] overflow-hidden"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.9, ease: "easeInOut" }}
-      >
-        <Teleprompter 
-          initialScript={affirmationsText}
-          fontSize={44}
-          fontFamily="cal-sans"
-          textColor="#785340"
-          autoStart={true}
-          onExit={() => navigate('/home')}
-        />
-      </motion.div>
-    </ProtectedRoute>
+    <motion.div 
+      className="fixed inset-0 min-h-screen w-full bg-[#FFF8F6] overflow-hidden"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.9, ease: "easeInOut" }}
+    >
+      <Teleprompter 
+        initialScript={affirmationsText}
+        fontSize={44}
+        fontFamily="cal-sans"
+        textColor="#785340"
+        autoStart={true}
+        onExit={() => navigate('/home')}
+      />
+    </motion.div>
   );
 };
