@@ -2,13 +2,14 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useLocation, Navigate, useNavigate, useParams } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { Home } from "./components/Home";
 import { Chat } from "./components/Chat";
 import { Login } from "./components/Login";
 import { Intro } from "./components/Intro";
 import { QuickAnswers } from "./components/QuickAnswers";
 import Teleprompter from "./components/Teleprompter";
+import EmotionalReflectionPage from "./pages/EmotionalReflectionDashboard";
 import { LoadingAnimation } from "./components/LoadingAnimation";
 import { createContext, useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -154,6 +155,11 @@ function App() {
                 <Route path="/chat/:personality" element={
                   <ProtectedRoute>
                     <ChatWrapper />
+                  </ProtectedRoute>
+                } />
+                <Route path="/emotional-reflection" element={
+                  <ProtectedRoute>
+                    <EmotionalReflectionPage />
                   </ProtectedRoute>
                 } />
                 <Route path="/teleprompter" element={

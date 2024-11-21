@@ -155,6 +155,8 @@ export function PersonalityGrid({ hoveredCard, setHoveredCard, navigate }: Perso
               navigate("/affirmations");
             } else if (personality.id === "quick-answers") {
               navigate("/quick-answers");
+            } else if (personality.id === "emotional-reflection") {
+              navigate("/emotional-reflection");
             } else {
               navigate(`/chat/${personality.id}`);
             }
