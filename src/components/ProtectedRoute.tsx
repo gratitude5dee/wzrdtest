@@ -30,10 +30,6 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     return <LoadingAnimation />;
   }
 
-  if (!authenticated) {
-    return <Navigate to="/login" replace />;
-  }
-
   if (showInitialLoading) {
     return <LoadingAnimation onComplete={() => setShowInitialLoading(false)} />;
   }

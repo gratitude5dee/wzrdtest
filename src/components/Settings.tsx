@@ -11,11 +11,13 @@ import { PreferencesSection } from "./settings/PreferencesSection";
 import { useProfileManager } from "./settings/ProfileManager";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@crossmint/client-sdk-react-ui";
 
 export function Settings({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
   const [view, setView] = useState<'main' | 'profile' | 'preferences'>('main');
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { logout } = useAuth();
   const {
     firstName,
     lastName,
@@ -40,10 +42,10 @@ export function Settings({ open, onOpenChange }: { open: boolean; onOpenChange: 
 
   const handleLogout = async () => {
     try {
-      await supabase.auth.signOut();
+      logout();
       onOpenChange(false);
-      navigate('/login', { replace: true });
-      
+      navigate('/logout', { replace: true });
+
       toast({
         title: "Success",
         description: "You have been logged out successfully",
@@ -83,9 +85,9 @@ export function Settings({ open, onOpenChange }: { open: boolean; onOpenChange: 
         return (
           <div className="h-[600px] flex flex-col bg-white">
             <div className="flex items-center p-4 border-b">
-              <Button 
-                variant="ghost" 
-                size="icon" 
+              <Button
+                variant="ghost"
+                size="icon"
                 className="mr-2 rounded-full hover:bg-gray-100"
                 onClick={() => setView('main')}
               >
@@ -108,7 +110,7 @@ export function Settings({ open, onOpenChange }: { open: boolean; onOpenChange: 
             </div>
 
             <div className="p-4 border-t">
-              <Button 
+              <Button
                 className="w-full h-10 rounded-lg text-sm font-medium bg-gray-900 hover:bg-gray-800 text-white"
                 onClick={handleSave}
               >
@@ -121,9 +123,9 @@ export function Settings({ open, onOpenChange }: { open: boolean; onOpenChange: 
         return (
           <div className="h-full flex flex-col">
             <div className="flex items-center p-6 border-b border-gray-100">
-              <Button 
-                variant="ghost" 
-                size="icon" 
+              <Button
+                variant="ghost"
+                size="icon"
                 className="mr-2 rounded-full"
                 onClick={() => setView('main')}
               >
