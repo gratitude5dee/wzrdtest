@@ -9,29 +9,23 @@
   letter-spacing: -0.02em;
   white-space: pre-wrap;
   word-spacing: 0.35em;
-  color: rgba(120, 83, 64, 0.2);
   transform: translateZ(0);
   will-change: transform;
   backface-visibility: hidden;
 }
 
 .smooth-scroll {
-  scroll-behavior: auto;
+  scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
   will-change: scroll-position;
   overscroll-behavior-y: contain;
 }
 
 .word-highlight {
-  color: rgb(120, 83, 64);
   font-weight: 600;
-  background: rgba(120, 83, 64, 0.04);
   border-radius: 1em;
   padding: 0.3em 0.6em;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 
-    0 0 40px rgba(120, 83, 64, 0.15),
-    0 8px 24px rgba(120, 83, 64, 0.1);
   transform-origin: center;
 }
 
@@ -56,30 +50,15 @@
   border-radius: 9999px;
   border: 1px solid rgba(120, 83, 64, 0.1);
   z-index: 50;
-  box-shadow: 0 4px 6px -1px rgba(120, 83, 64, 0.05), 0 2px 4px -1px rgba(120, 83, 64, 0.03);
-}
-
-.nav-button {
-  width: 2.75rem;
-  height: 2.75rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(120, 83, 64, 0.1);
-  color: rgb(120, 83, 64);
-  transition: all 0.2s;
-}
-
-.nav-button:hover {
-  background: rgba(120, 83, 64, 0.1);
+  box-shadow: 
+    0 4px 6px -1px rgba(120, 83, 64, 0.05),
+    0 2px 4px -1px rgba(120, 83, 64, 0.03);
 }
 
 @media (max-width: 640px) {
   .teleprompter-text {
     font-size: 2rem;
-    padding: 50vh 0;
+    padding: 15vh 0;
     max-width: 100%;
     line-height: 1.8;
   }

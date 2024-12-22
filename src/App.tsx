@@ -1,106 +1,101 @@
+import { Buffer } from 'buffer';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useLocation, Navigate, useNavigate, useParams } from "react-router-dom";
+import { Routes, Route, useLocation, useParams } from "react-router-dom";
 import { Home } from "./components/Home";
 import { Chat } from "./components/Chat";
 import { Login } from "./components/Login";
 import { Intro } from "./components/Intro";
 import { QuickAnswers } from "./components/QuickAnswers";
-import Teleprompter from "./components/Teleprompter";
-import { LoadingAnimation } from "./components/LoadingAnimation";
-import { createContext, useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { AnimatePresence, motion } from "framer-motion";
+import { Affirmations } from "./components/Affirmations";
+import { ChatHistory } from "./components/ChatHistory";
+import { EmotionalReflectionDashboard } from "./components/EmotionalReflectionDashboard";
+import { createContext, useState } from "react";
+import { AnimatePresence } from "framer-motion";
 import { ThemeProvider } from "@/hooks/useTheme";
-import "./styles/animations.css";
+import { ProtectedRoute } from "./components/ProtectedRoute";
+import { useEffect } from "react";
+
+window.Buffer = Buffer;
 
 const queryClient = new QueryClient();
+
+// TODO: route through a backend server.
+const crossmintEndpoint = 'https://www.crossmint.com/api/v1-alpha2';
+
+// TODO: No API Keys on the frontend
+const crossmintApiKey = import.meta.env.VITE_CROSSMINT_API_KEY || '';
+
+// TODO: one wallet per user
+const userWallet = 'yE6XZFvVaPAnN5KShY9U5AekNGyZ1YharCSSTt2Vm7v';
+
+const storeWallet = 'HQdycpZvKJMU8Y555e7u6TffSZTGrPxMZJmgq2Zw8dqw';
 
 export const ActiveCallContext = createContext<{
   activeCall: string | null;
   setActiveCall: (personality: string | null) => void;
 }>({
   activeCall: null,
-  setActiveCall: () => {},
+  setActiveCall: () => { },
 });
 
-function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const [loading, setLoading] = useState(true);
-  const [authenticated, setAuthenticated] = useState(false);
-  const [showInitialLoading, setShowInitialLoading] = useState(true);
+export const SolanaContext = createContext<{
+  balance: number;
+  address: string;
+  storeAddress: string;
+  endpoint: string;
+  apiKey: string;
+  setBalance: (balance: number) => void;
+}>({
+  balance: 0,
+  address: userWallet,
+  storeAddress: storeWallet,
+  apiKey: crossmintApiKey,
+  endpoint: crossmintEndpoint,
+  setBalance: () => { },
+});
+
+function SolanaProvider({ children }: { children: React.ReactNode }) {
+  const [balance, setBalance] = useState<number>(0);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setAuthenticated(!!session);
-      setLoading(false);
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      setAuthenticated(!!session);
-      if (event === 'SIGNED_IN') {
-        setShowInitialLoading(true);
-        setTimeout(() => setShowInitialLoading(false), 5000);
+    const fetchBalance = async () => {
+      try {
+        const response = await fetch(`${crossmintEndpoint}/wallets/${userWallet}/balances?currencies=sol`, {
+          headers: {
+            'X-API-KEY': crossmintApiKey
+          }
+        });
+        const data = await response.json();
+        setBalance(parseFloat(data[0].balances["solana"]));
+      } catch (error) {
+        console.error("Failed to fetch balance:", error);
       }
-    });
+    };
 
-    return () => subscription.unsubscribe();
+    const intervalId = setInterval(fetchBalance, 1000);
+
+    return () => clearInterval(intervalId);
   }, []);
 
-  if (loading) {
-    return <LoadingAnimation />;
-  }
-
-  if (!authenticated) {
-    return <Navigate to="/login" replace />;
-  }
-
-  if (showInitialLoading) {
-    return <LoadingAnimation onComplete={() => setShowInitialLoading(false)} />;
-  }
-
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.9, ease: "easeInOut" }}
-    >
+    <SolanaContext.Provider value={{
+      balance, setBalance,
+      address: userWallet,
+      storeAddress: storeWallet,
+      endpoint: crossmintEndpoint,
+      apiKey: crossmintApiKey
+    }}>
       {children}
-    </motion.div>
+    </SolanaContext.Provider>
   );
 }
 
 function ChatWrapper() {
   const { personality } = useParams();
   return <Chat personality={personality || "Assistant"} />;
-}
-
-function AffirmationsWrapper() {
-  const navigate = useNavigate();
-  const affirmationsText = "I am worthy of love and respect. Every day I grow stronger and more confident. I trust in my abilities and embrace new challenges. My potential is limitless. I radiate positivity and attract success. I am grateful for all that I have. I choose to be happy and spread joy to others. I am exactly where I need to be. My future is bright and full of possibilities. I deserve all the good things life has to offer.";
-
-  return (
-    <ProtectedRoute>
-      <motion.div 
-        className="fixed inset-0 min-h-screen w-full bg-[#FFF8F6] overflow-hidden"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.9, ease: "easeInOut" }}
-      >
-        <Teleprompter 
-          initialScript={affirmationsText} 
-          fontSize={44} 
-          fontFamily="cal-sans" 
-          textColor="#785340"
-          autoStart={true}
-          onExit={() => navigate('/home')}
-        />
-      </motion.div>
-    </ProtectedRoute>
-  );
 }
 
 function App() {
@@ -110,64 +105,50 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
-        <ActiveCallContext.Provider value={{ activeCall, setActiveCall }}>
-          <TooltipProvider>
-            <AnimatePresence mode="wait">
-              <Routes location={location} key={location.pathname}>
-                <Route path="/" element={
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.9, ease: "easeInOut" }}
-                  >
-                    <Intro />
-                  </motion.div>
-                } />
-                <Route path="/login" element={
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.9, ease: "easeInOut" }}
-                  >
-                    <Login />
-                  </motion.div>
-                } />
-                <Route path="/home" element={
-                  <ProtectedRoute>
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.9, ease: "easeInOut" }}
-                    >
+        <SolanaProvider>
+          <ActiveCallContext.Provider value={{ activeCall, setActiveCall }}>
+            <TooltipProvider>
+              <AnimatePresence mode="wait">
+                <Routes location={location} key={location.pathname}>
+                  <Route path="/" element={<Intro />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/home" element={
+                    <ProtectedRoute>
                       <Home />
-                    </motion.div>
-                  </ProtectedRoute>
-                } />
-                <Route path="/quick-answers" element={
-                  <ProtectedRoute>
-                    <QuickAnswers />
-                  </ProtectedRoute>
-                } />
-                <Route path="/chat/:personality" element={
-                  <ProtectedRoute>
-                    <ChatWrapper />
-                  </ProtectedRoute>
-                } />
-                <Route path="/teleprompter" element={
-                  <ProtectedRoute>
-                    <Teleprompter />
-                  </ProtectedRoute>
-                } />
-                <Route path="/affirmations" element={<AffirmationsWrapper />} />
-              </Routes>
-            </AnimatePresence>
-            <Toaster />
-            <Sonner />
-          </TooltipProvider>
-        </ActiveCallContext.Provider>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/chat-history" element={
+                    <ProtectedRoute>
+                      <ChatHistory />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/quick-answers" element={
+                    <ProtectedRoute>
+                      <QuickAnswers />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/chat/:personality" element={
+                    <ProtectedRoute>
+                      <ChatWrapper />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/emotional-reflection" element={
+                    <ProtectedRoute>
+                      <EmotionalReflectionDashboard />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/affirmations" element={
+                    <ProtectedRoute>
+                      <Affirmations />
+                    </ProtectedRoute>
+                  } />
+                </Routes>
+              </AnimatePresence>
+              <Toaster />
+              <Sonner />
+            </TooltipProvider>
+          </ActiveCallContext.Provider>
+        </SolanaProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );

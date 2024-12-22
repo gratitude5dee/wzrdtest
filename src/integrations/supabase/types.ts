@@ -9,6 +9,128 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      chat_history: {
+        Row: {
+          created_at: string | null
+          emotion_name: string | null
+          emotion_score: number | null
+          id: string
+          is_user_message: boolean | null
+          message: string
+          personality: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          emotion_name?: string | null
+          emotion_score?: number | null
+          id?: string
+          is_user_message?: boolean | null
+          message: string
+          personality: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          emotion_name?: string | null
+          emotion_score?: number | null
+          id?: string
+          is_user_message?: boolean | null
+          message?: string
+          personality?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_history_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      emotional_responses: {
+        Row: {
+          created_at: string | null
+          emotion_name: string
+          emotion_score: number
+          id: string
+          is_user_message: boolean | null
+          session_id: string | null
+          timestamp: string | null
+          transcript: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          emotion_name: string
+          emotion_score: number
+          id?: string
+          is_user_message?: boolean | null
+          session_id?: string | null
+          timestamp?: string | null
+          transcript?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          emotion_name?: string
+          emotion_score?: number
+          id?: string
+          is_user_message?: boolean | null
+          session_id?: string | null
+          timestamp?: string | null
+          transcript?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "emotional_responses_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "voice_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "emotional_responses_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      personality_configs: {
+        Row: {
+          created_at: string | null
+          id: string
+          personality_id: string
+          response_format: string
+          style: string
+          updated_at: string | null
+          voice: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          personality_id: string
+          response_format: string
+          style: string
+          updated_at?: string | null
+          voice: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          personality_id?: string
+          response_format?: string
+          style?: string
+          updated_at?: string | null
+          voice?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -215,6 +337,47 @@ export type Database = {
           },
         ]
       }
+      voice_sessions: {
+        Row: {
+          created_at: string | null
+          duration_seconds: number | null
+          end_time: string | null
+          id: string
+          personality: string
+          start_time: string | null
+          status: Database["public"]["Enums"]["session_status"] | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          duration_seconds?: number | null
+          end_time?: string | null
+          id?: string
+          personality: string
+          start_time?: string | null
+          status?: Database["public"]["Enums"]["session_status"] | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          duration_seconds?: number | null
+          end_time?: string | null
+          id?: string
+          personality?: string
+          start_time?: string | null
+          status?: Database["public"]["Enums"]["session_status"] | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "voice_sessions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -223,6 +386,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      session_status: "active" | "completed" | "interrupted"
       share_permission: "read" | "edit"
     }
     CompositeTypes: {

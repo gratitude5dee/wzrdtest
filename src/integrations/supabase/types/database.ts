@@ -3,7 +3,8 @@ import type {
   ScriptsTable,
   ScriptAnalyticsTable,
   ScriptSharesTable,
-  UserPreferencesTable 
+  UserPreferencesTable,
+  ChatHistoryTable
 } from './tables';
 
 export interface Database {
@@ -14,6 +15,7 @@ export interface Database {
       script_analytics: ScriptAnalyticsTable
       script_shares: ScriptSharesTable
       user_preferences: UserPreferencesTable
+      chat_history: ChatHistoryTable
     }
     Views: {
       [_ in never]: never

@@ -116,3 +116,36 @@ export interface ScriptSharesTable {
 }
 
 export { type UserPreferencesTable } from './preferences';
+
+export interface ChatHistoryTable {
+  Row: {
+    id: string
+    user_id: string | null
+    personality: string
+    message: string
+    emotion_name: string | null
+    emotion_score: number | null
+    is_user_message: boolean | null
+    created_at: string | null
+  }
+  Insert: {
+    id?: string
+    user_id?: string | null
+    personality: string
+    message: string
+    emotion_name?: string | null
+    emotion_score?: number | null
+    is_user_message?: boolean | null
+    created_at?: string | null
+  }
+  Update: {
+    id?: string
+    user_id?: string | null
+    personality?: string
+    message?: string
+    emotion_name?: string | null
+    emotion_score?: number | null
+    is_user_message?: boolean | null
+    created_at?: string | null
+  }
+}

@@ -1,38 +1,29 @@
 import { supabase } from "@/integrations/supabase/client";
-
-interface HumeMessage {
-  type: 'transcript' | 'response' | 'interruption';
-  text?: string;
-  emotions?: Array<{
-    name: string;
-    score: number;
-  }>;
-}
-
-interface HumeConfig {
-  voice: string;
-  style: string;
-  responseFormat: string;
-}
+import { HumeConfig, HumeCallbacks } from "./types";
+import { SessionManager } from "./sessionManager";
+import { AudioManager } from "./audioManager";
 
 class HumeService {
   private socket: WebSocket | null = null;
-  private recorder: MediaRecorder | null = null;
-  private audioStream: MediaStream | null = null;
+  private sessionManager: SessionManager;
+  private audioManager: AudioManager;
   private onMessageCallback: ((message: any) => void) | null = null;
-  private currentSessionId: string | null = null;
+
+  constructor() {
+    this.sessionManager = new SessionManager();
+    this.audioManager = new AudioManager();
+  }
 
   async connect(onMessage: (message: any) => void, personality: string) {
     try {
       const config = await this.getPersonalityConfig(personality);
       
-      // Initialize WebSocket connection to Hume EVI
-      this.socket = new WebSocket('wss://api.hume.ai/v0/evi/stream');
+      // Initialize WebSocket connection to Hume MVI
+      this.socket = new WebSocket('wss://api.hume.ai/v0/mvi/stream');
       this.onMessageCallback = onMessage;
       
       // Create a new voice session
-      const session = await this.createVoiceSession(personality);
-      this.currentSessionId = session.id;
+      await this.sessionManager.createVoiceSession(personality);
       
       await this.setupSocketHandlers(config);
       await this.startAudioCapture();
@@ -66,47 +57,11 @@ class HumeService {
     };
   }
 
-  private async createVoiceSession(personality: string) {
-    const { data: session, error } = await supabase
-      .from('voice_sessions')
-      .insert({
-        personality,
-        status: 'active'
-      })
-      .select()
-      .single();
-
-    if (error) throw error;
-    return session;
-  }
-
-  private async storeEmotionalResponse(
-    emotions: Array<{ name: string; score: number }>,
-    transcript: string,
-    isUser: boolean
-  ) {
-    if (!this.currentSessionId) return;
-
-    const { error } = await supabase
-      .from('emotional_responses')
-      .insert(
-        emotions.map(emotion => ({
-          session_id: this.currentSessionId,
-          emotion_name: emotion.name,
-          emotion_score: emotion.score,
-          transcript,
-          is_user_message: isUser
-        }))
-      );
-
-    if (error) console.error('Failed to store emotional response:', error);
-  }
-
   private async setupSocketHandlers(config: HumeConfig) {
     if (!this.socket) return;
 
     this.socket.onopen = () => {
-      console.log('Connected to Hume EVI');
+      console.log('Connected to Hume MVI');
       if (this.socket) {
         this.socket.send(JSON.stringify({
           type: 'config',
@@ -119,12 +74,12 @@ class HumeService {
     };
 
     this.socket.onmessage = async (event) => {
-      const message: HumeMessage = JSON.parse(event.data);
+      const message = JSON.parse(event.data);
       
       switch (message.type) {
         case 'transcript':
           if (message.emotions && message.text) {
-            await this.storeEmotionalResponse(message.emotions, message.text, true);
+            await this.sessionManager.storeEmotionalResponse(message.emotions, message.text, true);
           }
           this.onMessageCallback?.({
             type: 'user_message',
@@ -138,7 +93,7 @@ class HumeService {
         
         case 'response':
           if (message.emotions && message.text) {
-            await this.storeEmotionalResponse(message.emotions, message.text, false);
+            await this.sessionManager.storeEmotionalResponse(message.emotions, message.text, false);
           }
           this.onMessageCallback?.({
             type: 'assistant_message',
@@ -164,53 +119,24 @@ class HumeService {
   }
 
   private async startAudioCapture() {
-    try {
-      this.audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mimeType = 'audio/webm';
-
-      this.recorder = new MediaRecorder(this.audioStream, { mimeType });
-      
-      this.recorder.ondataavailable = async ({ data }) => {
-        if (data.size > 0 && this.socket?.readyState === WebSocket.OPEN) {
-          this.socket.send(data);
-        }
-      };
-
-      this.recorder.start(100);
-    } catch (error) {
-      console.error('Failed to start audio capture:', error);
-    }
+    await this.audioManager.startAudioCapture((data) => {
+      if (this.socket?.readyState === WebSocket.OPEN) {
+        this.socket.send(data);
+      }
+    });
   }
 
   async cleanup() {
     try {
-      if (this.currentSessionId) {
-        const { error } = await supabase
-          .from('voice_sessions')
-          .update({
-            status: 'completed',
-            end_time: new Date().toISOString(),
-          })
-          .eq('id', this.currentSessionId);
-
-        if (error) console.error('Failed to update session status:', error);
-      }
-
-      if (this.recorder?.state === 'recording') {
-        this.recorder.stop();
-      }
-      
-      this.audioStream?.getTracks().forEach(track => track.stop());
+      await this.sessionManager.completeSession();
+      this.audioManager.cleanup();
       
       if (this.socket?.readyState === WebSocket.OPEN) {
         this.socket.close();
       }
       
       this.socket = null;
-      this.recorder = null;
-      this.audioStream = null;
       this.onMessageCallback = null;
-      this.currentSessionId = null;
     } catch (error) {
       console.error('Error during cleanup:', error);
     }

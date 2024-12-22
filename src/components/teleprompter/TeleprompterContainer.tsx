@@ -20,7 +20,6 @@ export const TeleprompterContainer = ({
 
   useEffect(() => {
     if (!initialScrollComplete.current && containerRef.current && firstWordRef?.current) {
-      // Immediate initial scroll for better positioning
       scrollToWord(firstWordRef.current!, containerRef.current!, false);
       initialScrollComplete.current = true;
     }
@@ -31,15 +30,11 @@ export const TeleprompterContainer = ({
       ref={containerRef}
       className={cn(
         "fixed inset-0 overflow-y-auto overflow-x-hidden scroll-smooth",
-        "px-4 md:px-8 lg:px-16"
+        "px-4 md:px-8 lg:px-16 bg-[#FFF8F6]"
       )}
-      style={{ 
-        perspective: '1000px',
-        transformStyle: 'preserve-3d'
-      }}
     >
-      <div className="min-h-[200vh] w-full">
-        <div className="py-[50vh] flex items-center justify-center">
+      <div className="min-h-[200vh] w-full flex items-center justify-center">
+        <div className="py-[50vh]">
           {children}
         </div>
       </div>

@@ -16,7 +16,7 @@ export const TeleprompterWord = ({
   currentWordIndex,
   onClick,
   highlightRef,
-  textColor,
+  textColor = "#785340",
 }: TeleprompterWordProps) => {
   return (
     <motion.span
@@ -24,25 +24,20 @@ export const TeleprompterWord = ({
       ref={highlightRef}
       onClick={() => onClick(index)}
       className={cn(
-        "inline-block mx-2 px-2 py-1 rounded-xl cursor-pointer transition-colors",
-        index === currentWordIndex
-          ? "text-teleprompter-highlight scale-110 bg-teleprompter-highlight/10 font-semibold"
-          : index < currentWordIndex
-          ? "opacity-40"
-          : "opacity-80"
+        "relative inline-block mx-2 px-2 py-1 rounded-xl cursor-pointer transition-all duration-500",
+        index === currentWordIndex ? "scale-110 font-semibold" : "",
+        index < currentWordIndex ? "opacity-40" : "opacity-80"
       )}
       initial={false}
       animate={{
         scale: index === currentWordIndex ? 1.1 : 1,
         y: index === currentWordIndex ? -8 : 0,
-        opacity: index === currentWordIndex ? 1 : 
-                index < currentWordIndex ? 0.4 : 0.8,
-      }}
-      transition={{
-        type: "spring",
-        stiffness: 500,
-        damping: 30,
-        mass: 1
+        transition: {
+          type: "spring",
+          stiffness: 500,
+          damping: 30,
+          mass: 1
+        }
       }}
       whileHover={{
         scale: 1.05,
@@ -50,13 +45,15 @@ export const TeleprompterWord = ({
         transition: { duration: 0.2 }
       }}
       style={{
-        color: index === currentWordIndex ? '#3B82F6' : textColor
+        color: index === currentWordIndex ? textColor : undefined,
+        textShadow: index === currentWordIndex ? 
+          `0 0 20px ${textColor}40, 0 0 40px ${textColor}20, 0 0 60px ${textColor}10` : undefined
       }}
     >
       {word}
       {index === currentWordIndex && (
         <motion.div
-          className="absolute inset-0 rounded-xl bg-blue-500/5"
+          className="absolute inset-0 rounded-xl"
           initial={{ opacity: 0 }}
           animate={{ 
             opacity: [0.2, 0.6, 0.2],
@@ -66,6 +63,9 @@ export const TeleprompterWord = ({
             duration: 2,
             repeat: Infinity,
             ease: "easeInOut"
+          }}
+          style={{
+            background: `${textColor}10`
           }}
         />
       )}
