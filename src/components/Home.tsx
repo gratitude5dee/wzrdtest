@@ -11,6 +11,7 @@ import { GradientShader } from "./GradientShader";
 import { motion } from "framer-motion";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { LAMPORT_COUNT } from "@/services/solanaService";
+import { useAuth } from "@crossmint/client-sdk-react-ui";
 
 export function Home() {
   const navigate = useNavigate();
@@ -24,6 +25,9 @@ export function Home() {
   const [callDuration, setCallDuration] = useState(0);
   const [balanceModalOpen, setBalanceModalOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const { login } = useAuth();
+
+
 
   const handleMicToggle = () => setIsMicMuted(!isMicMuted);
   const handleEndCall = () => setActiveCall(null);

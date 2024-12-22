@@ -135,6 +135,33 @@ export function PersonalityGrid({ hoveredCard, setHoveredCard, navigate }: Perso
     };
   }, [hoveredCard, setHoveredCard, debouncedMouseMove, resetCard]);
 
+  const pay = async (): Promise<boolean> => {
+    if (import.meta.env.VITE_USE_PAYMENTS == "true") {
+      // Assert balance.
+      if (balance < LAMPORT_COST) {
+        alert("Insufficient balance to proceed!");
+        return false;
+      }
+
+      // Transfer SOL to seller account.
+      const base58Transaction = await createTransferTransaction(address, storeAddress, LAMPORT_COST);
+      console.log("Base58 encoded Solana transaction:", base58Transaction);
+      await fetch(`${endpoint}/wallets/${address}/transactions`, {
+        method: "POST",
+        headers: {
+          "X-API-KEY": apiKey,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          params: {
+            transaction: base58Transaction
+          }
+        })
+      });
+    }
+    return true;
+  }
+
   return (
     <div className="grid grid-cols-2 auto-rows-[180px] gap-4">
       {personalities.map((personality) => (
@@ -158,32 +185,15 @@ export function PersonalityGrid({ hoveredCard, setHoveredCard, navigate }: Perso
               'z-0 hover:shadow-xl hover:shadow-white/20'
           )}
           onClick={async () => {
+            if (personality.id === "quick-answers"
+              || personality.id === "storytelling"
+              || personality.id === "life-advice"
+              || personality.id === "deeper-questions") {
+              if (!(await pay())) return;
+            }
             if (personality.id === "affirmations") {
               navigate("/affirmations");
             } else if (personality.id === "quick-answers") {
-              if (import.meta.env.VITE_USE_PAYMENTS == "true") {
-                // Assert balance.
-                if (balance < LAMPORT_COST) {
-                  alert("Insufficient balance to proceed!");
-                  return;
-                }
-
-                // Transfer SOL to seller account.
-                const base58Transaction = await createTransferTransaction(address, storeAddress, LAMPORT_COST);
-                console.log("Base58 encoded Solana transaction:", base58Transaction);
-                await fetch(`${endpoint}/wallets/${address}/transactions`, {
-                  method: "POST",
-                  headers: {
-                    "X-API-KEY": apiKey,
-                    "Content-Type": "application/json"
-                  },
-                  body: JSON.stringify({
-                    params: {
-                      transaction: base58Transaction
-                    }
-                  })
-                });
-              }
               navigate("/quick-answers");
             } else if (personality.id === "emotional-reflection") {
               navigate("/emotional-reflection");
