@@ -2,6 +2,9 @@ import { personalities } from "@/data/personalities";
 import { cn } from "@/lib/utils";
 import { useEffect, useRef, useCallback } from "react";
 import { debounce } from "lodash";
+import { SolanaContext } from "../App";
+import { useContext } from "react";
+import { createTransferTransaction, LAMPORT_COUNT } from "@/services/solanaService";
 
 interface PersonalityGridProps {
   hoveredCard: string | null;
@@ -14,10 +17,14 @@ const MAX_ROTATION = 8;
 const MAX_LIFT = 1.03;
 const MAGNETIC_PULL = 0.15;
 
+const LAMPORT_COST = 1500000;
+
 export function PersonalityGrid({ hoveredCard, setHoveredCard, navigate }: PersonalityGridProps) {
   const cardRefs = useRef<{ [key: string]: HTMLButtonElement | null }>({});
   const velocities = useRef<{ [key: string]: { x: number; y: number; scale: number } }>({});
   const rafId = useRef<number>();
+
+  const { balance, address, apiKey, endpoint, storeAddress } = useContext(SolanaContext);
 
   const calculateDynamics = useCallback((e: MouseEvent, card: HTMLElement, rect: DOMRect) => {
     const centerX = rect.left + rect.width / 2;
@@ -42,12 +49,12 @@ export function PersonalityGrid({ hoveredCard, setHoveredCard, navigate }: Perso
   }, []);
 
   const applyCardTransform = useCallback((
-    card: HTMLElement, 
+    card: HTMLElement,
     dynamics: { rotationX: number; rotationY: number; lift: number; pullX: number; pullY: number; pullStrength: number; distance: number }
   ) => {
     const { rotationX, rotationY, lift, pullX, pullY, pullStrength } = dynamics;
     const cardId = card.getAttribute('data-card-id') || '';
-    
+
     if (!velocities.current[cardId]) {
       velocities.current[cardId] = { x: 0, y: 0, scale: 1 };
     }
@@ -81,13 +88,13 @@ export function PersonalityGrid({ hoveredCard, setHoveredCard, navigate }: Perso
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
     if (!hoveredCard || !cardRefs.current[hoveredCard]) return;
-    
+
     const card = cardRefs.current[hoveredCard];
     const rect = card?.getBoundingClientRect();
     if (!card || !rect) return;
 
     const dynamics = calculateDynamics(e, card, rect);
-    
+
     if (dynamics.distance < rect.width * 1.2) {
       applyCardTransform(card, dynamics);
       card.style.transition = 'transform 0.05s ease-out';
@@ -99,10 +106,10 @@ export function PersonalityGrid({ hoveredCard, setHoveredCard, navigate }: Perso
     if (!card) return;
 
     velocities.current[cardId] = { x: 0, y: 0, scale: 1 };
-    
+
     card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1) translate3d(0, 0, 0)';
     card.style.transition = "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)";
-    
+
     const content = card.querySelector('.card-content') as HTMLElement;
     if (content) {
       content.style.transform = 'translate3d(0, 0, 0)';
@@ -146,14 +153,37 @@ export function PersonalityGrid({ hoveredCard, setHoveredCard, navigate }: Perso
             'bg-clip-padding backdrop-filter',
             'shadow-[inset_0_1px_2px_rgba(255,255,255,0.4)]',
             personality.id === "quick-answers" ? "hovering-card" : "",
-            hoveredCard === personality.id ? 
-              'z-10 shadow-2xl shadow-white/30' : 
+            hoveredCard === personality.id ?
+              'z-10 shadow-2xl shadow-white/30' :
               'z-0 hover:shadow-xl hover:shadow-white/20'
           )}
-          onClick={() => {
+          onClick={async () => {
             if (personality.id === "affirmations") {
               navigate("/affirmations");
             } else if (personality.id === "quick-answers") {
+              if (import.meta.env.VITE_USE_PAYMENTS == "true") {
+                // Assert balance.
+                if (balance < LAMPORT_COST) {
+                  alert("Insufficient balance to proceed!");
+                  return;
+                }
+
+                // Transfer SOL to seller account.
+                const base58Transaction = await createTransferTransaction(address, storeAddress, LAMPORT_COST);
+                console.log("Base58 encoded Solana transaction:", base58Transaction);
+                await fetch(`${endpoint}/wallets/${address}/transactions`, {
+                  method: "POST",
+                  headers: {
+                    "X-API-KEY": apiKey,
+                    "Content-Type": "application/json"
+                  },
+                  body: JSON.stringify({
+                    params: {
+                      transaction: base58Transaction
+                    }
+                  })
+                });
+              }
               navigate("/quick-answers");
             } else if (personality.id === "emotional-reflection") {
               navigate("/emotional-reflection");
@@ -171,10 +201,10 @@ export function PersonalityGrid({ hoveredCard, setHoveredCard, navigate }: Perso
         >
           <div className="card-content relative z-10 space-y-3 transition-transform duration-300">
             <div className="w-12 h-12 rounded-full bg-white/95 flex items-center justify-center overflow-hidden mb-3 group-hover:scale-110 transition-transform duration-300 backdrop-blur-xl border border-white/50 shadow-lg">
-              <img 
-                src={personality.icon} 
-                alt={personality.title} 
-                className="w-10 h-10 transition-transform duration-300 group-hover:scale-110" 
+              <img
+                src={personality.icon}
+                alt={personality.title}
+                className="w-10 h-10 transition-transform duration-300 group-hover:scale-110"
               />
             </div>
             <div className="space-y-1">
@@ -182,7 +212,7 @@ export function PersonalityGrid({ hoveredCard, setHoveredCard, navigate }: Perso
                 "text-xl font-semibold text-[#2A2A2A] group-hover:text-black transition-colors",
                 personality.id === "quick-answers" && "text-glow-strong"
               )}>
-                {personality.title}
+                {personality.title} {personality.id === "quick-answers" && `- ${LAMPORT_COST / LAMPORT_COUNT} SOL Per Session`}
               </h3>
               <p className={cn(
                 "text-gray-600 text-sm leading-relaxed group-hover:text-gray-800 transition-colors"
